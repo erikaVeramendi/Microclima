@@ -1,0 +1,1306 @@
+/* =========================================================
+   MICROCLIMA — SITIO PÚBLICO MULTIESPECTRAL (EDICIÓN HACKATHON)
+   Colorimetría equilibrada:
+   Obsidiana (#070910) + Esmeralda NDVI (#43A875 / #8BCB9A) +
+   Ámbar/Coral LST (#FFCB73 / #F28B50 / #D95757) +
+   Violeta IA (#8875D8) + Celeste Orbital (#65C8F2)
+   ========================================================= */
+
+.site-wrapper {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: #070910;
+  color: var(--color-cloud);
+  overflow-x: hidden;
+}
+
+.container {
+  width: 100%;
+  max-width: 1280px;
+  margin-inline: auto;
+  padding-inline: 1.5rem;
+}
+
+/* =========================================================
+   PÍLDORAS Y ENCABEZADOS MULTIESPECTRALES
+   ========================================================= */
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.34rem 0.85rem;
+  border-radius: 999px;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #FFCB73;
+  background: rgba(242, 139, 80, 0.12);
+  border: 1px solid rgba(242, 139, 80, 0.38);
+  margin-bottom: 1.1rem;
+}
+
+.eyebrow--veg {
+  color: #8BCB9A;
+  background: rgba(67, 168, 117, 0.14);
+  border-color: rgba(67, 168, 117, 0.42);
+}
+
+.eyebrow--purple {
+  color: #c4b5fd;
+  background: rgba(136, 117, 216, 0.15);
+  border-color: rgba(136, 117, 216, 0.45);
+}
+
+.eyebrow--cyan {
+  color: var(--color-cyan);
+  background: rgba(101, 200, 242, 0.12);
+  border-color: rgba(101, 200, 242, 0.38);
+}
+
+.eyebrow-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background-color: currentColor;
+  box-shadow: 0 0 10px currentColor;
+  animation: pulseDot 2s ease-in-out infinite;
+}
+
+@keyframes pulseDot {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.45;
+    transform: scale(0.75);
+  }
+}
+
+.section-title {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 3.6vw, 3.1rem);
+  font-weight: 700;
+  line-height: 1.08;
+  letter-spacing: -0.025em;
+  margin-bottom: 0.85rem;
+  color: var(--color-cloud);
+}
+
+.section-lead {
+  font-size: clamp(0.98rem, 1.15vw, 1.08rem);
+  color: var(--color-gray);
+  max-width: 58ch;
+  line-height: 1.6;
+}
+
+/* Fondos por sección con identidad cromática propia (Ya no todo azul) */
+.section-block {
+  padding-block: clamp(4.5rem, 7.5vw, 6.5rem);
+  position: relative;
+}
+
+.section-block--navy {
+  background:
+    radial-gradient(circle at 18% 25%, rgba(67, 168, 117, 0.12), transparent 45%),
+    radial-gradient(circle at 82% 75%, rgba(242, 139, 80, 0.12), transparent 45%),
+    #080b14;
+  border-bottom: 1px solid rgba(245, 247, 252, 0.08);
+}
+
+.section-block--slate {
+  background:
+    radial-gradient(circle at 80% 25%, rgba(136, 117, 216, 0.15), transparent 48%),
+    radial-gradient(circle at 20% 80%, rgba(67, 168, 117, 0.11), transparent 48%),
+    #0b101d;
+  border-bottom: 1px solid rgba(245, 247, 252, 0.08);
+}
+
+/* =========================================================
+   BOTONES MULTIESPECTRALES
+   ========================================================= */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.65rem;
+  padding: 0.85rem 1.55rem;
+  border-radius: 10px;
+  font-size: 0.92rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.22s ease;
+  border: 1px solid transparent;
+  white-space: nowrap;
+}
+
+.btn--primary {
+  background: linear-gradient(135deg, #43A875 0%, #65C8F2 52%, #8875D8 100%);
+  color: #070910;
+  border-color: rgba(255, 203, 115, 0.45);
+  box-shadow: 0 12px 30px -6px rgba(67, 168, 117, 0.45);
+}
+
+.btn--primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 16px 36px -4px rgba(136, 117, 216, 0.65);
+  filter: brightness(1.08);
+}
+
+.btn--outline {
+  background-color: rgba(16, 22, 38, 0.76);
+  color: var(--color-cloud);
+  border-color: rgba(255, 203, 115, 0.38);
+  backdrop-filter: blur(10px);
+}
+
+.btn--outline:hover {
+  border-color: #FFCB73;
+  color: #FFCB73;
+  transform: translateY(-2px);
+}
+
+.btn--nav {
+  padding: 0.52rem 1.15rem;
+  font-size: 0.82rem;
+  border-radius: 999px;
+  background: linear-gradient(135deg, rgba(67, 168, 117, 0.2), rgba(136, 117, 216, 0.25));
+  color: var(--color-cloud);
+  border: 1px solid rgba(255, 203, 115, 0.45);
+}
+
+.btn--nav:hover {
+  background: linear-gradient(135deg, #43A875, #65C8F2);
+  color: #070910;
+}
+
+/* =========================================================
+   01. NAVBAR FLOTANTE CON BORDE MULTIESPECTRAL
+   ========================================================= */
+.site-navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  padding-top: 0.85rem;
+  transition: padding 0.25s ease;
+}
+
+.site-navbar.is-scrolled {
+  padding-top: 0.45rem;
+}
+
+.navbar-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 66px;
+  padding-inline: 1.25rem;
+  border-radius: 14px;
+  background-color: rgba(10, 14, 24, 0.78);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border: 1px solid rgba(245, 247, 252, 0.14);
+  box-shadow: 0 18px 40px -18px rgba(0, 0, 0, 0.85);
+}
+
+.brand-link {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.brand-logo {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, rgba(67, 168, 117, 0.25), rgba(242, 139, 80, 0.25));
+  border: 1px solid rgba(255, 203, 115, 0.5);
+  display: grid;
+  place-items: center;
+}
+
+.brand-text-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.brand-name {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: var(--color-cloud);
+}
+
+.brand-sub {
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  color: #8BCB9A;
+  letter-spacing: 0.06em;
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  list-style: none;
+}
+
+.nav-link-btn {
+  background: transparent;
+  border: none;
+  color: var(--color-gray);
+  font-size: 0.84rem;
+  font-weight: 500;
+  padding: 0.45rem 0.85rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.18s ease;
+}
+
+.nav-link-btn:hover {
+  color: var(--color-cloud);
+  background-color: rgba(245, 247, 252, 0.06);
+}
+
+.nav-link-btn.is-active {
+  color: #FFCB73;
+  background-color: rgba(242, 139, 80, 0.14);
+}
+
+.nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.mobile-menu-toggle {
+  display: none;
+  background: rgba(20, 27, 45, 0.9);
+  border: 1px solid rgba(245, 247, 252, 0.25);
+  color: var(--color-cloud);
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.mobile-drawer {
+  display: none;
+  margin-top: 0.5rem;
+  margin-inline: 1.5rem;
+  border-radius: 12px;
+  background-color: rgba(10, 14, 24, 0.96);
+  border: 1px solid rgba(255, 203, 115, 0.35);
+  padding: 1rem 1.25rem;
+}
+
+.mobile-drawer.is-open {
+  display: block;
+}
+
+.mobile-nav-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  margin-bottom: 1rem;
+}
+
+/* =========================================================
+   02. HERO ORBITAL MULTIESPECTRAL + CINTA DE TELEMETRÍA
+   ========================================================= */
+.hero-section {
+  position: relative;
+  min-height: 100vh;
+  padding-top: 118px;
+  padding-bottom: 3rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  overflow: hidden;
+  border-bottom: 1px solid rgba(245, 247, 252, 0.12);
+}
+
+.hero-vignette {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 58% 45%, transparent 20%, rgba(7, 9, 16, 0.65) 85%),
+    linear-gradient(90deg, rgba(7, 9, 16, 0.85) 0%, rgba(7, 9, 16, 0.35) 55%, rgba(7, 9, 16, 0.72) 100%);
+}
+
+.hero-grid {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  grid-template-columns: 1.12fr 0.88fr;
+  gap: 2.5rem;
+  align-items: center;
+  margin-block: auto;
+}
+
+.hero-title {
+  font-family: var(--font-display);
+  font-size: clamp(2.5rem, 5vw, 4.35rem);
+  font-weight: 700;
+  line-height: 1.04;
+  letter-spacing: -0.03em;
+  margin-bottom: 1.2rem;
+}
+
+.hero-title-highlight {
+  display: block;
+  background: linear-gradient(90deg, #8BCB9A 0%, #65C8F2 36%, #8875D8 68%, #FFCB73 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.hero-description {
+  font-size: clamp(1rem, 1.25vw, 1.15rem);
+  color: var(--color-gray);
+  max-width: 50ch;
+  margin-bottom: 1.75rem;
+}
+
+.hero-cta-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.9rem;
+  margin-bottom: 1.75rem;
+}
+
+.hero-live-switcher {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.35rem;
+  border-radius: 10px;
+  background-color: rgba(12, 17, 29, 0.84);
+  border: 1px solid rgba(245, 247, 252, 0.16);
+  backdrop-filter: blur(12px);
+}
+
+.hero-mode-btn {
+  padding: 0.45rem 0.85rem;
+  border-radius: 7px;
+  border: none;
+  background: transparent;
+  color: var(--color-gray);
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.18s ease;
+}
+
+.hero-mode-btn.is-active {
+  background: linear-gradient(135deg, rgba(67, 168, 117, 0.22), rgba(242, 139, 80, 0.22));
+  color: #FFCB73;
+  box-shadow: inset 0 0 0 1px rgba(255, 203, 115, 0.45);
+}
+
+/* Consola Derecha del Hero con Gauges Circulares y Radar Multiespectral */
+.hero-hud-console {
+  background: linear-gradient(160deg, rgba(18, 24, 42, 0.82), rgba(9, 13, 24, 0.92));
+  border: 1px solid rgba(245, 247, 252, 0.18);
+  border-radius: 18px;
+  padding: 1.5rem;
+  backdrop-filter: blur(20px);
+  box-shadow:
+    0 30px 60px -15px rgba(0, 0, 0, 0.85),
+    0 0 35px -15px rgba(67, 168, 117, 0.3),
+    0 0 35px -15px rgba(242, 139, 80, 0.3);
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.hero-hud-console::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #43A875, #65C8F2, #8875D8, #F28B50);
+}
+
+.hud-console-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid rgba(245, 247, 252, 0.1);
+}
+
+.hud-gauges-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.65rem;
+}
+
+.hud-gauge-card {
+  background-color: rgba(9, 13, 24, 0.82);
+  border: 1px solid rgba(245, 247, 252, 0.1);
+  border-radius: 12px;
+  padding: 0.75rem 0.6rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 0.35rem;
+}
+
+.hud-radar-ring {
+  position: relative;
+  height: 150px;
+  border-radius: 12px;
+  background-color: rgba(7, 9, 16, 0.9);
+  border: 1px solid rgba(245, 247, 252, 0.12);
+  overflow: hidden;
+}
+
+/* Cinta de Telemetría Satelital en movimiento continuo */
+.orbital-ticker {
+  position: relative;
+  z-index: 2;
+  margin-top: 2rem;
+  padding-block: 0.65rem;
+  background-color: rgba(10, 14, 24, 0.78);
+  border-top: 1px solid rgba(245, 247, 252, 0.1);
+  border-bottom: 1px solid rgba(245, 247, 252, 0.1);
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.orbital-ticker-track {
+  display: inline-flex;
+  align-items: center;
+  gap: 2.5rem;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  animation: tickerScroll 28s linear infinite;
+}
+
+@keyframes tickerScroll {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+/* =========================================================
+   TARJETAS CON IDENTIDAD CROMÁTICA DIFERENCIADA (BENTO)
+   ========================================================= */
+.bento-4grid {
+  margin-top: 2.25rem;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.15rem;
+}
+
+.bento-card {
+  position: relative;
+  background: linear-gradient(165deg, rgba(20, 26, 44, 0.78) 0%, rgba(10, 14, 24, 0.92) 100%);
+  border: 1px solid rgba(245, 247, 252, 0.14);
+  border-radius: 16px;
+  padding: 1.4rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 0.9rem;
+  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+  overflow: hidden;
+}
+
+.bento-card--lst {
+  border-top: 3px solid #F28B50;
+}
+.bento-card--lst:hover {
+  transform: translateY(-5px);
+  border-color: #F28B50;
+  box-shadow: 0 20px 40px -15px rgba(242, 139, 80, 0.35);
+}
+
+.bento-card--veg {
+  border-top: 3px solid #43A875;
+}
+.bento-card--veg:hover {
+  transform: translateY(-5px);
+  border-color: #43A875;
+  box-shadow: 0 20px 40px -15px rgba(67, 168, 117, 0.35);
+}
+
+.bento-card--purple {
+  border-top: 3px solid #8875D8;
+}
+.bento-card--purple:hover {
+  transform: translateY(-5px);
+  border-color: #8875D8;
+  box-shadow: 0 20px 40px -15px rgba(136, 117, 216, 0.38);
+}
+
+.bento-card--cyan {
+  border-top: 3px solid #65C8F2;
+}
+.bento-card--cyan:hover {
+  transform: translateY(-5px);
+  border-color: #65C8F2;
+  box-shadow: 0 20px 40px -15px rgba(101, 200, 242, 0.35);
+}
+
+.bento-num {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+}
+
+.bento-card h3 {
+  font-family: var(--font-display);
+  font-size: 1.12rem;
+  color: var(--color-cloud);
+  line-height: 1.3;
+}
+
+.bento-card p {
+  font-size: 0.82rem;
+  color: var(--color-gray);
+}
+
+/* =========================================================
+   PIPELINE ANIMADO MULTICOLOR
+   ========================================================= */
+.concept-pipeline {
+  margin-top: 2.25rem;
+  background: linear-gradient(180deg, rgba(18, 24, 42, 0.72), rgba(9, 13, 24, 0.92));
+  border: 1px solid rgba(245, 247, 252, 0.16);
+  border-radius: 18px;
+  padding: 1.75rem;
+}
+
+.pipeline-steps {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 0.9rem;
+}
+
+.pipeline-node {
+  background-color: rgba(11, 15, 26, 0.88);
+  border: 1px solid rgba(245, 247, 252, 0.14);
+  border-radius: 12px;
+  padding: 1.15rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  transition: transform 0.2s ease;
+}
+
+.pipeline-node:hover {
+  transform: translateY(-4px);
+}
+
+.pipeline-node--veg {
+  border-bottom: 3px solid #43A875;
+}
+.pipeline-node--cyan {
+  border-bottom: 3px solid #65C8F2;
+}
+.pipeline-node--ai {
+  border-bottom: 3px solid #8875D8;
+  background: linear-gradient(145deg, rgba(136, 117, 216, 0.2), rgba(11, 15, 26, 0.9));
+}
+.pipeline-node--lst {
+  border-bottom: 3px solid #F28B50;
+}
+.pipeline-node--amber {
+  border-bottom: 3px solid #FFCB73;
+}
+
+.pipeline-step-num {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.08em;
+}
+
+.pipeline-node h3 {
+  font-family: var(--font-display);
+  font-size: 0.98rem;
+  color: var(--color-cloud);
+}
+
+.pipeline-node p {
+  font-size: 0.8rem;
+  color: var(--color-gray);
+}
+
+/* =========================================================
+   CAPACIDADES CON MINI-GRÁFICOS INTEGRADOS
+   ========================================================= */
+.capabilities-grid {
+  margin-top: 2.25rem;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.2rem;
+}
+
+.capability-card {
+  background: linear-gradient(160deg, rgba(20, 26, 44, 0.72), rgba(10, 14, 24, 0.92));
+  border: 1px solid rgba(245, 247, 252, 0.14);
+  border-radius: 16px;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 1rem;
+  transition: all 0.25s ease;
+}
+
+.capability-card:hover {
+  transform: translateY(-5px);
+}
+
+.capability-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.65rem;
+}
+
+.capability-num {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 600;
+}
+
+.capability-icon-box {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  background-color: rgba(11, 15, 26, 0.9);
+  border: 1px solid rgba(245, 247, 252, 0.18);
+  display: grid;
+  place-items: center;
+}
+
+.capability-title {
+  font-family: var(--font-display);
+  font-size: 1.2rem;
+  color: var(--color-cloud);
+  margin-bottom: 0.35rem;
+}
+
+.capability-desc {
+  font-size: 0.85rem;
+  color: var(--color-gray);
+}
+
+.capability-quote {
+  padding-top: 0.75rem;
+  border-top: 1px solid rgba(245, 247, 252, 0.1);
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+}
+
+/* =========================================================
+   SECCIONES COMPLEMENTARIAS (HUELLA VERDE, TÉRMICA, EXPLORADOR)
+   ========================================================= */
+.split-2col,
+.huella-layout,
+.thermal-layout,
+.methodology-layout {
+  margin-top: 2rem;
+  display: grid;
+  grid-template-columns: 1.12fr 0.88fr;
+  gap: 2rem;
+  align-items: center;
+}
+
+.comparison-showcase {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.sector-card,
+.huella-visualizer,
+.audit-panel,
+.source-card,
+.vision-card,
+.research-card {
+  background: linear-gradient(160deg, rgba(20, 26, 44, 0.75), rgba(10, 14, 24, 0.92));
+  border: 1px solid rgba(245, 247, 252, 0.15);
+  border-radius: 16px;
+  padding: 1.35rem;
+}
+
+.sector-card {
+  padding: 0;
+  overflow: hidden;
+}
+
+.sector-visual {
+  height: 195px;
+  position: relative;
+}
+
+.sector-visual img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.sector-tag {
+  position: absolute;
+  top: 0.75rem;
+  left: 0.75rem;
+  padding: 0.25rem 0.65rem;
+  border-radius: 6px;
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  background-color: rgba(7, 9, 16, 0.88);
+  color: #8BCB9A;
+  border: 1px solid rgba(67, 168, 117, 0.45);
+}
+
+.sector-body {
+  padding: 1.1rem;
+}
+
+.sector-body h3 {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  margin-bottom: 0.25rem;
+}
+
+.sector-body p {
+  font-size: 0.82rem;
+  color: var(--color-gray);
+}
+
+.visualizer-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-bottom: 0.9rem;
+}
+
+.demo-tag {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  padding: 0.24rem 0.6rem;
+  border-radius: 6px;
+  background-color: rgba(67, 168, 117, 0.16);
+  color: #8BCB9A;
+  border: 1px solid rgba(67, 168, 117, 0.42);
+}
+
+.ndvi-compare-stage {
+  position: relative;
+  height: 275px;
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid rgba(245, 247, 252, 0.18);
+  margin-bottom: 0.9rem;
+}
+
+.ndvi-layer {
+  position: absolute;
+  inset: 0;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.ndvi-slider-control {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  font-family: var(--font-mono);
+  font-size: 0.74rem;
+  color: var(--color-gray);
+  margin-bottom: 0.8rem;
+}
+
+.ndvi-slider-control input[type='range'] {
+  flex: 1;
+  accent-color: #43A875;
+  cursor: pointer;
+}
+
+.veg-scale-bar {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+}
+
+.lst-scale-bar {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 6px;
+}
+
+.veg-swatch,
+.lst-swatch {
+  height: 10px;
+  border-radius: 999px;
+}
+
+.huella-pillars {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.pillar-item {
+  background-color: rgba(16, 22, 38, 0.76);
+  border: 1px solid rgba(245, 247, 252, 0.14);
+  border-left: 3px solid #43A875;
+  border-radius: 10px;
+  padding: 1.05rem 1.2rem;
+  transition: transform 0.2s ease;
+}
+
+.pillar-item:hover {
+  transform: translateX(4px);
+}
+
+.pillar-item h3 {
+  font-family: var(--font-display);
+  font-size: 1.02rem;
+  margin-bottom: 0.2rem;
+}
+
+.pillar-item p {
+  font-size: 0.84rem;
+  color: var(--color-gray);
+}
+
+.caution-box {
+  background-color: rgba(10, 14, 24, 0.88);
+  border: 1px solid rgba(230, 184, 92, 0.4);
+  border-radius: 10px;
+  padding: 0.9rem 1.05rem;
+  font-size: 0.78rem;
+  color: var(--color-gray);
+}
+
+.caution-box strong {
+  color: #FFCB73;
+  display: block;
+  margin-bottom: 0.2rem;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  text-transform: uppercase;
+}
+
+/* Explorador Territorial Conceptual */
+.explorer-console {
+  margin-top: 2rem;
+  background: linear-gradient(180deg, rgba(18, 24, 42, 0.82), rgba(9, 13, 24, 0.96));
+  border: 1px solid rgba(245, 247, 252, 0.18);
+  border-radius: 18px;
+  overflow: hidden;
+}
+
+.explorer-topbar {
+  padding: 0.95rem 1.3rem;
+  background-color: rgba(9, 13, 24, 0.9);
+  border-bottom: 1px solid rgba(245, 247, 252, 0.12);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.layer-pills {
+  display: flex;
+  gap: 0.45rem;
+  flex-wrap: wrap;
+}
+
+.layer-pill-btn {
+  padding: 0.4rem 0.85rem;
+  border-radius: 7px;
+  border: 1px solid rgba(245, 247, 252, 0.16);
+  background-color: rgba(20, 27, 45, 0.65);
+  color: var(--color-gray);
+  font-size: 0.76rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.layer-pill-btn.is-active {
+  background-color: rgba(242, 139, 80, 0.18);
+  color: #FFCB73;
+  border-color: #F28B50;
+}
+
+.explorer-body {
+  display: grid;
+  grid-template-columns: 1.55fr 0.85fr;
+  min-height: 400px;
+}
+
+.explorer-map-canvas {
+  padding: 1.2rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  border-right: 1px solid rgba(245, 247, 252, 0.12);
+}
+
+.explorer-sidebar {
+  padding: 1.35rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 1.1rem;
+}
+
+.zone-selector-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.42rem;
+}
+
+.zone-select-btn {
+  text-align: left;
+  padding: 0.6rem 0.85rem;
+  border-radius: 8px;
+  border: 1px solid rgba(245, 247, 252, 0.14);
+  background-color: rgba(20, 27, 45, 0.5);
+  color: var(--color-gray);
+  font-size: 0.78rem;
+  cursor: pointer;
+}
+
+.zone-select-btn.is-active {
+  border-color: #43A875;
+  color: #8BCB9A;
+  background-color: rgba(67, 168, 117, 0.16);
+}
+
+/* =========================================================
+   PUENTE DE FUSIÓN: SATÉLITES NASA × APIs ALCALDÍA (GAMC)
+   ========================================================= */
+.fusion-bridge-grid {
+  display: grid;
+  grid-template-columns: 1fr 1.18fr 1fr;
+  gap: 1.25rem;
+  align-items: stretch;
+}
+
+.fusion-column {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.fusion-col-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.65rem 0.9rem;
+  border-radius: 10px;
+  background-color: rgba(11, 16, 29, 0.9);
+  border: 1px solid rgba(245, 247, 252, 0.14);
+  border-left-width: 3px;
+}
+
+.fusion-cards-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  flex: 1;
+}
+
+.fusion-select-card {
+  width: 100%;
+  text-align: left;
+  background: linear-gradient(155deg, rgba(19, 27, 46, 0.78), rgba(9, 13, 24, 0.94));
+  border: 1px solid rgba(245, 247, 252, 0.14);
+  border-radius: 12px;
+  padding: 0.9rem 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.28rem;
+  cursor: pointer;
+  transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.fusion-select-card:hover {
+  transform: translateY(-2px);
+}
+
+.fusion-select-card.is-selected {
+  background: linear-gradient(155deg, rgba(28, 39, 66, 0.92), rgba(12, 18, 32, 0.98));
+}
+
+.fusion-core-stage {
+  background: linear-gradient(165deg, rgba(18, 25, 44, 0.85), rgba(8, 11, 20, 0.96));
+  border: 1px solid rgba(245, 247, 252, 0.18);
+  border-radius: 16px;
+  padding: 1.15rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 24px 48px -18px rgba(0, 0, 0, 0.85);
+}
+
+.research-grid,
+.vision-grid {
+  margin-top: 2rem;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.15rem;
+}
+
+.discovery-banner {
+  margin-top: 1.5rem;
+  background: linear-gradient(135deg, rgba(136, 117, 216, 0.2), rgba(242, 139, 80, 0.16));
+  border: 1px solid rgba(136, 117, 216, 0.45);
+  border-radius: 16px;
+  padding: 1.4rem 1.7rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.discovery-banner-quote {
+  font-family: var(--font-display);
+  font-size: 1.12rem;
+  font-weight: 600;
+  color: var(--color-cloud);
+}
+
+.principles-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+}
+
+.principle-row {
+  background-color: rgba(16, 22, 38, 0.72);
+  border: 1px solid rgba(245, 247, 252, 0.14);
+  border-radius: 10px;
+  padding: 0.9rem 1.1rem;
+  display: flex;
+  gap: 0.95rem;
+}
+
+.principle-num {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  color: #FFCB73;
+}
+
+.audit-row {
+  display: flex;
+  justify-content: space-between;
+  padding-block: 0.52rem;
+  border-bottom: 1px solid rgba(245, 247, 252, 0.1);
+  font-size: 0.8rem;
+}
+
+.audit-row span:first-child {
+  color: var(--color-gray);
+}
+
+.audit-row span:last-child {
+  font-family: var(--font-mono);
+  font-size: 0.74rem;
+  color: var(--color-cloud);
+}
+
+.sources-grid {
+  margin-top: 2.25rem;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.95rem;
+}
+
+.source-status {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: 0.64rem;
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+}
+
+.source-status--public {
+  background-color: rgba(67, 168, 117, 0.16);
+  color: #8BCB9A;
+  border: 1px solid rgba(67, 168, 117, 0.4);
+}
+
+.source-status--tool {
+  background-color: rgba(136, 117, 216, 0.18);
+  color: #c4b5fd;
+  border: 1px solid rgba(136, 117, 216, 0.42);
+}
+
+.source-status--pending {
+  background-color: rgba(242, 139, 80, 0.16);
+  color: #FFCB73;
+  border: 1px solid rgba(242, 139, 80, 0.42);
+}
+
+.source-provider {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  color: #FFCB73;
+}
+
+.source-desc {
+  font-size: 0.8rem;
+  color: var(--color-gray);
+}
+
+.cta-Closing {
+  padding-block: 5.5rem;
+  background:
+    radial-gradient(circle at 25% 30%, rgba(67, 168, 117, 0.2), transparent 50%),
+    radial-gradient(circle at 75% 70%, rgba(242, 139, 80, 0.2), transparent 50%),
+    #070910;
+  border-top: 1px solid rgba(245, 247, 252, 0.14);
+  text-align: center;
+}
+
+.cta-box {
+  max-width: 740px;
+  margin-inline: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.15rem;
+}
+
+.site-footer {
+  background-color: #05070d;
+  padding-block: 3.5rem 2rem;
+  color: var(--color-gray);
+  font-size: 0.82rem;
+  border-top: 1px solid rgba(245, 247, 252, 0.1);
+}
+
+.footer-grid {
+  display: grid;
+  grid-template-columns: 1.6fr 1fr 1fr 1fr;
+  gap: 2rem;
+  padding-bottom: 2rem;
+  border-bottom: 1px solid rgba(245, 247, 252, 0.1);
+}
+
+.footer-col h4 {
+  font-family: var(--font-display);
+  color: var(--color-cloud);
+  font-size: 0.9rem;
+  margin-bottom: 0.8rem;
+}
+
+.footer-links {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.footer-link-btn {
+  background: transparent;
+  border: none;
+  color: var(--color-gray);
+  font-size: 0.82rem;
+  cursor: pointer;
+  padding: 0;
+  text-align: left;
+}
+
+.footer-link-btn:hover {
+  color: #FFCB73;
+}
+
+.footer-bottom {
+  padding-top: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  font-size: 0.74rem;
+}
+
+@media (max-width: 1080px) {
+  .hero-grid,
+  .fusion-bridge-grid,
+  .split-2col,
+  .huella-layout,
+  .thermal-layout,
+  .explorer-body,
+  .methodology-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .bento-4grid,
+  .capabilities-grid,
+  .sources-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .pipeline-steps {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .footer-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 820px) {
+  .nav-links,
+  .nav-actions .btn--nav {
+    display: none;
+  }
+
+  .mobile-menu-toggle {
+    display: inline-flex;
+  }
+
+  .research-grid,
+  .vision-grid,
+  .comparison-showcase {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 560px) {
+  .bento-4grid,
+  .capabilities-grid,
+  .sources-grid,
+  .pipeline-steps,
+  .footer-grid,
+  .hud-gauges-grid {
+    grid-template-columns: 1fr;
+  }
+}

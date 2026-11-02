@@ -1,0 +1,296 @@
+/* =========================================================
+   LOGIN — AUTENTICADOR CENTRADO + FONDO 3D EN MOVIMIENTO
+   ========================================================= */
+
+.login-viewport {
+  position: relative;
+  min-height: 100vh;
+  width: 100%;
+  overflow: hidden;
+  background-color: #06080f;
+  color: var(--color-cloud);
+  display: flex;
+  flex-direction: column;
+}
+
+.login-vignette {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background: radial-gradient(
+    circle at 50% 50%,
+    rgba(6, 8, 15, 0.18) 0%,
+    rgba(6, 8, 15, 0.68) 88%
+  );
+}
+
+/* Barra superior discreta únicamente para el botón de volver */
+.login-topbar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  padding: 1.25rem 2rem;
+}
+
+.login-back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.48rem 0.95rem;
+  border-radius: 999px;
+  background-color: rgba(15, 22, 38, 0.72);
+  border: 1px solid rgba(245, 247, 252, 0.18);
+  color: var(--color-cloud);
+  font-size: 0.82rem;
+  font-weight: 500;
+  backdrop-filter: blur(12px);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.login-back-link:hover {
+  border-color: #FFCB73;
+  color: #FFCB73;
+  transform: translateX(-3px);
+}
+
+/* Escenario central para ubicar el autenticador exactamente al medio */
+.login-center-stage {
+  position: relative;
+  z-index: 3;
+  flex: 1;
+  width: 100%;
+  display: grid;
+  place-items: center;
+  padding: 2rem 1.25rem;
+}
+
+/* =========================================================
+   TARJETA DE AUTENTICACIÓN CENTRADA (GLASSMORPHISM)
+   ========================================================= */
+.login-card {
+  position: relative;
+  width: 100%;
+  max-width: 410px;
+  background: linear-gradient(
+    165deg,
+    rgba(18, 25, 44, 0.76) 0%,
+    rgba(9, 13, 24, 0.86) 100%
+  );
+  backdrop-filter: blur(22px);
+  -webkit-backdrop-filter: blur(22px);
+  border: 1px solid rgba(245, 247, 252, 0.18);
+  border-radius: 22px;
+  padding: 2.25rem 2rem;
+  box-shadow:
+    0 32px 64px -16px rgba(0, 0, 0, 0.88),
+    0 0 38px -16px rgba(101, 200, 242, 0.3),
+    0 0 38px -18px rgba(67, 168, 117, 0.25);
+  display: flex;
+  flex-direction: column;
+  gap: 1.35rem;
+  overflow: hidden;
+}
+
+/* Línea luminosa superior animada */
+.login-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #43A875, #65C8F2, #8875D8, #F28B50, #43A875);
+  background-size: 200% 100%;
+  animation: spectrumFlow 4s linear infinite;
+}
+
+@keyframes spectrumFlow {
+  0% {
+    background-position: 0% 50%;
+  }
+  100% {
+    background-position: 200% 50%;
+  }
+}
+
+.login-portal-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 0.45rem;
+}
+
+.portal-ring-avatar {
+  position: relative;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(136, 117, 216, 0.22), rgba(11, 18, 34, 0.9));
+  border: 1px solid rgba(101, 200, 242, 0.45);
+  display: grid;
+  place-items: center;
+  margin-bottom: 0.35rem;
+}
+
+.portal-ring-avatar::after {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  border-radius: 50%;
+  border: 1.5px dashed rgba(67, 168, 117, 0.65);
+  animation: loginSpin 10s linear infinite;
+}
+
+.login-title {
+  font-family: var(--font-display);
+  font-size: 1.55rem;
+  font-weight: 700;
+  color: var(--color-cloud);
+  line-height: 1.15;
+}
+
+.login-subtitle {
+  font-size: 0.84rem;
+  color: var(--color-gray);
+}
+
+/* Campos del formulario */
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.38rem;
+}
+
+.form-label {
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: var(--color-cloud);
+}
+
+.input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.form-input {
+  width: 100%;
+  padding: 0.78rem 0.95rem;
+  padding-right: 2.75rem;
+  background-color: rgba(8, 12, 22, 0.82);
+  border: 1px solid rgba(245, 247, 252, 0.18);
+  border-radius: 10px;
+  color: var(--color-cloud);
+  font-size: 0.9rem;
+  transition: all 0.18s ease;
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: #65C8F2;
+  box-shadow: 0 0 0 3px rgba(101, 200, 242, 0.16);
+}
+
+.form-input.has-error {
+  border-color: #f28b82;
+}
+
+.password-toggle-btn {
+  position: absolute;
+  right: 0.55rem;
+  background: transparent;
+  border: none;
+  color: var(--color-gray);
+  width: 32px;
+  height: 32px;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+}
+
+.field-error-msg {
+  font-size: 0.75rem;
+  color: #f28b82;
+}
+
+.login-aux-row {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.forgot-password-btn {
+  background: transparent;
+  border: none;
+  color: var(--color-gray);
+  font-size: 0.76rem;
+  cursor: pointer;
+  padding: 0;
+}
+
+.forgot-password-btn:hover {
+  color: #65C8F2;
+}
+
+/* Botón principal */
+.login-submit-btn {
+  width: 100%;
+  padding: 0.85rem 1.25rem;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 203, 115, 0.45);
+  background: linear-gradient(135deg, #43A875 0%, #65C8F2 50%, #8875D8 100%);
+  color: #070910;
+  font-size: 0.92rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  box-shadow: 0 12px 28px -6px rgba(101, 200, 242, 0.42);
+  transition: all 0.22s ease;
+}
+
+.login-submit-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 16px 34px -4px rgba(136, 117, 216, 0.6);
+  filter: brightness(1.06);
+}
+
+.spinner-ring {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(7, 9, 16, 0.25);
+  border-top-color: #070910;
+  border-radius: 50%;
+  animation: loginSpin 0.75s linear infinite;
+}
+
+@keyframes loginSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.service-status-banner {
+  padding: 0.7rem 0.9rem;
+  border-radius: 8px;
+  font-size: 0.78rem;
+  text-align: center;
+  background-color: rgba(101, 200, 242, 0.14);
+  border: 1px solid rgba(101, 200, 242, 0.38);
+  color: var(--color-cloud);
+}
