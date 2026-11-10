@@ -967,29 +967,36 @@ export function EnvironmentalRelationsScreen({
     'ndvi-lst': {
       xKey: 'ndviIllustrative',
       yKey: 'lstIllustrative',
-      xLabel: 'NDVI (Sentinel-2 10m)',
-      yLabel: 'LST Superficial °C (Landsat 30m)',
-      rho: statMethod === 'Spearman' ? '−0.86' : statMethod === 'Pearson' ? '−0.83' : '−0.79 (Ctrl DEM)',
+      xLabel: 'NDVI (Sentinel-2 100m)',
+      yLabel: 'LST Superficial °C (Landsat 8 100m)',
+      rho: statMethod === 'Spearman' ? '−0.43 (Valle)' : statMethod === 'Pearson' ? '−0.413 (Global Colab)' : '−0.474 (D13 Tunari)',
+    },
+    'monica-lst': {
+      xKey: 'popDensity',
+      yKey: 'lstIllustrative',
+      xLabel: 'Material Particulado PM10 µg/m³ (Red MÓNICA GAMC)',
+      yLabel: 'LST Superficial °C (Landsat 8 100m)',
+      rho: '+0.78 (Kanata 67.1 vs SEMAPA 49.3 µg/m³)',
     },
     'imp-lst': {
       xKey: 'imperviousPct',
       yKey: 'lstIllustrative',
-      xLabel: 'Densidad Edificada / Sellado % (OSM)',
-      yLabel: 'LST Superficial °C (Landsat 30m)',
+      xLabel: 'Densidad Edificada / Sellado % (OSM + GAMC)',
+      yLabel: 'LST Superficial °C (Landsat 8 100m)',
       rho: statMethod === 'Spearman' ? '+0.91' : '+0.89',
     },
     'elev-lst': {
       xKey: 'elevationNum',
       yKey: 'lstIllustrative',
       xLabel: 'Elevación m s.n.m. (NASADEM)',
-      yLabel: 'LST Superficial °C (Landsat 30m)',
+      yLabel: 'LST Superficial °C (Landsat 8 100m)',
       rho: '−0.78',
     },
     'pop-lst': {
       xKey: 'popDensity',
       yKey: 'lstIllustrative',
-      xLabel: 'Densidad Poblacional (WorldPop 100m)',
-      yLabel: 'LST Superficial °C (Landsat 30m)',
+      xLabel: 'Densidad Poblacional (Manzanas GAMC)',
+      yLabel: 'LST Superficial °C (Landsat 8 100m)',
       rho: '+0.84',
     },
   }
@@ -1011,9 +1018,10 @@ export function EnvironmentalRelationsScreen({
         <div className="neo-pill-group">
           {[
             { id: 'ndvi-lst', label: '🌿 NDVI × 🔥 LST' },
+            { id: 'monica-lst', label: '🏛 Red MÓNICA (PM10) × LST' },
             { id: 'imp-lst', label: '🏙 Edificaciones × 🔥 LST' },
             { id: 'elev-lst', label: '⛰ Elevación × 🔥 LST' },
-            { id: 'pop-lst', label: '👥 WorldPop × 🔥 LST' },
+            { id: 'pop-lst', label: '👥 Manzanas GAMC × 🔥 LST' },
           ].map((b) => (
             <button
               key={b.id}
