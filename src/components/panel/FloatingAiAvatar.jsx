@@ -1,17 +1,17 @@
 import { useState, useEffect, useRef } from 'react'
 import './FloatingAiAvatar.css'
-import WayritaAvatarSvg from './WayritaAvatarSvg'
+import PachaAvatarSvg from './PachaAvatarSvg'
 import { COCHABAMBA_ZONES } from '../../data/internalPanelData'
 
-// Calcula el estado de ánimo climático de Wayrita según la zona o módulo activo
-function getWayritaMood(moduleId, zone) {
+// Calcula el estado de ánimo climático de Pacha según la zona o módulo activo
+function getPachaMood(moduleId, zone) {
   if (moduleId === 'relaciones-ambientales') return 'smoky'
   if (zone && zone.lstMean >= 31.0) return 'hot'
   if (zone && (zone.ndviMean >= 0.27 || zone.lstMean <= 27.2)) return 'fresh'
   return 'curious'
 }
 
-// Síntesis explicativa en la voz directa y concreta de Wayrita
+// Síntesis explicativa en la voz directa y concreta de Pacha
 function generateContextualExplanation(moduleId, zone, mood) {
   const zoneName = zone ? zone.name : 'Cochabamba'
   const lst = zone ? zone.lstMean : 29.6
@@ -58,7 +58,7 @@ function generateContextualExplanation(moduleId, zone, mood) {
   }
 }
 
-// Generador de respuestas directas y concretas de Wayrita (Fallback si Ollama está offline)
+// Generador de respuestas directas y concretas de Pacha (Fallback si Ollama está offline)
 function answerLocally(query, zone, moduleId) {
   const q = query.toLowerCase()
   const zoneName = zone ? zone.name : 'Cochabamba'
@@ -101,7 +101,7 @@ export default function FloatingAiAvatar({ activeModuleId, activeZone }) {
   const [ollamaModel, setOllamaModel] = useState(null)
   const bodyRef = useRef(null)
 
-  const mood = getWayritaMood(activeModuleId, activeZone)
+  const mood = getPachaMood(activeModuleId, activeZone)
 
   // 1. Probar conectividad real con Ollama en el puerto 11434 (vía proxy Vite)
   useEffect(() => {
@@ -147,7 +147,7 @@ export default function FloatingAiAvatar({ activeModuleId, activeZone }) {
     // Si Ollama está conectado en vivo, consultarlo
     if (ollamaConnected && ollamaModel) {
       try {
-        const prompt = `Eres Wayrita, el guardián andino del microclima de Cochabamba (Bolivia).
+        const prompt = `Eres Pacha, el guardián del microclima de Cochabamba (Bolivia).
 Tienes los datos reales del municipio:
 - Zona activa: ${activeZone ? activeZone.name : 'Cochabamba'}
 - LST superficial: ${activeZone ? activeZone.lstMean : 29.6} °C
@@ -194,7 +194,7 @@ Instrucción: Responde en español con tono amable, directo, científico y sin r
 
   const currentExplanation = generateContextualExplanation(activeModuleId, activeZone, mood)
 
-  // Etiqueta de humor de Wayrita
+  // Etiqueta de humor de Pacha
   const moodLabel =
     mood === 'hot'
       ? '¡Uf, mucho calor!'
@@ -205,22 +205,21 @@ Instrucción: Responde en español con tono amable, directo, científico y sin r
       : 'Guardián del Valle'
 
   return (
-    <div className="floating-avatar-container" aria-label="Wayrita, Copiloto Andino del Microclima">
+    <div className="floating-avatar-container" aria-label="Pacha, Copiloto del Microclima">
       {!isOpen ? (
-        // Estado Minimizado: Wayrita Flotando con su Chullito
+        // Estado Minimizado: Pacha Flotando con su Chullito (limpio, sin etiquetas innecesarias)
         <button
           type="button"
           className="floating-avatar-trigger"
           onClick={() => setIsOpen(true)}
-          title="Hablar con Wayrita, espíritu del microclima"
+          title="Hablar con Pacha, guardián del microclima"
         >
           <div className="wayrita-sprite-wrap">
-            <WayritaAvatarSvg mood={mood} size={48} />
+            <PachaAvatarSvg mood={mood} size={48} />
           </div>
           <div className="floating-avatar-label-box">
             <div className="floating-avatar-name-row">
-              <span className="floating-avatar-name">Wayrita</span>
-              <span className="floating-avatar-badge">Andino</span>
+              <span className="floating-avatar-name">Pacha</span>
             </div>
             <span className="floating-avatar-mood-pill">
               <span className={`floating-status-dot dot-${mood}`} />
@@ -229,18 +228,18 @@ Instrucción: Responde en español con tono amable, directo, científico y sin r
           </div>
         </button>
       ) : (
-        // Estado Expandido: Tarjeta Holográfica de Wayrita
+        // Estado Expandido: Tarjeta Holográfica de Pacha
         <div className="floating-avatar-panel" role="dialog" aria-modal="false">
           {/* Cabecera */}
           <div className="avatar-panel-header">
             <div className="avatar-header-left">
               <div className="avatar-header-sprite">
-                <WayritaAvatarSvg mood={mood} size={44} />
+                <PachaAvatarSvg mood={mood} size={44} />
               </div>
               <div className="avatar-header-title-box">
-                <div className="avatar-header-title">Wayrita · Guardián del Valle</div>
+                <div className="avatar-header-title">Pacha · Guardián del Valle</div>
                 <div className="avatar-header-subtitle">
-                  <span>Espíritu del microclima</span>
+                  <span>Microclimas de Cochabamba</span>
                   <span className={`avatar-backend-badge ${ollamaConnected ? 'is-ollama' : ''}`}>
                     {ollamaConnected ? `Ollama (${ollamaModel})` : 'Datos NASA / GAMC'}
                   </span>
@@ -251,7 +250,7 @@ Instrucción: Responde en español con tono amable, directo, científico y sin r
               type="button"
               className="avatar-close-btn"
               onClick={() => setIsOpen(false)}
-              aria-label="Minimizar a Wayrita"
+              aria-label="Minimizar a Pacha"
             >
               ✕
             </button>
@@ -266,13 +265,13 @@ Instrucción: Responde en español con tono amable, directo, científico y sin r
 
           {/* Cuerpo */}
           <div className="avatar-panel-body" ref={bodyRef}>
-            {/* Explicación contextual de Wayrita de lo que está en pantalla */}
+            {/* Explicación contextual de Pacha de lo que está en pantalla */}
             <div className={`avatar-explanation-card card-${mood}`}>
               <div className="avatar-card-tag">
                 <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                   <path d="M12 2a10 10 0 1 0 10 10H12V2z" />
                 </svg>
-                {mood === 'hot' ? '¡Alerta de calor de Wayrita!' : mood === 'fresh' ? '¡Diagnóstico verde de Wayrita!' : 'Diagnóstico de Wayrita:'}
+                {mood === 'hot' ? '¡Alerta de calor de Pacha!' : mood === 'fresh' ? '¡Diagnóstico verde de Pacha!' : 'Diagnóstico de Pacha:'}
               </div>
               <div className="avatar-card-text">{currentExplanation}</div>
             </div>
@@ -292,7 +291,7 @@ Instrucción: Responde en español con tono amable, directo, científico y sin r
                 <span></span>
                 <span></span>
                 <span></span>
-                <span style={{ fontSize: '0.72rem', marginLeft: '6px' }}>Wayrita está pensando...</span>
+                <span style={{ fontSize: '0.72rem', marginLeft: '6px' }}>Pacha está pensando...</span>
               </div>
             )}
           </div>
@@ -303,7 +302,7 @@ Instrucción: Responde en español con tono amable, directo, científico y sin r
               type="text"
               value={inputValue}
               onChange={(e) => setInputValue(e.target.value)}
-              placeholder="Pregúntale a Wayrita sobre el calor, árboles o este distrito..."
+              placeholder="Pregúntale a Pacha sobre el calor, árboles o este distrito..."
               className="avatar-input-field"
               disabled={isThinking}
             />
