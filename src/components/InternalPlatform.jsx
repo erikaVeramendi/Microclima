@@ -276,35 +276,60 @@ export function InternalPlatform({ userSession, onLogout }) {
         </div>
 
         <nav className="mon-sidebar-nav">
-          {/* Opción #1 Principal: Monitoreo Resumen */}
+          {/* BLOQUE ENFOQUE 1: MICROCLIMAS CON IA (NASA × IA) */}
           <div className="mon-nav-group">
             {!sidebarCollapsed && (
-              <div className="mon-nav-group-title" style={{ color: '#38BDF8' }}>
-                VISTA GENERAL EN VIVO
+              <div
+                className="mon-nav-group-title"
+                style={{
+                  color: '#38BDF8',
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                }}
+              >
+                <span>ENFOQUE 1 · MICROCLIMAS</span>
+                <span
+                  style={{
+                    fontSize: '0.52rem',
+                    padding: '0.1rem 0.35rem',
+                    borderRadius: '4px',
+                    background: 'rgba(56,189,248,0.15)',
+                    color: '#7DD3FC',
+                    fontWeight: 700,
+                  }}
+                >
+                  NASA × IA
+                </span>
               </div>
             )}
             <div className="mon-nav-items">
-              {TEN_MODULES.slice(0, 1).map((mod) => {
+              {TEN_MODULES.filter((m) => m.enfoque === 1).map((mod) => {
                 const isActive = mod.id === activeModuleId
                 return (
                   <button
                     key={mod.id}
                     type="button"
-                    className={`mon-nav-btn mon-nav-btn--featured ${isActive ? 'is-active' : ''}`}
+                    className={`mon-nav-btn ${isActive ? 'is-active' : ''}`}
                     onClick={() => setActiveModuleId(mod.id)}
                     title={mod.title}
+                    style={
+                      isActive
+                        ? {
+                            borderColor: `${mod.accent}66`,
+                            boxShadow: `inset 3px 0 0 ${mod.accent}, 0 8px 22px -10px ${mod.accent}66`,
+                          }
+                        : undefined
+                    }
                   >
                     <span
                       className="mon-nav-icon"
-                      style={{ color: isActive ? '#38BDF8' : '#7DD3FC' }}
+                      style={{ color: isActive ? mod.accent : 'inherit' }}
                     >
                       <ModuleSidebarIcon type={mod.icon} />
                     </span>
                     {!sidebarCollapsed && (
-                      <>
-                        <span className="mon-nav-label">{mod.shortLabel}</span>
-                        <span className="mon-live-pill">LIVE</span>
-                      </>
+                      <span className="mon-nav-label">{mod.shortLabel}</span>
                     )}
                   </button>
                 )
@@ -312,13 +337,35 @@ export function InternalPlatform({ userSession, onLogout }) {
             </div>
           </div>
 
-          {/* Las 10 Opciones de Módulos Especializados */}
-          <div className="mon-nav-group" style={{ marginTop: '0.65rem' }}>
+          {/* BLOQUE ENFOQUE 2: GESTIÓN DISTRITAL (GAMC × ALCALDÍA) */}
+          <div className="mon-nav-group" style={{ marginTop: '0.85rem' }}>
             {!sidebarCollapsed && (
-              <div className="mon-nav-group-title">10 MÓDULOS ESPECIALIZADOS</div>
+              <div
+                className="mon-nav-group-title"
+                style={{
+                  color: '#34D399',
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                }}
+              >
+                <span>ENFOQUE 2 · GESTIÓN DISTRITAL</span>
+                <span
+                  style={{
+                    fontSize: '0.52rem',
+                    padding: '0.1rem 0.35rem',
+                    borderRadius: '4px',
+                    background: 'rgba(52,211,153,0.15)',
+                    color: '#A7F3D0',
+                    fontWeight: 700,
+                  }}
+                >
+                  GAMC
+                </span>
+              </div>
             )}
             <div className="mon-nav-items">
-              {TEN_MODULES.slice(1).map((mod) => {
+              {TEN_MODULES.filter((m) => m.enfoque === 2).map((mod) => {
                 const isActive = mod.id === activeModuleId
                 return (
                   <button
