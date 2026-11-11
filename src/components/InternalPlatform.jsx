@@ -23,6 +23,7 @@ import {
   PlanningScenariosScreen,
   ResearchReportsScreen,
 } from './panel/ScreensPart2'
+import FloatingAiAvatar from './panel/FloatingAiAvatar'
 
 function ModuleSidebarIcon({ type }) {
   switch (type) {
@@ -918,6 +919,12 @@ export function InternalPlatform({ userSession, onLogout }) {
           </div>
         </div>
       )}
+
+      {/* Copiloto Científico Flotante (Omnipresente en todas las pantallas) */}
+      <FloatingAiAvatar
+        activeModuleId={activeModuleId}
+        activeZone={activeZone}
+      />
     </div>
   )
 }
