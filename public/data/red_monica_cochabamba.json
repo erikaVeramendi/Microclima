@@ -1,0 +1,702 @@
+{
+  "title": "Red MÓNICA Cochabamba - Monitoreo Continuo de Calidad del Aire (GAMC / DIMA)",
+  "source": "Gobierno Autónomo Municipal de Cochabamba · Space Apps Challenge 2026",
+  "generatedAt": "2026-11-11T13:25:05.695Z",
+  "stations": {
+    "kanata": {
+      "id": "kanata",
+      "name": "Estación KANATA",
+      "location": "Parque Kanata / Av. 6 de Agosto (Zona Sur)",
+      "coords": {
+        "lat": -17.4132,
+        "lng": -66.1554
+      },
+      "districtRef": "Distrito 5 / 8",
+      "meanPm10": 67.05,
+      "station": "Kanata (Zona Sur)",
+      "validSamples": 54711,
+      "hourlyProfile": [
+        {
+          "hour": "00:00",
+          "pm10": 62.81
+        },
+        {
+          "hour": "01:00",
+          "pm10": 59.87
+        },
+        {
+          "hour": "02:00",
+          "pm10": 65.29
+        },
+        {
+          "hour": "03:00",
+          "pm10": 66.96
+        },
+        {
+          "hour": "04:00",
+          "pm10": 76.68
+        },
+        {
+          "hour": "05:00",
+          "pm10": 81.1
+        },
+        {
+          "hour": "06:00",
+          "pm10": 87.72
+        },
+        {
+          "hour": "07:00",
+          "pm10": 101.66
+        },
+        {
+          "hour": "08:00",
+          "pm10": 112.11
+        },
+        {
+          "hour": "09:00",
+          "pm10": 98.57
+        },
+        {
+          "hour": "10:00",
+          "pm10": 79.11
+        },
+        {
+          "hour": "11:00",
+          "pm10": 59.51
+        },
+        {
+          "hour": "12:00",
+          "pm10": 45.48
+        },
+        {
+          "hour": "13:00",
+          "pm10": 37.77
+        },
+        {
+          "hour": "14:00",
+          "pm10": 33.85
+        },
+        {
+          "hour": "15:00",
+          "pm10": 36.6
+        },
+        {
+          "hour": "16:00",
+          "pm10": 41.16
+        },
+        {
+          "hour": "17:00",
+          "pm10": 49.2
+        },
+        {
+          "hour": "18:00",
+          "pm10": 62.67
+        },
+        {
+          "hour": "19:00",
+          "pm10": 77.39
+        },
+        {
+          "hour": "20:00",
+          "pm10": 79.57
+        },
+        {
+          "hour": "21:00",
+          "pm10": 76.51
+        },
+        {
+          "hour": "22:00",
+          "pm10": 73.88
+        },
+        {
+          "hour": "23:00",
+          "pm10": 72.02
+        }
+      ],
+      "monthlyTrend": [
+        {
+          "month": "2022-07",
+          "pm10": 115.89,
+          "samples": 1212
+        },
+        {
+          "month": "2022-08",
+          "pm10": 84.35,
+          "samples": 420
+        },
+        {
+          "month": "2023-06",
+          "pm10": 188.14,
+          "samples": 491
+        },
+        {
+          "month": "2023-07",
+          "pm10": 158.18,
+          "samples": 1487
+        },
+        {
+          "month": "2023-08",
+          "pm10": 108.29,
+          "samples": 1481
+        },
+        {
+          "month": "2023-09",
+          "pm10": 64.82,
+          "samples": 1418
+        },
+        {
+          "month": "2023-10",
+          "pm10": 59.36,
+          "samples": 1245
+        },
+        {
+          "month": "2023-11",
+          "pm10": 59.41,
+          "samples": 1417
+        },
+        {
+          "month": "2023-12",
+          "pm10": 56.62,
+          "samples": 1448
+        },
+        {
+          "month": "2024-01",
+          "pm10": 46.72,
+          "samples": 182
+        },
+        {
+          "month": "2024-03",
+          "pm10": 53.13,
+          "samples": 531
+        },
+        {
+          "month": "2024-04",
+          "pm10": 68.04,
+          "samples": 1429
+        },
+        {
+          "month": "2024-05",
+          "pm10": 68.08,
+          "samples": 1486
+        },
+        {
+          "month": "2024-06",
+          "pm10": 118.34,
+          "samples": 948
+        },
+        {
+          "month": "2024-07",
+          "pm10": 114.64,
+          "samples": 1487
+        },
+        {
+          "month": "2024-08",
+          "pm10": 97.05,
+          "samples": 882
+        },
+        {
+          "month": "2024-09",
+          "pm10": 90.92,
+          "samples": 1388
+        },
+        {
+          "month": "2024-10",
+          "pm10": 58.12,
+          "samples": 1473
+        },
+        {
+          "month": "2024-11",
+          "pm10": 43.29,
+          "samples": 1424
+        },
+        {
+          "month": "2024-12",
+          "pm10": 50.19,
+          "samples": 1467
+        },
+        {
+          "month": "2025-01",
+          "pm10": 42.32,
+          "samples": 1431
+        },
+        {
+          "month": "2025-02",
+          "pm10": 43.76,
+          "samples": 1318
+        },
+        {
+          "month": "2025-03",
+          "pm10": 47.53,
+          "samples": 1454
+        },
+        {
+          "month": "2025-04",
+          "pm10": 28.1,
+          "samples": 1440
+        },
+        {
+          "month": "2025-05",
+          "pm10": 95.08,
+          "samples": 1486
+        },
+        {
+          "month": "2025-06",
+          "pm10": 97.8,
+          "samples": 1440
+        },
+        {
+          "month": "2025-07",
+          "pm10": 112.02,
+          "samples": 1486
+        },
+        {
+          "month": "2025-08",
+          "pm10": 67.18,
+          "samples": 1477
+        },
+        {
+          "month": "2025-09",
+          "pm10": 54.2,
+          "samples": 1432
+        },
+        {
+          "month": "2025-10",
+          "pm10": 48.83,
+          "samples": 1459
+        },
+        {
+          "month": "2025-11",
+          "pm10": 47.46,
+          "samples": 1414
+        },
+        {
+          "month": "2025-12",
+          "pm10": 53.8,
+          "samples": 1402
+        },
+        {
+          "month": "2026-01",
+          "pm10": 48.26,
+          "samples": 1374
+        },
+        {
+          "month": "2026-02",
+          "pm10": 44.78,
+          "samples": 1316
+        },
+        {
+          "month": "2026-03",
+          "pm10": 22.91,
+          "samples": 1445
+        },
+        {
+          "month": "2026-04",
+          "pm10": 54.33,
+          "samples": 1426
+        },
+        {
+          "month": "2026-05",
+          "pm10": 64.37,
+          "samples": 1477
+        },
+        {
+          "month": "2026-06",
+          "pm10": 72.84,
+          "samples": 1436
+        },
+        {
+          "month": "2026-07",
+          "pm10": 50.34,
+          "samples": 1197
+        },
+        {
+          "month": "2026-08",
+          "pm10": 56.68,
+          "samples": 1411
+        },
+        {
+          "month": "2026-09",
+          "pm10": 41.31,
+          "samples": 1274
+        },
+        {
+          "month": "2026-10",
+          "pm10": 41.78,
+          "samples": 1070
+        }
+      ]
+    },
+    "semapa": {
+      "id": "semapa",
+      "name": "Estación SEMAPA",
+      "location": "SEMAPA / Av. Circunvalación - Cala Cala (Zona Norte)",
+      "coords": {
+        "lat": -17.3685,
+        "lng": -66.1602
+      },
+      "districtRef": "Distrito 2 / 12",
+      "meanPm10": 49.28,
+      "station": "SEMAPA (Zona Norte)",
+      "validSamples": 71154,
+      "hourlyProfile": [
+        {
+          "hour": "00:00",
+          "pm10": 36.4
+        },
+        {
+          "hour": "01:00",
+          "pm10": 39.83
+        },
+        {
+          "hour": "02:00",
+          "pm10": 32.75
+        },
+        {
+          "hour": "03:00",
+          "pm10": 30.4
+        },
+        {
+          "hour": "04:00",
+          "pm10": 30.81
+        },
+        {
+          "hour": "05:00",
+          "pm10": 31.76
+        },
+        {
+          "hour": "06:00",
+          "pm10": 38.74
+        },
+        {
+          "hour": "07:00",
+          "pm10": 50.41
+        },
+        {
+          "hour": "08:00",
+          "pm10": 61.94
+        },
+        {
+          "hour": "09:00",
+          "pm10": 60.44
+        },
+        {
+          "hour": "10:00",
+          "pm10": 51.56
+        },
+        {
+          "hour": "11:00",
+          "pm10": 48.7
+        },
+        {
+          "hour": "12:00",
+          "pm10": 49.41
+        },
+        {
+          "hour": "13:00",
+          "pm10": 50.28
+        },
+        {
+          "hour": "14:00",
+          "pm10": 52.58
+        },
+        {
+          "hour": "15:00",
+          "pm10": 57.65
+        },
+        {
+          "hour": "16:00",
+          "pm10": 62.09
+        },
+        {
+          "hour": "17:00",
+          "pm10": 65.52
+        },
+        {
+          "hour": "18:00",
+          "pm10": 67.49
+        },
+        {
+          "hour": "19:00",
+          "pm10": 64.8
+        },
+        {
+          "hour": "20:00",
+          "pm10": 62.06
+        },
+        {
+          "hour": "21:00",
+          "pm10": 57.51
+        },
+        {
+          "hour": "22:00",
+          "pm10": 52.17
+        },
+        {
+          "hour": "23:00",
+          "pm10": 44.97
+        }
+      ],
+      "monthlyTrend": [
+        {
+          "month": "2022-08",
+          "pm10": 74.18,
+          "samples": 377
+        },
+        {
+          "month": "2022-09",
+          "pm10": 58.64,
+          "samples": 1439
+        },
+        {
+          "month": "2022-10",
+          "pm10": 54.6,
+          "samples": 1439
+        },
+        {
+          "month": "2022-11",
+          "pm10": 77.92,
+          "samples": 1186
+        },
+        {
+          "month": "2022-12",
+          "pm10": 46.78,
+          "samples": 1433
+        },
+        {
+          "month": "2023-01",
+          "pm10": 41.46,
+          "samples": 1464
+        },
+        {
+          "month": "2023-02",
+          "pm10": 42.24,
+          "samples": 1308
+        },
+        {
+          "month": "2023-03",
+          "pm10": 43.39,
+          "samples": 1467
+        },
+        {
+          "month": "2023-04",
+          "pm10": 53.4,
+          "samples": 1420
+        },
+        {
+          "month": "2023-05",
+          "pm10": 59.73,
+          "samples": 1478
+        },
+        {
+          "month": "2023-06",
+          "pm10": 71.15,
+          "samples": 1439
+        },
+        {
+          "month": "2023-07",
+          "pm10": 79.06,
+          "samples": 1488
+        },
+        {
+          "month": "2023-08",
+          "pm10": 69.05,
+          "samples": 1485
+        },
+        {
+          "month": "2023-09",
+          "pm10": 57.01,
+          "samples": 1436
+        },
+        {
+          "month": "2023-10",
+          "pm10": 64.59,
+          "samples": 1485
+        },
+        {
+          "month": "2023-11",
+          "pm10": 56.75,
+          "samples": 1410
+        },
+        {
+          "month": "2023-12",
+          "pm10": 42.81,
+          "samples": 1465
+        },
+        {
+          "month": "2024-01",
+          "pm10": 43.15,
+          "samples": 1434
+        },
+        {
+          "month": "2024-02",
+          "pm10": 42.8,
+          "samples": 1316
+        },
+        {
+          "month": "2024-03",
+          "pm10": 47.27,
+          "samples": 1443
+        },
+        {
+          "month": "2024-04",
+          "pm10": 59.83,
+          "samples": 1430
+        },
+        {
+          "month": "2024-05",
+          "pm10": 49.79,
+          "samples": 1470
+        },
+        {
+          "month": "2024-06",
+          "pm10": 64.02,
+          "samples": 1427
+        },
+        {
+          "month": "2024-07",
+          "pm10": 72.68,
+          "samples": 1488
+        },
+        {
+          "month": "2024-08",
+          "pm10": 66.03,
+          "samples": 1437
+        },
+        {
+          "month": "2024-09",
+          "pm10": 81.46,
+          "samples": 1436
+        },
+        {
+          "month": "2024-10",
+          "pm10": 53.23,
+          "samples": 1447
+        },
+        {
+          "month": "2024-11",
+          "pm10": 44.98,
+          "samples": 1299
+        },
+        {
+          "month": "2024-12",
+          "pm10": 44.94,
+          "samples": 1449
+        },
+        {
+          "month": "2025-01",
+          "pm10": 34.21,
+          "samples": 1460
+        },
+        {
+          "month": "2025-02",
+          "pm10": 38.31,
+          "samples": 1330
+        },
+        {
+          "month": "2025-03",
+          "pm10": 37.28,
+          "samples": 1487
+        },
+        {
+          "month": "2025-04",
+          "pm10": 43.31,
+          "samples": 1440
+        },
+        {
+          "month": "2025-05",
+          "pm10": 56.45,
+          "samples": 1488
+        },
+        {
+          "month": "2025-06",
+          "pm10": 62.55,
+          "samples": 1440
+        },
+        {
+          "month": "2025-07",
+          "pm10": 66.87,
+          "samples": 1488
+        },
+        {
+          "month": "2025-08",
+          "pm10": 55.35,
+          "samples": 1486
+        },
+        {
+          "month": "2025-09",
+          "pm10": 46.14,
+          "samples": 1437
+        },
+        {
+          "month": "2025-10",
+          "pm10": 33.7,
+          "samples": 1487
+        },
+        {
+          "month": "2025-11",
+          "pm10": 28.83,
+          "samples": 1440
+        },
+        {
+          "month": "2025-12",
+          "pm10": 30.16,
+          "samples": 1486
+        },
+        {
+          "month": "2026-01",
+          "pm10": 26.17,
+          "samples": 1488
+        },
+        {
+          "month": "2026-02",
+          "pm10": 29.65,
+          "samples": 1344
+        },
+        {
+          "month": "2026-03",
+          "pm10": 30.18,
+          "samples": 1487
+        },
+        {
+          "month": "2026-04",
+          "pm10": 35.27,
+          "samples": 1312
+        },
+        {
+          "month": "2026-05",
+          "pm10": 41.87,
+          "samples": 1395
+        },
+        {
+          "month": "2026-06",
+          "pm10": 42.83,
+          "samples": 1406
+        },
+        {
+          "month": "2026-07",
+          "pm10": 43.3,
+          "samples": 1177
+        },
+        {
+          "month": "2026-08",
+          "pm10": 25.08,
+          "samples": 278
+        },
+        {
+          "month": "2026-09",
+          "pm10": 38.41,
+          "samples": 985
+        },
+        {
+          "month": "2026-10",
+          "pm10": 37.97,
+          "samples": 1000
+        }
+      ]
+    }
+  },
+  "comparison": {
+    "surDisparityPct": "+36.06%",
+    "summary": "La Estación Kanata en la zona sur presenta consistentemente un 36% mayor concentración de PM10 en comparación con SEMAPA en la zona norte, correlacionándose de manera directa con las islas de calor superficiales LST de 27.7°C a 29.1°C observadas por satélite."
+  }
+}

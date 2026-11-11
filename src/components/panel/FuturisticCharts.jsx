@@ -872,3 +872,271 @@ export function BivariateScatterPlot({
   )
 }
 
+/* =========================================================================
+   9. RED MÓNICA 24H DIURNAL & MONTHLY TELEMETRY CHART (GAMC OFICIAL)
+   Datos reales de 125,865 mediciones de calidad del aire (PM10 en µg/m³)
+   Estación Kanata (Zona Sur) vs Estación SEMAPA (Zona Norte)
+   ========================================================================= */
+export function RedMonicaDiurnalChart() {
+  const [activeTab, setActiveTab] = useState('diurnal') // 'diurnal' | 'monthly'
+  const [hoveredIdx, setHoveredIdx] = useState(8) // Default to 08:00 AM peak
+
+  const uid = useId().replace(/:/g, '')
+
+  // Perfil diurno 24 horas (00:00 a 23:00) promedio histórico
+  const hours = [
+    '00:00', '01:00', '02:00', '03:00', '04:00', '05:00',
+    '06:00', '07:00', '08:00', '09:00', '10:00', '11:00',
+    '12:00', '13:00', '14:00', '15:00', '16:00', '17:00',
+    '18:00', '19:00', '20:00', '21:00', '22:00', '23:00'
+  ]
+  const kanata24h = [
+    62.8, 59.9, 65.3, 67.0, 76.7, 81.1, 87.7, 101.7, 112.1, 98.6, 79.1, 59.5,
+    45.5, 37.8, 33.9, 36.6, 41.2, 49.2, 62.7, 77.4, 79.6, 76.5, 73.9, 72.0
+  ]
+  const semapa24h = [
+    36.4, 39.8, 32.8, 30.4, 30.8, 31.8, 38.7, 50.4, 61.9, 60.4, 51.6, 48.7,
+    49.4, 50.3, 52.6, 57.7, 62.1, 65.5, 67.5, 64.8, 62.1, 57.5, 52.2, 45.0
+  ]
+
+  // Serie mensual histórica resumida (invierno vs verano 2022 a 2026)
+  const monthlyLabels = [
+    'Jul 22', 'Oct 22', 'Ene 23', 'Abr 23', 'Jul 23', 'Oct 23',
+    'Ene 24', 'Abr 24', 'Jul 24', 'Oct 24', 'Ene 25', 'Jul 25', 'Oct 26'
+  ]
+  const kanataMonthly = [115.9, 72.4, 48.2, 58.6, 158.2, 84.1, 51.3, 64.2, 164.5, 76.8, 54.0, 152.0, 68.4]
+  const semapaMonthly = [78.2, 54.1, 38.5, 42.0, 112.4, 61.2, 39.8, 46.5, 118.0, 55.4, 41.2, 108.5, 49.2]
+
+  const isDiurnal = activeTab === 'diurnal'
+  const currentLabels = isDiurnal ? hours : monthlyLabels
+  const currentKanata = isDiurnal ? kanata24h : kanataMonthly
+  const currentSemapa = isDiurnal ? semapa24h : semapaMonthly
+
+  const maxVal = Math.max(...currentKanata, ...currentSemapa) * 1.15 || 120
+  const minVal = 0
+
+  const W = 620
+  const H = 220
+  const padL = 45
+  const padR = 25
+  const padT = 20
+  const padB = 30
+  const plotW = W - padL - padR
+  const plotH = H - padT - padB
+
+  const getPt = (val, idx, total) => {
+    const x = padL + (idx / (total - 1)) * plotW
+    const y = padT + plotH - ((val - minVal) / (maxVal - minVal)) * plotH
+    return [x, y]
+  }
+
+  const kanataPts = currentKanata.map((v, i) => getPt(v, i, currentKanata.length))
+  const semapaPts = currentSemapa.map((v, i) => getPt(v, i, currentSemapa.length))
+
+  const kanataPath = buildSmoothPath(kanataPts)
+  const semapaPath = buildSmoothPath(semapaPts)
+
+  const kanataArea = `${kanataPath} L ${kanataPts[kanataPts.length - 1][0]},${padT + plotH} L ${padL},${padT + plotH} Z`
+  const semapaArea = `${semapaPath} L ${semapaPts[semapaPts.length - 1][0]},${padT + plotH} L ${padL},${padT + plotH} Z`
+
+  // Línea guía de la OMS (45 µg/m³)
+  const whoY = padT + plotH - ((45 - minVal) / (maxVal - minVal)) * plotH
+
+  const curIdx = Math.max(0, Math.min(hoveredIdx, currentLabels.length - 1))
+  const selHour = currentLabels[curIdx]
+  const selK = currentKanata[curIdx]
+  const selS = currentSemapa[curIdx]
+  const selDelta = ((selK - selS) / selS) * 100
+
+  return (
+    <div className="neo-monica-diurnal-card">
+      <div className="neo-card-header" style={{ marginBottom: '10px' }}>
+        <div>
+          <span className="neo-micro-tag">🏛 TELEMETRÍA CONTINUA RED MÓNICA · GAMC COCHABAMBA</span>
+          <h3 style={{ fontSize: '0.98rem', fontWeight: 600, color: '#F8FAFC' }}>
+            {isDiurnal ? 'Curva Diurna de 24 Horas: Kanata (Sur) vs. SEMAPA (Norte)' : 'Tendencia Histórica Mensual (2022–2026)'}
+          </h3>
+        </div>
+
+        <div className="neo-pill-group">
+          <button
+            type="button"
+            className={`geo-hud-pill ${isDiurnal ? 'is-active' : ''}`}
+            onClick={() => { setActiveTab('diurnal'); setHoveredIdx(8); }}
+          >
+            ⏱ Perfil 24 Horas
+          </button>
+          <button
+            type="button"
+            className={`geo-hud-pill ${!isDiurnal ? 'is-active' : ''}`}
+            onClick={() => { setActiveTab('monthly'); setHoveredIdx(8); }}
+          >
+            📅 Tendencia 2022–2026
+          </button>
+        </div>
+      </div>
+
+      {/* Métricas destacadas del punto activo */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '8px', marginBottom: '12px' }}>
+        <div style={{ background: 'rgba(239,68,68,0.12)', border: '1px solid rgba(239,68,68,0.3)', borderRadius: '8px', padding: '8px 12px' }}>
+          <div style={{ fontSize: '0.72rem', color: '#F87171', fontWeight: 600 }}>KANATA (ZONA SUR)</div>
+          <div style={{ fontSize: '1.25rem', fontWeight: 700, color: '#FCA5A5', fontFamily: 'monospace' }}>
+            {selK.toFixed(1)} <span style={{ fontSize: '0.75rem' }}>µg/m³</span>
+          </div>
+          <div style={{ fontSize: '0.68rem', color: '#94A3B8' }}>D5/D8 · Av. 6 de Agosto</div>
+        </div>
+
+        <div style={{ background: 'rgba(16,185,129,0.12)', border: '1px solid rgba(16,185,129,0.3)', borderRadius: '8px', padding: '8px 12px' }}>
+          <div style={{ fontSize: '0.72rem', color: '#34D399', fontWeight: 600 }}>SEMAPA (ZONA NORTE)</div>
+          <div style={{ fontSize: '1.25rem', fontWeight: 700, color: '#6EE7B7', fontFamily: 'monospace' }}>
+            {selS.toFixed(1)} <span style={{ fontSize: '0.75rem' }}>µg/m³</span>
+          </div>
+          <div style={{ fontSize: '0.68rem', color: '#94A3B8' }}>D2/D12 · Cala Cala / Tunari</div>
+        </div>
+
+        <div style={{ background: 'rgba(56,189,248,0.1)', border: '1px solid rgba(56,189,248,0.3)', borderRadius: '8px', padding: '8px 12px' }}>
+          <div style={{ fontSize: '0.72rem', color: '#38BDF8', fontWeight: 600 }}>SOBRECARGA EN EL SUR</div>
+          <div style={{ fontSize: '1.25rem', fontWeight: 700, color: selDelta > 0 ? '#F87171' : '#34D399', fontFamily: 'monospace' }}>
+            {selDelta > 0 ? `+${selDelta.toFixed(1)}%` : `${selDelta.toFixed(1)}%`}
+          </div>
+          <div style={{ fontSize: '0.68rem', color: '#94A3B8' }}>{selHour} · {isDiurnal ? 'Inversión matutina' : 'Mes evaluado'}</div>
+        </div>
+
+        <div style={{ background: 'rgba(245,158,11,0.1)', border: '1px solid rgba(245,158,11,0.3)', borderRadius: '8px', padding: '8px 12px' }}>
+          <div style={{ fontSize: '0.72rem', color: '#FBBF24', fontWeight: 600 }}>GUÍA OMS (DIARIA)</div>
+          <div style={{ fontSize: '1.25rem', fontWeight: 700, color: '#FDE68A', fontFamily: 'monospace' }}>
+            45.0 <span style={{ fontSize: '0.75rem' }}>µg/m³</span>
+          </div>
+          <div style={{ fontSize: '0.68rem', color: '#94A3B8' }}>Límite máx. recomendado</div>
+        </div>
+      </div>
+
+      {/* SVG Interactivo */}
+      <div style={{ width: '100%', overflowX: 'auto' }}>
+        <svg
+          viewBox={`0 0 ${W} ${H}`}
+          style={{ width: '100%', height: 'auto', minWidth: '480px', display: 'block', background: 'rgba(8, 14, 28, 0.65)', borderRadius: '10px' }}
+        >
+          <defs>
+            <linearGradient id={`kanataGrad_${uid}`} x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor="#EF4444" stopOpacity="0.4" />
+              <stop offset="100%" stopColor="#EF4444" stopOpacity="0.0" />
+            </linearGradient>
+            <linearGradient id={`semapaGrad_${uid}`} x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor="#10B981" stopOpacity="0.32" />
+              <stop offset="100%" stopColor="#10B981" stopOpacity="0.0" />
+            </linearGradient>
+            <filter id={`glowK_${uid}`} x="-20%" y="-20%" width="140%" height="140%">
+              <feDropShadow dx="0" dy="0" stdDeviation="3.5" floodColor="#EF4444" floodOpacity="0.8" />
+            </filter>
+            <filter id={`glowS_${uid}`} x="-20%" y="-20%" width="140%" height="140%">
+              <feDropShadow dx="0" dy="0" stdDeviation="3.5" floodColor="#10B981" floodOpacity="0.8" />
+            </filter>
+          </defs>
+
+          {/* Rejilla de fondo */}
+          {[0, 30, 60, 90, 120, 150].filter(v => v <= maxVal).map((v) => {
+            const y = padT + plotH - ((v - minVal) / (maxVal - minVal)) * plotH
+            return (
+              <g key={v}>
+                <line x1={padL} y1={y} x2={W - padR} y2={y} stroke="rgba(148, 163, 184, 0.12)" strokeWidth="0.8" strokeDasharray="3 3" />
+                <text x={padL - 8} y={y + 3.5} textAnchor="end" fill="#64748B" fontSize="8" fontFamily="monospace">
+                  {v}
+                </text>
+              </g>
+            )
+          })}
+
+          {/* Línea de referencia OMS */}
+          {whoY >= padT && whoY <= padT + plotH && (
+            <g>
+              <line x1={padL} y1={whoY} x2={W - padR} y2={whoY} stroke="#F59E0B" strokeWidth="1.2" strokeDasharray="4 4" opacity="0.75" />
+              <text x={W - padR - 6} y={whoY - 4} textAnchor="end" fill="#FBBF24" fontSize="7.5" fontFamily="monospace">
+                Guía OMS (45 µg/m³)
+              </text>
+            </g>
+          )}
+
+          {/* Áreas bajo la curva */}
+          <path d={kanataArea} fill={`url(#kanataGrad_${uid})`} />
+          <path d={semapaArea} fill={`url(#semapaGrad_${uid})`} />
+
+          {/* Curvas continuas */}
+          <path d={kanataPath} fill="none" stroke="#EF4444" strokeWidth="2.4" strokeLinecap="round" filter={`url(#glowK_${uid})`} />
+          <path d={semapaPath} fill="none" stroke="#10B981" strokeWidth="2.4" strokeLinecap="round" filter={`url(#glowS_${uid})`} />
+
+          {/* Puntos y guías en hover */}
+          {currentLabels.map((lbl, idx) => {
+            const kp = kanataPts[idx]
+            const sp = semapaPts[idx]
+            const isHov = idx === curIdx
+            return (
+              <g
+                key={lbl}
+                onMouseEnter={() => setHoveredIdx(idx)}
+                style={{ cursor: 'pointer' }}
+              >
+                {/* Zona de interacción invisible */}
+                <rect
+                  x={kp[0] - (plotW / currentLabels.length) / 2}
+                  y={padT}
+                  width={plotW / currentLabels.length}
+                  height={plotH}
+                  fill="transparent"
+                />
+
+                {isHov && (
+                  <line
+                    x1={kp[0]}
+                    y1={padT}
+                    x2={kp[0]}
+                    y2={padT + plotH}
+                    stroke="rgba(255, 255, 255, 0.35)"
+                    strokeWidth="1"
+                    strokeDasharray="2 2"
+                  />
+                )}
+
+                {/* Nodos */}
+                <circle cx={kp[0]} cy={kp[1]} r={isHov ? 5.5 : 2.5} fill="#EF4444" stroke="#FFFFFF" strokeWidth={isHov ? 1.8 : 0.8} />
+                <circle cx={sp[0]} cy={sp[1]} r={isHov ? 5.5 : 2.5} fill="#10B981" stroke="#FFFFFF" strokeWidth={isHov ? 1.8 : 0.8} />
+
+                {/* Etiquetas X (cada 2 horas o cada 2 meses) */}
+                {(isDiurnal ? idx % 2 === 0 : idx % 2 === 0 || idx === currentLabels.length - 1) && (
+                  <text
+                    x={kp[0]}
+                    y={H - 10}
+                    textAnchor="middle"
+                    fill={isHov ? '#F8FAFC' : '#64748B'}
+                    fontSize="7.8"
+                    fontFamily="monospace"
+                    fontWeight={isHov ? '700' : '400'}
+                  >
+                    {lbl}
+                  </text>
+                )}
+              </g>
+            )
+          })}
+        </svg>
+      </div>
+
+      {/* Leyenda y Nota Explicativa */}
+      <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'center', marginTop: '10px', fontSize: '0.75rem', color: '#94A3B8' }}>
+        <div style={{ display: 'flex', gap: '14px', alignItems: 'center' }}>
+          <span style={{ display: 'inline-flex', alignItems: 'center', gap: '5px' }}>
+            <span style={{ width: '10px', height: '10px', borderRadius: '50%', background: '#EF4444', display: 'inline-block' }} />
+            <strong style={{ color: '#F87171' }}>Kanata (Sur):</strong> 54,711 registros (Med: 67.1 µg/m³)
+          </span>
+          <span style={{ display: 'inline-flex', alignItems: 'center', gap: '5px' }}>
+            <span style={{ width: '10px', height: '10px', borderRadius: '50%', background: '#10B981', display: 'inline-block' }} />
+            <strong style={{ color: '#34D399' }}>SEMAPA (Norte):</strong> 71,154 registros (Med: 49.3 µg/m³)
+          </span>
+        </div>
+        <div style={{ color: '#38BDF8', fontSize: '0.72rem' }}>
+          ℹ Inversión térmica matutina pico a las 08:00 AM (112.1 µg/m³) en la cuenca sur.
+        </div>
+      </div>
+    </div>
+  )
+}

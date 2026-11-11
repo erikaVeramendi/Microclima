@@ -13,6 +13,7 @@ import {
   SatellitePatchStrip,
   NeonRadarChart,
   BivariateScatterPlot,
+  RedMonicaDiurnalChart,
 } from './FuturisticCharts'
 
 const YEAR_LABELS = ['19', '20', '21', '22', '23', '24', '25', '26']
@@ -1126,6 +1127,13 @@ export function EnvironmentalRelationsScreen({
               </div>
             ))}
           </div>
+        </article>
+      </section>
+
+      {/* TELEMETRÍA CONTINUA RED MÓNICA (GAMC OFICIAL): Curva Diurna 24H y Tendencia Mensual */}
+      <section style={{ marginTop: '16px' }}>
+        <article className="neo-glass-card">
+          <RedMonicaDiurnalChart />
         </article>
       </section>
     </div>
