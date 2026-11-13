@@ -76,20 +76,21 @@
 }
 
 .floating-avatar-badge {
-  font-size: 0.52rem;
-  font-weight: 700;
-  padding: 1px 5px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 1px 6px;
   border-radius: 4px;
   background: rgba(225, 29, 72, 0.2);
   border: 1px solid rgba(225, 29, 72, 0.4);
   color: #fca5a5;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
+  text-transform: none;
+  letter-spacing: normal;
+  font-family: var(--font-sans);
 }
 
 .floating-avatar-mood-pill {
-  font-size: 0.65rem;
-  font-family: var(--font-mono, monospace);
+  font-size: 0.75rem;
+  font-family: var(--font-sans);
   color: #cbd5e1;
   display: flex;
   align-items: center;
@@ -297,10 +298,11 @@
 }
 
 .avatar-card-tag {
-  font-size: 0.62rem;
-  font-weight: 800;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: none;
+  letter-spacing: normal;
+  font-family: var(--font-sans);
   color: #7dd3fc;
   margin-bottom: 6px;
   display: flex;

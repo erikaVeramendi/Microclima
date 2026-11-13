@@ -308,7 +308,7 @@ export function EvidenceValidationScreen({
       <article className="neo-glass-card">
         <div className="neo-card-header">
           <div>
-            <span className="neo-micro-tag">✦ WOW · PASAPORTE CIENTÍFICO REPRODUCIBLE (ID: TRAZA-EV-{activeZone.id.toUpperCase()})</span>
+            <span className="neo-micro-tag">✦ WOW · PASAPORTE CIENTÍFICO REPRODUCIBLE (ID: MICROCLIMA-EV-{activeZone.id.toUpperCase()})</span>
             <h3>Recorrido de trazabilidad: Fuente → Procesamiento → Método → Resultado → Validación → Limitaciones</h3>
           </div>
           <div className="neo-pill-group">
@@ -981,7 +981,7 @@ export function ResearchReportsScreen({
     const url = URL.createObjectURL(blob)
     const a = document.createElement('a')
     a.href = url
-    a.download = `traza-${activeProject.toLowerCase()}-${activeZone.id}.json`
+    a.download = `microclima-${activeProject.toLowerCase()}-${activeZone.id}.json`
     a.click()
     URL.revokeObjectURL(url)
     setExportedFlag(true)
@@ -1044,7 +1044,7 @@ export function ResearchReportsScreen({
         ))}
       </div>
 
-      {/* Póster / Informe Vivo con soporte de Modo Claro Documental oficial de TRAZA (#F5F7FC / #111B32) */}
+      {/* Póster / Informe Vivo con soporte de Modo Claro Documental oficial de MICROCLIMA (#F5F7FC / #111B32) */}
       <article
         className="neo-infographic-poster"
         style={

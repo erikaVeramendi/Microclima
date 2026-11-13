@@ -173,7 +173,7 @@ export function MonitoreoGeneralScreen({
           <article className="neo-glass-card">
             <div className="neo-card-header">
               <div>
-                <span className="neo-micro-tag">EL HALLAZGO DEL DÍA · TRAZA</span>
+                <span className="neo-micro-tag">EL HALLAZGO DEL DÍA · MICROCLIMA</span>
                 <h3>{CANDIDATE_FINDINGS_LIST[0].shortMetric} · Rocha vs. Centro</h3>
               </div>
               <span className="neo-pill-badge neo-pill--violet">CANDIDATO</span>
@@ -207,7 +207,7 @@ export function MonitoreoGeneralScreen({
                   onOpenAssistantWithPrompt('¿Cuál es la zona con mayor anomalía térmica hoy?')
                 }
               >
-                ✦ Consultar IA TRAZA
+                Consultar Asistente IA
               </button>
               <button
                 type="button"
@@ -288,7 +288,7 @@ export function IntelligenceCenterScreen({
         />
 
         <div className="neo-col-stack">
-          {/* EL HALLAZGO DEL DÍA (Innovación clave TRAZA P1) */}
+          {/* EL HALLAZGO DEL DÍA (Innovación clave MICROCLIMA P1) */}
           <article className="neo-glass-card" style={{ borderColor: 'rgba(136,117,216,0.45)' }}>
             <div className="neo-card-header">
               <div>
@@ -321,7 +321,7 @@ export function IntelligenceCenterScreen({
             <div className="neo-card-header">
               <div>
                 <span className="neo-micro-tag">RADAR DE ACTIVIDAD INVESTIGATIVA</span>
-                <h3>Estado vivo del ciclo científico TRAZA</h3>
+                <h3>Estado vivo del ciclo científico MICROCLIMA</h3>
               </div>
               <button
                 type="button"
@@ -464,7 +464,7 @@ export function TerritorialExplorerScreen({
             />
           </div>
 
-          {/* INNOVACIÓN TRAZA: «Viaje Temporal por Cochabamba» SIN INTERPOLAR VACÍOS */}
+          {/* INNOVACIÓN MICROCLIMA: «Viaje Temporal por Cochabamba» SIN INTERPOLAR VACÍOS */}
           <article className="neo-glass-card">
             <div className="neo-card-header">
               <div>
@@ -604,7 +604,7 @@ export function VegetationIntelligenceScreen({
 
   return (
     <div className="neo-screen">
-      {/* Sub-navegación de las 4 capacidades de Vegetación (TRAZA P3 + P4) */}
+      {/* Sub-navegación de las 4 capacidades de Vegetación (MICROCLIMA P3 + P4) */}
       <div className="neo-toolbar-row">
         <div>
           <span className="neo-micro-tag" style={{ color: '#8BCB9A' }}>
@@ -855,14 +855,14 @@ export function ThermalIntelligenceScreen({
                 <span className="neo-pill-badge neo-pill--amber">MANN-KENDALL</span>
               </div>
 
-              {/* Las 5 clases térmicas de TRAZA P7 */}
+              {/* Las 5 clases térmicas de MICROCLIMA P7 */}
               <div className="neo-zone-bars-list">
                 {[
-                  { z: 'trama-central', cls: 'Caliente + tendencia creciente', slp: '+0.26°/a', col: '#D95757' },
-                  { z: 'expansion-sur', cls: 'Cambio rápido emergente (Itocta)', slp: '+0.34°/a', col: '#F28B50' },
-                  { z: 'cuenca-alalay', cls: 'Cálida con tendencia moderada', slp: '+0.16°/a', col: '#FFCB73' },
-                  { z: 'corredor-rocha', cls: 'Amortiguada / sin tendencia fuerte', slp: '+0.11°/a', col: '#65C8F2' },
-                  { z: 'tunari-norte', cls: 'Evidencia parcial en lluvia', slp: '+0.12°/a', col: '#8BCB9A' },
+                  { z: 'distrito-10', cls: 'D10 · Caliente + tendencia creciente', slp: '+0.26°/a', col: '#D95757' },
+                  { z: 'distrito-9', cls: 'D9 · Cambio rápido emergente', slp: '+0.34°/a', col: '#F28B50' },
+                  { z: 'distrito-6', cls: 'D6 · Cálida con tendencia moderada', slp: '+0.16°/a', col: '#FFCB73' },
+                  { z: 'distrito-2', cls: 'D2 · Amortiguada / sin tendencia fuerte', slp: '+0.11°/a', col: '#65C8F2' },
+                  { z: 'distrito-1', cls: 'D1 · Confort térmico relativo', slp: '+0.12°/a', col: '#8BCB9A' },
                 ].map((item) => (
                   <div
                     key={item.z}
@@ -1050,14 +1050,14 @@ export function EnvironmentalRelationsScreen({
         </div>
       </div>
 
-      {/* INNOVACIÓN TRAZA P5: «Detector de Coincidencias Ambientales» (5 Clases) */}
+      {/* INNOVACIÓN MICROCLIMA P5: «Detector de Coincidencias Ambientales» (5 Clases) */}
       <div className="neo-diverging-grid">
         {[
-          { cls: '↓ NDVI + ↑ LST', sub: 'Itocta / Centro', z: 'expansion-sur', col: '#D95757' },
-          { cls: '↑ NDVI + ↓ LST', sub: 'Corredor Rocha', z: 'corredor-rocha', col: '#43A875' },
-          { cls: '= NDVI + ↑ LST', sub: 'Contradicción Alalay', z: 'cuenca-alalay', col: '#FFCB73' },
-          { cls: '↓ NDVI + = LST', sub: 'Ladera Media', z: 'tunari-norte', col: '#65C8F2' },
-          { cls: 'Datos Insuficientes', sub: 'Verano Nuboso', z: 'tunari-norte', col: '#8875D8' },
+          { cls: '↓ NDVI + ↑ LST', sub: 'Itocta / Sur (D9)', z: 'distrito-9', col: '#D95757' },
+          { cls: '↑ NDVI + ↓ LST', sub: 'Cala Cala (D2)', z: 'distrito-2', col: '#43A875' },
+          { cls: '= NDVI + ↑ LST', sub: 'Laguna Alalay (D6)', z: 'distrito-6', col: '#FFCB73' },
+          { cls: '↓ NDVI + = LST', sub: 'Ladera Tunari (D13)', z: 'distrito-13', col: '#65C8F2' },
+          { cls: 'Datos Insuficientes', sub: 'Queru Queru (D1)', z: 'distrito-1', col: '#8875D8' },
         ].map((item) => (
           <div
             key={item.cls}

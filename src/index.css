@@ -16,6 +16,27 @@
   --color-border-strong: rgba(169, 184, 204, 0.32);
   --color-border-light: rgba(38, 59, 89, 0.14);
 
+  /* Variables de Tema Global (Modo Oscuro por Defecto - Azul Noche) */
+  --theme-bg: #0b132b;
+  --theme-surface: #101b37;
+  --theme-card-bg: rgba(15, 25, 46, 0.85);
+  --theme-card-solid: #0f192e;
+  --theme-card-hover: rgba(22, 36, 66, 0.9);
+  --theme-border: rgba(56, 189, 248, 0.16);
+  --theme-border-subtle: rgba(148, 163, 184, 0.14);
+  --theme-border-strong: rgba(56, 189, 248, 0.35);
+  --theme-text: #F1F5F9;
+  --theme-text-secondary: #94A3B8;
+  --theme-text-muted: #64748B;
+  --color-icon: #8A94A6;
+  --theme-accent: #0D9488;
+  --theme-accent-hover: #14B8A6;
+  --theme-accent-subtle: rgba(13, 148, 136, 0.15);
+  --theme-chip-bg: rgba(12, 22, 42, 0.85);
+  --theme-topbar-bg: rgba(6, 12, 24, 0.86);
+  --theme-sidebar-bg: linear-gradient(180deg, rgba(8, 15, 30, 0.96) 0%, rgba(4, 8, 17, 0.98) 100%);
+  --theme-shell-bg: radial-gradient(circle at 55% 15%, #0b1b36 0%, #050a15 58%, #03060d 100%);
+
   /* 2. Escalas Semánticas Científicas */
   /* Vegetación – Huella Verde */
   --veg-100: #D9F0DC;
@@ -103,4 +124,47 @@ a {
 :focus-visible {
   outline: 2px solid var(--color-cyan);
   outline-offset: 3px;
+}
+
+/* Modo Claro según especificaciones exactas:
+   Fondo crema #F6F1E7, Tarjetas #FFFDF8, Bordes #E6DFD0,
+   Texto principal #2B2A26, Texto secundario #6B6559, mismo color de acento */
+[data-theme="light"] {
+  --theme-bg: #F6F1E7;
+  --theme-surface: #EDE7DC;
+  --theme-card-bg: #FFFDF8;
+  --theme-card-solid: #FFFDF8;
+  --theme-card-hover: #FAF7F0;
+  --theme-border: #E6DFD0;
+  --theme-border-subtle: #E6DFD0;
+  --theme-border-strong: #D5CCBB;
+  --theme-text: #2B2A26;
+  --theme-text-secondary: #6B6559;
+  --theme-text-muted: #8C8476;
+  --color-icon: #6B6559;
+  --theme-accent: #0D9488;
+  --theme-accent-hover: #0F766E;
+  --theme-accent-subtle: rgba(13, 148, 136, 0.12);
+  --theme-chip-bg: #EDE7DC;
+  --theme-topbar-bg: rgba(246, 241, 231, 0.94);
+  --theme-sidebar-bg: linear-gradient(180deg, #F3ECE1 0%, #EDE5D7 100%);
+  --theme-shell-bg: #F6F1E7;
+
+  /* Mapeos a variables originales para retrocompatibilidad */
+  --color-navy: #F6F1E7;
+  --color-slate: #EDE7DC;
+  --color-cloud: #2B2A26;
+  --color-gray: #6B6559;
+  --color-navy-deep: #F6F1E7;
+  --color-navy-glass: rgba(246, 241, 231, 0.92);
+  --color-slate-soft: rgba(237, 231, 220, 0.7);
+  --color-slate-hover: #E3DCCC;
+  --color-border-dark: #E6DFD0;
+  --color-border-strong: #D5CCBB;
+  --color-border-light: #E6DFD0;
+}
+
+[data-theme="light"] body {
+  background-color: var(--theme-bg);
+  color: var(--theme-text);
 }

@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
-import { COCHABAMBA_ZONES, RED_MONICA_STATIONS, GAMC_WMS_CONFIG } from '../../data/internalPanelData'
+import { COCHABAMBA_ZONES } from '../../data/internalPanelData'
 import { COCHABAMBA_DISTRICT_SVGS } from '../../data/cochabambaDistrictsSvg'
 
 /* Focos multiespectrales para renderizado bioluminiscente en HTML5 Canvas */

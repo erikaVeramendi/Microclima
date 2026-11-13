@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
+import { X } from 'lucide-react'
 import './FloatingAiAvatar.css'
 import PachaAvatarSvg from './PachaAvatarSvg'
-import { COCHABAMBA_ZONES } from '../../data/internalPanelData'
 
 // Calcula el estado de ánimo climático de Pacha según la zona o módulo activo
 function getPachaMood(moduleId, zone) {
@@ -59,7 +59,7 @@ function generateContextualExplanation(moduleId, zone, mood) {
 }
 
 // Generador de respuestas directas y concretas de Pacha (Fallback si Ollama está offline)
-function answerLocally(query, zone, moduleId) {
+function answerLocally(query, zone, _moduleId) {
   const q = query.toLowerCase()
   const zoneName = zone ? zone.name : 'Cochabamba'
   const lst = zone ? zone.lstMean : 29.6
@@ -252,7 +252,7 @@ Instrucción: Responde en español con tono amable, directo, científico y sin r
               onClick={() => setIsOpen(false)}
               aria-label="Minimizar a Pacha"
             >
-              ✕
+              <X size={18} strokeWidth={1.75} color="var(--color-icon)" />
             </button>
           </div>
 
