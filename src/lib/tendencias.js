@@ -1,10 +1,12 @@
 /**
  * src/lib/tendencias.js
  * Funciones puras en JavaScript (sin librerías externas) para el análisis de tendencias
- * en series temporales climáticas mensuales de Cochabamba.
+ * en series temporales climáticas de Cochabamba (mensuales y anuales).
  *
  * Formato esperado de entrada:
- * Array de objetos: [{ fecha: "YYYY-MM", valor: number | null }, ...]
+ * - Mensual: Array de objetos [{ fecha: "YYYY-MM", valor: number | null }, ...]
+ * - Anual:   Array de objetos [{ fecha: "YYYY", valor: number | null }, ...]
+ * Ignora los null y valores no numéricos.
  */
 
 // Utilidad interna: Aproximación de la función de error erf(x) de Abramowitz y Stegun (7.1.26)
@@ -28,22 +30,73 @@ function normalCdf(z) {
   return 0.5 * (1 + erf(z / Math.SQRT2))
 }
 
-// Utilidad interna: Parsear y filtrar objetos válidos ignorando nulls
-function parseSerieValida(serie) {
+// Utilidad interna: Calcular mediana de un arreglo numérico
+function calcularMediana(arr) {
+  if (!arr || arr.length === 0) return 0
+  const ordenados = [...arr].sort((a, b) => a - b)
+  const mid = Math.floor(ordenados.length / 2)
+  if (ordenados.length % 2 !== 0) {
+    return ordenados[mid]
+  }
+  return (ordenados[mid - 1] + ordenados[mid]) / 2
+}
+
+// Utilidad interna: Parsear y filtrar serie mensual ignorando nulls
+function parseSerieMensual(serie) {
   if (!Array.isArray(serie)) return []
   const validos = []
   for (const item of serie) {
-    if (!item || !item.fecha || item.valor === null || item.valor === undefined) continue
+    if (!item || item.valor === null || item.valor === undefined) continue
     const val = Number(item.valor)
     if (isNaN(val)) continue
-    const parts = String(item.fecha).split('-')
+    const fStr = String(item.fecha || '').trim()
+    const parts = fStr.split('-')
     if (parts.length < 2) continue
     const anio = parseInt(parts[0], 10)
     const mes = parseInt(parts[1], 10)
     if (isNaN(anio) || isNaN(mes) || mes < 1 || mes > 12) continue
-    validos.push({ fecha: item.fecha, anio, mes, valor: val })
+    validos.push({ fecha: `${anio}-${String(mes).padStart(2, '0')}`, anio, mes, valor: val })
   }
   return validos
+}
+
+// Utilidad interna: Parsear y filtrar serie anual ignorando nulls
+function parseSerieAnual(serie) {
+  if (!Array.isArray(serie)) return []
+  const validos = []
+  for (const item of serie) {
+    if (!item || item.valor === null || item.valor === undefined) continue
+    const val = Number(item.valor)
+    if (isNaN(val)) continue
+    let anio = NaN
+    if (item.fecha !== undefined && item.fecha !== null) {
+      const fStr = String(item.fecha).trim()
+      anio = parseInt(fStr.split('-')[0], 10)
+    } else if (item.año !== undefined) {
+      anio = parseInt(item.año, 10)
+    } else if (item.anio !== undefined) {
+      anio = parseInt(item.anio, 10)
+    }
+    if (isNaN(anio)) continue
+    validos.push({ fecha: String(anio), anio, valor: val })
+  }
+  return validos
+}
+
+// Utilidad interna: Detectar si una serie es mensual ("YYYY-MM") o anual ("YYYY")
+export function detectarTipoSerie(serie) {
+  if (!Array.isArray(serie)) return 'mensual'
+  for (const item of serie) {
+    if (!item || item.valor === null || item.valor === undefined) continue
+    const fStr = String(item.fecha || '').trim()
+    if (fStr.includes('-')) {
+      const parts = fStr.split('-')
+      if (parts.length >= 2 && parts[1].length > 0) {
+        return 'mensual'
+      }
+    }
+  }
+  return 'anual'
 }
 
 /**
@@ -53,10 +106,9 @@ function parseSerieValida(serie) {
  * La pendiente es la mediana de todos esos cocientes juntos.
  */
 export function senEstacional(serie) {
-  const validos = parseSerieValida(serie)
+  const validos = parseSerieMensual(serie)
   if (validos.length === 0) return 0
 
-  // Agrupar por mes (1 a 12)
   const meses = {}
   for (let m = 1; m <= 12; m++) meses[m] = []
   for (const d of validos) {
@@ -80,13 +132,7 @@ export function senEstacional(serie) {
   }
 
   if (cocientes.length === 0) return 0
-  cocientes.sort((a, b) => a - b)
-  const mid = Math.floor(cocientes.length / 2)
-  if (cocientes.length % 2 !== 0) {
-    return cocientes[mid]
-  } else {
-    return (cocientes[mid - 1] + cocientes[mid]) / 2
-  }
+  return calcularMediana(cocientes)
 }
 
 /**
@@ -99,7 +145,7 @@ export function senEstacional(serie) {
  * Devuelve { S, Z, p, tendencia: "aumenta" | "disminuye" | "sin tendencia" } usando p < 0,05.
  */
 export function mannKendallEstacional(serie) {
-  const validos = parseSerieValida(serie)
+  const validos = parseSerieMensual(serie)
   if (validos.length === 0) {
     return { S: 0, Z: 0, p: 1, tendencia: 'sin tendencia' }
   }
@@ -139,7 +185,6 @@ export function mannKendallEstacional(serie) {
     else Z = 0
   }
 
-  // p-valor normal bilateral
   const absZ = Math.abs(Z)
   const phiAbsZ = normalCdf(absZ)
   let p = 2 * (1 - phiAbsZ)
@@ -162,12 +207,12 @@ export function mannKendallEstacional(serie) {
  * Para el IC usa error estándar de la pendiente × 1,96 si n > 30.
  */
 export function regresionAnomalias(serie) {
-  const validos = parseSerieValida(serie)
+  const validos = parseSerieMensual(serie)
   if (validos.length < 3) {
     return { pendiente: 0, ic95: [0, 0], p: 1 }
   }
 
-  // Promedio histórico por cada mes
+  // Promedio histórico por mes
   const mesesValores = {}
   for (let m = 1; m <= 12; m++) mesesValores[m] = []
   for (const d of validos) {
@@ -213,7 +258,6 @@ export function regresionAnomalias(serie) {
   const pendiente = SSta / SStt
   const intercepto = meanA - pendiente * meanT
 
-  // Suma de residuos al cuadrado
   let SSres = 0
   for (const p of pts) {
     const pred = intercepto + pendiente * p.t
@@ -237,35 +281,11 @@ export function regresionAnomalias(serie) {
 }
 
 /**
- * 4. resumenTendencia(serie, desdeAño, hastaAño):
- * Filtra la serie por años y devuelve:
- * { sen, mk: {...}, lineal: {...}, cambioTotal: sen × (hastaAño - desdeAño + 1), mesesValidos }
- */
-export function resumenTendencia(serie, desdeAño, hastaAño) {
-  const validos = parseSerieValida(serie)
-  const filtrados = validos.filter((d) => d.anio >= desdeAño && d.anio <= hastaAño)
-
-  const sen = senEstacional(filtrados)
-  const mk = mannKendallEstacional(filtrados)
-  const lineal = regresionAnomalias(filtrados)
-  const cambioTotal = sen * (hastaAño - desdeAño + 1)
-  const mesesValidos = filtrados.length
-
-  return {
-    sen,
-    mk,
-    lineal,
-    cambioTotal,
-    mesesValidos,
-  }
-}
-
-/**
  * 5. promediosAnuales(serie):
  * Devuelve [{ año, valor }] con el promedio de cada año que tenga al menos 6 meses con dato.
  */
 export function promediosAnuales(serie) {
-  const validos = parseSerieValida(serie)
+  const validos = parseSerieMensual(serie)
   const aniosMap = {}
 
   for (const d of validos) {
@@ -289,35 +309,224 @@ export function promediosAnuales(serie) {
   return resultado
 }
 
+/**
+ * 6. SERIES ANUALES:
+ * senAnual(serie): Mediana de (valor_j - valor_i) / (año_j - año_i) para todos los pares i < j.
+ */
+export function senAnual(serie) {
+  const validos = parseSerieAnual(serie)
+  if (validos.length < 2) return 0
+
+  validos.sort((a, b) => a.anio - b.anio)
+  const cocientes = []
+  const n = validos.length
+
+  for (let i = 0; i < n - 1; i++) {
+    for (let j = i + 1; j < n; j++) {
+      const dy = validos[j].valor - validos[i].valor
+      const dt = validos[j].anio - validos[i].anio
+      if (dt > 0) {
+        cocientes.push(dy / dt)
+      }
+    }
+  }
+
+  if (cocientes.length === 0) return 0
+  return calcularMediana(cocientes)
+}
+
+/**
+ * 6. mannKendallAnual(serie):
+ * Igual que el estacional pero con un solo grupo (todos los años juntos).
+ */
+export function mannKendallAnual(serie) {
+  const validos = parseSerieAnual(serie)
+  const n = validos.length
+  if (n < 2) {
+    return { S: 0, Z: 0, p: 1, tendencia: 'sin tendencia' }
+  }
+
+  validos.sort((a, b) => a.anio - b.anio)
+
+  let S = 0
+  for (let i = 0; i < n - 1; i++) {
+    for (let j = i + 1; j < n; j++) {
+      const diff = validos[j].valor - validos[i].valor
+      if (diff > 0) S += 1
+      else if (diff < 0) S -= 1
+    }
+  }
+
+  const Var = (n * (n - 1) * (2 * n + 5)) / 18
+
+  let Z = 0
+  if (Var > 0) {
+    if (S > 0) Z = (S - 1) / Math.sqrt(Var)
+    else if (S < 0) Z = (S + 1) / Math.sqrt(Var)
+    else Z = 0
+  }
+
+  const absZ = Math.abs(Z)
+  const phiAbsZ = normalCdf(absZ)
+  let p = 2 * (1 - phiAbsZ)
+  p = Math.max(0, Math.min(1, p))
+
+  let tendencia = 'sin tendencia'
+  if (p < 0.05) {
+    if (S > 0) tendencia = 'aumenta'
+    else if (S < 0) tendencia = 'disminuye'
+  }
+
+  return { S, Z, p, tendencia }
+}
+
+/**
+ * Regresión lineal simple para series anuales (valor vs año)
+ */
+export function regresionLinealAnual(serie) {
+  const validos = parseSerieAnual(serie)
+  const n = validos.length
+  if (n < 3) {
+    return { pendiente: 0, ic95: [0, 0], p: 1 }
+  }
+
+  let sumT = 0
+  let sumY = 0
+  for (const d of validos) {
+    sumT += d.anio
+    sumY += d.valor
+  }
+  const meanT = sumT / n
+  const meanY = sumY / n
+
+  let SStt = 0
+  let SSty = 0
+  for (const d of validos) {
+    const dt = d.anio - meanT
+    const dy = d.valor - meanY
+    SStt += dt * dt
+    SSty += dt * dy
+  }
+
+  if (SStt === 0) {
+    return { pendiente: 0, ic95: [0, 0], p: 1 }
+  }
+
+  const pendiente = SSty / SStt
+  const intercepto = meanY - pendiente * meanT
+
+  let SSres = 0
+  for (const d of validos) {
+    const pred = intercepto + pendiente * d.anio
+    const res = d.valor - pred
+    SSres += res * res
+  }
+
+  const df = Math.max(1, n - 2)
+  const s2 = SSres / df
+  const sePendiente = Math.sqrt(s2 / SStt)
+
+  const tCritico = n > 30 ? 1.96 : (df === 1 ? 12.7 : df === 2 ? 4.3 : df <= 10 ? 2.23 : 2.0)
+  const margen = sePendiente * tCritico
+  const ic95 = [pendiente - margen, pendiente + margen]
+
+  const tStat = sePendiente > 0 ? Math.abs(pendiente / sePendiente) : 0
+  let p = 2 * (1 - normalCdf(tStat))
+  p = Math.max(0, Math.min(1, p))
+
+  return { pendiente, ic95, p }
+}
+
+/**
+ * 4. resumenTendencia(serie, desdeAño, hastaAño):
+ * Detecta si la serie es mensual ("YYYY-MM") o anual ("YYYY") y usa las funciones que correspondan.
+ * Filtra la serie por años y devuelve:
+ * { sen, mk: {...}, lineal: {...}, cambioTotal: sen × (hastaAño - desdeAño + 1), mesesValidos }
+ */
+export function resumenTendencia(serie, desdeAño, hastaAño) {
+  const tipo = detectarTipoSerie(serie)
+
+  if (tipo === 'anual') {
+    const validos = parseSerieAnual(serie)
+    const filtrados = validos.filter((d) => d.anio >= desdeAño && d.anio <= hastaAño)
+    const sen = senAnual(filtrados)
+    const mk = mannKendallAnual(filtrados)
+    const lineal = regresionLinealAnual(filtrados)
+    const cambioTotal = sen * (hastaAño - desdeAño + 1)
+    const mesesValidos = filtrados.length // cantidad de observaciones válidas en el rango
+
+    return {
+      sen,
+      mk,
+      lineal,
+      cambioTotal,
+      mesesValidos,
+    }
+  }
+
+  // Tipo mensual
+  const validos = parseSerieMensual(serie)
+  const filtrados = validos.filter((d) => d.anio >= desdeAño && d.anio <= hastaAño)
+
+  const sen = senEstacional(filtrados)
+  const mk = mannKendallEstacional(filtrados)
+  const lineal = regresionAnomalias(filtrados)
+  const cambioTotal = sen * (hastaAño - desdeAño + 1)
+  const mesesValidos = filtrados.length
+
+  return {
+    sen,
+    mk,
+    lineal,
+    cambioTotal,
+    mesesValidos,
+  }
+}
+
 // =========================================================================
 // PRUEBA SIMPLE AL FINAL DEL ARCHIVO:
 // Una serie inventada que sube exactamente 0,1 por año durante 20 años
 // debe dar sen = 0,1 y p < 0,05.
 // =========================================================================
 export function ejecutarPruebaSimple() {
-  const seriePrueba = []
+  console.log('=== PRUEBA DE VALIDACIÓN 1: SERIE MENSUAL (20 años, +0.1/año) ===')
+  const serieMensualPrueba = []
   for (let y = 2001; y <= 2020; y++) {
     for (let m = 1; m <= 12; m++) {
       const fecha = `${y}-${String(m).padStart(2, '0')}`
       const valor = (y - 2001) * 0.1
-      seriePrueba.push({ fecha, valor })
+      serieMensualPrueba.push({ fecha, valor })
     }
   }
 
-  const res = resumenTendencia(seriePrueba, 2001, 2020)
-  const anuales = promediosAnuales(seriePrueba)
+  const resM = resumenTendencia(serieMensualPrueba, 2001, 2020)
+  const anuales = promediosAnuales(serieMensualPrueba)
 
-  console.log('=== PRUEBA DE VALIDACIÓN EN TENDENCIAS.JS ===')
-  console.log(`1. Pendiente de Sen Estacional: ${res.sen} (Esperado: 0.1)`)
-  console.log(`2. Mann-Kendall S: ${res.mk.S}, Z: ${res.mk.Z.toFixed(4)}`)
-  console.log(`3. Mann-Kendall p-valor: ${res.mk.p.toExponential(4)} (Esperado: < 0.05)`)
-  console.log(`4. Mann-Kendall Tendencia: "${res.mk.tendencia}" (Esperado: "aumenta")`)
-  console.log(`5. Regresión de Anomalías: pendiente = ${res.lineal.pendiente.toFixed(4)}, IC95 = [${res.lineal.ic95.map((v) => v.toFixed(4)).join(', ')}], p = ${res.lineal.p.toExponential(4)}`)
-  console.log(`6. Cambio Total en 20 años: ${res.cambioTotal.toFixed(2)} unidades`)
-  console.log(`7. Meses válidos evaluados: ${res.mesesValidos} meses (Esperado: 240)`)
-  console.log(`8. Promedios Anuales (años con >= 6 meses): ${anuales.length} años calculados`)
+  console.log(`1. Pendiente de Sen Estacional: ${resM.sen} (Esperado: 0.1)`)
+  console.log(`2. Mann-Kendall S: ${resM.mk.S}, Z: ${resM.mk.Z.toFixed(4)}`)
+  console.log(`3. Mann-Kendall p-valor: ${resM.mk.p.toExponential(4)} (Esperado: < 0.05)`)
+  console.log(`4. Mann-Kendall Tendencia: "${resM.mk.tendencia}" (Esperado: "aumenta")`)
+  console.log(`5. Regresión de Anomalías: pendiente = ${resM.lineal.pendiente.toFixed(4)}, IC95 = [${resM.lineal.ic95.map((v) => v.toFixed(4)).join(', ')}], p = ${resM.lineal.p.toExponential(4)}`)
+  console.log(`6. Cambio Total en 20 años: ${resM.cambioTotal.toFixed(2)} unidades`)
+  console.log(`7. Meses válidos: ${resM.mesesValidos} (Esperado: 240)`)
+  console.log(`8. Promedios Anuales calculados: ${anuales.length} años`)
 
-  return res
+  console.log('\n=== PRUEBA DE VALIDACIÓN 2: SERIE ANUAL (20 años, +0.1/año) ===')
+  const serieAnualPrueba = []
+  for (let y = 2001; y <= 2020; y++) {
+    serieAnualPrueba.push({ fecha: String(y), valor: (y - 2001) * 0.1 })
+  }
+
+  const resA = resumenTendencia(serieAnualPrueba, 2001, 2020)
+  console.log(`1. Pendiente de Sen Anual: ${resA.sen} (Esperado: 0.1)`)
+  console.log(`2. Mann-Kendall S: ${resA.mk.S}, Z: ${resA.mk.Z.toFixed(4)}`)
+  console.log(`3. Mann-Kendall p-valor: ${resA.mk.p.toExponential(4)} (Esperado: < 0.05)`)
+  console.log(`4. Mann-Kendall Tendencia: "${resA.mk.tendencia}" (Esperado: "aumenta")`)
+  console.log(`5. Regresión Lineal Anual: pendiente = ${resA.lineal.pendiente.toFixed(4)}, IC95 = [${resA.lineal.ic95.map((v) => v.toFixed(4)).join(', ')}], p = ${resA.lineal.p.toExponential(4)}`)
+  console.log(`6. Cambio Total en 20 años: ${resA.cambioTotal.toFixed(2)} unidades`)
+  console.log(`7. Observaciones válidas: ${resA.mesesValidos} (Esperado: 20)`)
+
+  return { mensual: resM, anual: resA }
 }
 
 // Ejecución directa en Node.js
