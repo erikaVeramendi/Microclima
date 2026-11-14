@@ -216,6 +216,25 @@ export const TEN_MODULES = [
       'Comparar los 3 mejores escenarios guardados',
     ],
   },
+  {
+    id: 'investigaciones-informes',
+    enfoque: 2,
+    enfoqueBadge: 'GAMC × GESTIÓN',
+    title: 'Informe socio-ambiental',
+    shortLabel: 'Informe',
+    subtitle: 'Ficha técnica distrital con datos reales y exportación en PDF y JSON.',
+    icon: 'file-text',
+    accent: '#38BDF8',
+    aiRole: 'Generador de Informes Socio-Ambientales',
+    aiGreeting:
+      'Perfil activo: Informe Socio-Ambiental. Genero la ficha técnica oficial del distrito para descarga o impresión.',
+    aiPrompts: [
+      'Resumen ejecutivo de este distrito',
+      '¿Qué alertas presenta este informe?',
+      'Descargar datos en formato JSON',
+      'Imprimir informe técnico',
+    ],
+  },
 ]
 
 export const PANEL_MODULES = TEN_MODULES

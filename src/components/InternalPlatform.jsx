@@ -182,6 +182,7 @@ export function InternalPlatform({ userSession, onLogout }) {
         return <PlanificacionScreen {...commonProps} />
       case 'simulador-equipamientos':
         return <SimuladorEquipamientosScreen {...commonProps} />
+      case 'informe':
       case 'investigaciones-informes':
         return <ResearchReportsScreen {...commonProps} />
       default:

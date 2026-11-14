@@ -1,19 +1,14 @@
 import { useState } from 'react'
 import {
   COCHABAMBA_ZONES,
-  CANDIDATE_FINDINGS_LIST,
   DATA_SOURCES_CATALOG,
 } from '../../data/internalPanelData'
 import { SharedGeoCanvas } from './SharedGeoCanvas'
 import {
-  NeonDonutChart,
-  NeonSplineChart,
-  ContouredIsoMap,
   NeonRadarChart,
 } from './FuturisticCharts'
 
 const MONTHS = ['ENE', 'FEB', 'MAR', 'ABR', 'MAY', 'JUN', 'JUL', 'AGO', 'SEP', 'OCT', 'NOV', 'DIC']
-const YEAR_LABELS = ['19', '20', '21', '22', '23', '24', '25', '26']
 
 /* =========================================================================
    PESTAÑA 9 · PUNTOS CRÍTICOS (Transición de ResearchDiscoveryScreen)
@@ -677,210 +672,11 @@ export function PlanningScenariosScreen({
 }
 
 /* =========================================================================
-   PANTALLA 10. INVESTIGACIONES E INFORMES
-   Integra: A/B/C. Proyectos & Biblioteca («Una investigación nunca empieza desde cero»)
-   + WOW: Línea Temporal / Grafo + D. «Informe Vivo» (13 Secciones Oficiales + Modo Claro/Oscuro)
+   PANTALLA: INFORME SOCIO-AMBIENTAL DISTRITAL
+   Transformación de ResearchReportsScreen en "Informe"
+   Usa solo datos reales de: indice_distritos.json, tendencias_distritos.json,
+   internalPanelData.js, y opcionales sensado_virtual.json / lluvias_inundaciones.json
    ========================================================================= */
-export function ResearchReportsScreen({
-  selectedZoneId,
-  onSelectZone,
-  onNavigateModule,
-}) {
-  const [lightDocMode, setLightDocMode] = useState(false)
-  const [activeProject, setActiveProject] = useState('EXP-01')
-  const [exportedFlag, setExportedFlag] = useState(false)
-
-  const activeZone =
-    COCHABAMBA_ZONES.find((z) => z.id === selectedZoneId) || COCHABAMBA_ZONES[1]
-
-  const projects = [
-    { id: 'EXP-01', title: 'Amortiguación Térmica Corredor Río Rocha vs. Centro', status: 'Informe Vivo v1.2' },
-    { id: 'EXP-02', title: 'Transformación Vegetal y Expansión Urbana Sur (Itocta)', status: 'En contraste' },
-    { id: 'EXP-03', title: 'Auditoría Estacional de Vacíos Ópticos en Ladera Tunari', status: 'Borrador QA' },
-  ]
-
-  const thirteenSections = [
-    '01. Título', '02. Resumen', '03. Objetivo', '04. Área de estudio',
-    '05. Fuentes', '06. Metodología', '07. Resultados', '08. Mapas',
-    '09. Gráficos', '10. Discusión', '11. Limitaciones', '12. Conclusiones', '13. Referencias',
-  ]
-
-  const handleExportJson = () => {
-    const payload = {
-      projectId: activeProject,
-      zone: activeZone.name,
-      sectionsIncluded: thirteenSections,
-      rules: ['LST != Air Temperature', 'NDVI != Direct Tree Count', 'Correlation != Causation'],
-    }
-    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' })
-    const url = URL.createObjectURL(blob)
-    const a = document.createElement('a')
-    a.href = url
-    a.download = `microclima-${activeProject.toLowerCase()}-${activeZone.id}.json`
-    a.click()
-    URL.revokeObjectURL(url)
-    setExportedFlag(true)
-  }
-
-  return (
-    <div className="neo-screen">
-      {/* Selector de Expediente («Una investigación nunca empieza desde cero») + Modo Claro/Oscuro Documental */}
-      <div className="neo-toolbar-row">
-        <div className="neo-pill-group">
-          {projects.map((p) => (
-            <button
-              key={p.id}
-              type="button"
-              className={`geo-hud-pill ${activeProject === p.id ? 'is-active' : ''}`}
-              onClick={() => setActiveProject(p.id)}
-            >
-              📁 {p.id} · {p.status}
-            </button>
-          ))}
-        </div>
-
-        <div className="neo-pill-group">
-          <button
-            type="button"
-            className="geo-hud-pill"
-            onClick={() => setLightDocMode((p) => !p)}
-          >
-            {lightDocMode ? '🌙 Vista HUD Oscura' : '☀ Modo Claro Documental (#F5F7FC)'}
-          </button>
-          <button type="button" className="neo-ai-glow-btn" onClick={handleExportJson}>
-            ⬇ Exportar Reproducible
-          </button>
-          <button type="button" className="geo-hud-pill" onClick={() => window.print()}>
-            🖨 PDF / Imprimir
-          </button>
-        </div>
-      </div>
-
-      {exportedFlag && (
-        <div className="neo-upload-toast">
-          ✔ Expediente <strong>{activeProject}</strong> exportado con las 13 secciones científicas y trazabilidad QA.
-        </div>
-      )}
-
-      {/* WOW: Línea Temporal Visual de la Investigación Conectada */}
-      <div className="neo-pipeline-6grid">
-        {[
-          { step: '1. PREGUNTA', name: 'Gradiente Rocha', col: '#65C8F2' },
-          { step: '2. HIPÓTESIS', name: 'HIP-01 Registrada', col: '#8875D8' },
-          { step: '3. FUENTES', name: 'S2 10m + L9 30m', col: '#43A875' },
-          { step: '4. ANÁLISIS', name: 'Spearman + Sen', col: '#FFCB73' },
-          { step: '5. EVIDENCIA', name: 'Pasaporte QA', col: '#38BDF8' },
-          { step: '6. INFORME VIVO', name: '13 Secciones', col: '#F28B50' },
-        ].map((n) => (
-          <div key={n.step} className="neo-pipe-node" style={{ borderColor: `${n.col}55` }}>
-            <span style={{ color: n.col, fontFamily: 'monospace', fontSize: '0.58rem' }}>{n.step}</span>
-            <h4>{n.name}</h4>
-          </div>
-        ))}
-      </div>
-
-      {/* Póster / Informe Vivo con soporte de Modo Claro Documental oficial de MICROCLIMA (#F5F7FC / #111B32) */}
-      <article
-        className="neo-infographic-poster"
-        style={
-          lightDocMode
-            ? {
-                background: '#F5F7FC',
-                color: '#111B32',
-                borderColor: '#A9B8CC',
-              }
-            : undefined
-        }
-      >
-        <header className="neo-poster-header">
-          <div>
-            <span className="neo-micro-tag" style={lightDocMode ? { color: '#263B59' } : undefined}>
-              ✦ INFORME VIVO REPRODUCIBLE · {activeProject}
-            </span>
-            <h2 style={lightDocMode ? { color: '#111B32' } : undefined}>
-              {projects.find((p) => p.id === activeProject)?.title} · ({activeZone.shortName})
-            </h2>
-          </div>
-          <div className="neo-poster-stamps">
-            <span className="neo-pill-badge neo-pill--amber">LST ≠ TEMP. AIRE</span>
-            <span className="neo-pill-badge neo-pill--emerald">NDVI ≠ N° ÁRBOLES</span>
-            <span className="neo-pill-badge neo-pill--violet">CORRELACIÓN ≠ CAUSALIDAD</span>
-          </div>
-        </header>
-
-        {/* Chips de las 13 Secciones Oficiales del Informe Científico */}
-        <div className="neo-chip-cloud">
-          {thirteenSections.map((sec) => (
-            <span
-              key={sec}
-              className="neo-hyp-pill"
-              style={
-                lightDocMode
-                  ? { backgroundColor: '#FFFFFF', color: '#111B32', borderColor: '#A9B8CC' }
-                  : { borderColor: 'rgba(101,200,242,0.35)' }
-              }
-            >
-              ✔ {sec}
-            </span>
-          ))}
-        </div>
-
-        <div className="neo-cockpit-3col">
-          <div className="neo-glass-card">
-            <span className="neo-micro-tag">08. MAPA ISO-TÉRMICO VINCULADO</span>
-            <ContouredIsoMap selectedZoneId={selectedZoneId} onSelectZone={onSelectZone} />
-          </div>
-
-          <div className="neo-glass-card">
-            <span className="neo-micro-tag">07. COMPOSICIÓN ESPECTRAL</span>
-            <NeonDonutChart
-              segments={[
-                { label: 'Dosel Denso', value: activeZone.spectralSplit[0], color: '#43A875' },
-                { label: 'Ripario / Parque', value: activeZone.spectralSplit[1], color: '#65C8F2' },
-                { label: 'Transición', value: activeZone.spectralSplit[2], color: '#FFCB73' },
-                { label: 'Impermeable', value: activeZone.spectralSplit[3], color: '#D95757' },
-              ]}
-              centerValue={`${activeZone.lstIllustrative}°`}
-              centerLabel="LST SUP."
-            />
-          </div>
-
-          <div className="neo-glass-card">
-            <span className="neo-micro-tag">09. SERIE MULTIANUAL 2019–2026</span>
-            <NeonSplineChart
-              series={[
-                { name: 'LST (°C)', data: activeZone.annualLst, color: '#F28B50', unit: '°C' },
-              ]}
-              labels={YEAR_LABELS}
-              height={150}
-            />
-          </div>
-        </div>
-
-        {/* C. Biblioteca de Hallazgos Vinculados con salto directo a su módulo de origen */}
-        <div className="neo-anomaly-4grid">
-          {CANDIDATE_FINDINGS_LIST.map((f) => (
-            <div
-              key={f.id}
-              className="neo-anomaly-card"
-              onClick={() => {
-                onSelectZone(f.zoneId)
-                onNavigateModule(f.targetModule)
-              }}
-            >
-              <div className="neo-anom-top">
-                <span style={{ color: f.accent }}>{f.id}</span>
-                <strong style={{ color: f.accent }}>{f.shortMetric}</strong>
-              </div>
-              <h4>{f.title}</h4>
-              <div className="neo-anom-bottom">
-                <span>{f.source}</span>
-                <span className="neo-conf-chip">Abrir origen →</span>
-              </div>
-            </div>
-          ))}
-        </div>
-      </article>
-    </div>
-  )
-}
+import InformeScreen from './InformeScreen'
+export { InformeScreen }
+export const ResearchReportsScreen = InformeScreen
