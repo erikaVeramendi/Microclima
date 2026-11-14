@@ -38,7 +38,7 @@ export function EvidenceValidationScreen({
       <article className="neo-glass-card">
         <div className="neo-card-header">
           <div>
-            <span className="neo-micro-tag">✦ WOW · PASAPORTE CIENTÍFICO REPRODUCIBLE (ID: MICROCLIMA-EV-{activeZone.id.toUpperCase()})</span>
+            <span className="neo-micro-tag">✦ WOW · PASAPORTE CIENTÍFICO REPRODUCIBLE (ID: LLAJTALAB-EV-{activeZone.id.toUpperCase()})</span>
             <h3>Recorrido de trazabilidad: Fuente → Procesamiento → Método → Resultado → Validación → Limitaciones</h3>
           </div>
           <div className="neo-pill-group">

@@ -1019,7 +1019,7 @@ export function IntelligenceCenterScreen({
             <div className="neo-card-header">
               <div>
                 <span className="neo-micro-tag">RADAR DE ACTIVIDAD INVESTIGATIVA</span>
-                <h3>Estado vivo del ciclo científico MICROCLIMA</h3>
+                <h3>Estado vivo del ciclo científico LlajtaLab</h3>
               </div>
               <button
                 type="button"

@@ -288,8 +288,8 @@ function App() {
                 </svg>
               </div>
               <div className="brand-text-group">
-                <span className="brand-name">MICROCLIMA</span>
-                <span className="brand-sub">GEO-AI LAB · COCHABAMBA</span>
+                <span className="brand-name">LlajtaLab</span>
+                <span className="brand-sub">Laboratorio climático urbano de Cochabamba</span>
               </div>
             </a>
 
@@ -736,7 +736,7 @@ function App() {
         </section>
 
         {/* =========================================================
-            05. ¿QUÉ ES MICROCLIMA? (PIPELINE MULTIESPECTRAL)
+            05. ¿QUÉ ES LLAJTALAB? (PIPELINE MULTIESPECTRAL)
            ========================================================= */}
         <section id="plataforma" className="section-block section-block--slate">
           <div className="container">
@@ -1082,9 +1082,9 @@ function App() {
                   </svg>
                 </div>
                 <div className="brand-text-group">
-                  <span className="brand-name">MICROCLIMA</span>
+                  <span className="brand-name">LlajtaLab</span>
                   <span className="brand-sub">
-                    Laboratorio Inteligente de Microclimas Urbanos
+                    Laboratorio climático urbano de Cochabamba
                   </span>
                 </div>
               </div>
@@ -1150,7 +1150,7 @@ function App() {
 
           <div className="footer-bottom">
             <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.75rem' }}>
-              <span>© 2026 MICROCLIMA — Cochabamba, Bolivia.</span>
+              <span>© 2026 LlajtaLab — Cochabamba, Bolivia.</span>
               <span style={{ fontFamily: 'var(--font-mono)', color: '#8BCB9A' }}>
                 NASA Space Apps Challenge Cochabamba 2026
               </span>

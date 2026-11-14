@@ -377,7 +377,7 @@ export default function InformeScreen({
                 className="informe-text-muted"
                 style={{ margin: '0.35rem 0 0 0', fontSize: '0.84rem' }}
               >
-                Fecha de emisión: {fechaHoy} · Municipio de Cochabamba · Sistema MICROCLIMA
+                Fecha de emisión: {fechaHoy} · Municipio de Cochabamba · Sistema LlajtaLab
               </p>
             </div>
 

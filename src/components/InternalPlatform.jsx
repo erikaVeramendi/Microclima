@@ -214,8 +214,8 @@ export function InternalPlatform({ userSession, onLogout }) {
           </div>
           {!sidebarCollapsed && (
             <div className="mon-brand-text">
-              <strong>MICROCLIMA</strong>
-              <span>LABORATORIO AMBIENTAL</span>
+              <strong>LlajtaLab</strong>
+              <span>Laboratorio climático urbano de Cochabamba</span>
             </div>
           )}
           <button

@@ -183,7 +183,7 @@ export function HuellaVerdeAndThermalSections() {
           <h2 className="section-title">El calor también deja patrones.</h2>
           <p className="section-lead">
             Las observaciones térmicas permiten estudiar cómo se distribuye y transforma la
-            temperatura superficial del territorio. MICROCLIMA busca identificar tendencias,
+            temperatura superficial del territorio. LlajtaLab busca identificar tendencias,
             anomalías y diferencias espaciales para comprender mejor su comportamiento a lo
             largo del tiempo.
           </p>
