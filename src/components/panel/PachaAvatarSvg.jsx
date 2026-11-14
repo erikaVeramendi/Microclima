@@ -1,4 +1,4 @@
-// PachaAvatarSvg.jsx — Pacha, el espíritu del microclima de Cochabamba
+// PachaAvatarSvg.jsx — Pacha, asistente de LlajtaLab (Cochabamba)
 
 export default function PachaAvatarSvg({ mood = 'curious', size = 56 }) {
   // Moods: 'hot' (D9 / calor extremo), 'fresh' (D12 / Tunari verde), 'smoky' (Red MÓNICA / contaminación), 'curious' (normal)
@@ -14,7 +14,7 @@ export default function PachaAvatarSvg({ mood = 'curious', size = 56 }) {
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
       className={`pacha-svg mood-${mood}`}
-      aria-label="Pacha, el espíritu del microclima"
+      aria-label="Pacha, asistente de LlajtaLab"
     >
       <defs>
         {/* Gradiente del cuerpito según el clima */}

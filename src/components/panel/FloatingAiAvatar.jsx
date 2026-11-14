@@ -147,7 +147,7 @@ export default function FloatingAiAvatar({ activeModuleId, activeZone }) {
     // Si Ollama está conectado en vivo, consultarlo
     if (ollamaConnected && ollamaModel) {
       try {
-        const prompt = `Eres Pacha, el guardián del microclima de Cochabamba (Bolivia).
+        const prompt = `Eres Pacha, asistente de LlajtaLab — Laboratorio climático urbano de Cochabamba (Bolivia).
 Tienes los datos reales del municipio:
 - Zona activa: ${activeZone ? activeZone.name : 'Cochabamba'}
 - LST superficial: ${activeZone ? activeZone.lstMean : 29.6} °C
@@ -205,14 +205,14 @@ Instrucción: Responde en español con tono amable, directo, científico y sin r
       : 'Guardián del Valle'
 
   return (
-    <div className="floating-avatar-container" aria-label="Pacha, Copiloto del Microclima">
+    <div className="floating-avatar-container" aria-label="Pacha, asistente de LlajtaLab">
       {!isOpen ? (
         // Estado Minimizado: Pacha Flotando con su Chullito (limpio, sin etiquetas innecesarias)
         <button
           type="button"
           className="floating-avatar-trigger"
           onClick={() => setIsOpen(true)}
-          title="Hablar con Pacha, guardián del microclima"
+          title="Hablar con Pacha · LlajtaLab"
         >
           <div className="wayrita-sprite-wrap">
             <PachaAvatarSvg mood={mood} size={48} />
@@ -237,9 +237,9 @@ Instrucción: Responde en español con tono amable, directo, científico y sin r
                 <PachaAvatarSvg mood={mood} size={44} />
               </div>
               <div className="avatar-header-title-box">
-                <div className="avatar-header-title">Pacha · Guardián del Valle</div>
+                <div className="avatar-header-title">Pacha · LlajtaLab</div>
                 <div className="avatar-header-subtitle">
-                  <span>Microclimas de Cochabamba</span>
+                  <span>Laboratorio climático urbano de Cochabamba</span>
                   <span className={`avatar-backend-badge ${ollamaConnected ? 'is-ollama' : ''}`}>
                     {ollamaConnected ? `Ollama (${ollamaModel})` : 'Datos NASA / GAMC'}
                   </span>

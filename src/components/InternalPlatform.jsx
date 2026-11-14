@@ -47,13 +47,12 @@ import {
   ResearchDiscoveryScreen,
   EvidenceValidationScreen,
   DataManagementScreen,
-  PlanningScenariosScreen,
   ResearchReportsScreen,
 } from './panel/ScreensPart2'
-import { IndiceScreen } from './panel/IndiceScreen'
-import { ComparadorScreen } from './panel/ComparadorScreen'
-import { PlanificacionScreen } from './panel/PlanificacionScreen'
-import { SimuladorEquipamientosScreen } from './panel/SimuladorEquipamientosScreen'
+import IndiceScreen from './panel/IndiceScreen'
+import ComparadorScreen from './panel/ComparadorScreen'
+import PlanificacionScreen from './panel/PlanificacionScreen'
+import SimuladorEquipamientosScreen from './panel/SimuladorEquipamientosScreen'
 import FloatingAiAvatar from './panel/FloatingAiAvatar'
 
 // Definición de grupos y pestañas del menú reorganizado
@@ -451,6 +450,7 @@ export function InternalPlatform({ userSession, onLogout }) {
       case 'investigacion-descubrimiento':
         return <ResearchDiscoveryScreen {...commonProps} />
       case 'planificacion-5-anos':
+      case 'planificacion-5anios':
         return <PlanificacionScreen {...commonProps} />
       case 'simulador-equipamientos':
         return <SimuladorEquipamientosScreen {...commonProps} />
@@ -496,8 +496,8 @@ export function InternalPlatform({ userSession, onLogout }) {
           </div>
           {!sidebarCollapsed && (
             <div className="mon-brand-text">
-              <strong>MICROCLIMA</strong>
-              <span>LABORATORIO AMBIENTAL</span>
+              <strong>LlajtaLab</strong>
+              <span>Laboratorio climático urbano de Cochabamba</span>
             </div>
           )}
           <button
