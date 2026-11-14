@@ -120,3 +120,6 @@ export function limpiarCacheDatos(nombreArchivo) {
     inFlightRequests.clear()
   }
 }
+
+export default useJSON
+
