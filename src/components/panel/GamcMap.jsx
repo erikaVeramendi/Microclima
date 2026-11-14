@@ -522,7 +522,12 @@ export default function GamcMap({
               onClickDistrito(feature, layer)
             })
           }
-          if (feature.properties?.nombre || feature.properties?.name) {
+          if (feature.properties?.labelPermanent) {
+            layer.bindTooltip(
+              String(feature.properties.labelPermanent),
+              { permanent: true, direction: 'center', className: 'district-index-badge' }
+            )
+          } else if (feature.properties?.nombre || feature.properties?.name) {
             layer.bindTooltip(
               feature.properties.nombre || feature.properties.name,
               { sticky: true, direction: 'top' }

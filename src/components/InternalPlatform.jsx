@@ -43,6 +43,7 @@ import {
   PlanningScenariosScreen,
   ResearchReportsScreen,
 } from './panel/ScreensPart2'
+import IndiceScreen from './panel/IndiceScreen'
 import FloatingAiAvatar from './panel/FloatingAiAvatar'
 
 function ModuleSidebarIcon({ type, isActive, accent }) {
@@ -151,6 +152,8 @@ export function InternalPlatform({ userSession, onLogout }) {
     }
 
     switch (activeModuleId) {
+      case 'indice-socioambiental':
+        return <IndiceScreen {...commonProps} />
       case 'monitoreo-general':
         return <MonitoreoGeneralScreen {...commonProps} />
       case 'centro-inteligencia':

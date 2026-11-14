@@ -244,3 +244,23 @@
   color: var(--theme-text-primary, #F8FAFC);
   word-break: break-word;
 }
+
+/* Insignias numéricas permanentes para distritos */
+.gamc-map-container .district-index-badge {
+  background: rgba(15, 23, 42, 0.88) !important;
+  color: #F8FAFC !important;
+  border: 1px solid rgba(255, 255, 255, 0.25) !important;
+  border-radius: 6px !important;
+  font-size: 0.72rem !important;
+  font-weight: 700 !important;
+  padding: 2px 6px !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.45) !important;
+  pointer-events: none;
+}
+
+[data-theme='light'] .gamc-map-container .district-index-badge {
+  background: rgba(255, 253, 248, 0.95) !important;
+  color: #2B2A26 !important;
+  border: 1px solid #E6DFD0 !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12) !important;
+}

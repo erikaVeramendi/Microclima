@@ -1,0 +1,28 @@
+/* Estilos complementarios para IndiceScreen (Índice Socio-Ambiental) */
+
+.gamc-btn-secondary {
+  background: var(--theme-card-bg-subtle, rgba(255, 255, 255, 0.05));
+  border: 1px solid var(--theme-border, rgba(56, 189, 248, 0.2));
+  color: var(--theme-text-primary, #F8FAFC);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.gamc-btn-secondary:hover {
+  background: var(--theme-accent-subtle, rgba(56, 189, 248, 0.15));
+  border-color: var(--theme-accent, #38BDF8);
+  color: var(--theme-accent, #38BDF8);
+}
+
+[data-theme='light'] .gamc-btn-secondary {
+  background: #FFFDF8;
+  border-color: #E6DFD0;
+  color: #2B2A26;
+}
+
+[data-theme='light'] .gamc-btn-secondary:hover {
+  background: rgba(56, 189, 248, 0.1);
+  border-color: var(--theme-accent, #38BDF8);
+  color: var(--theme-accent, #38BDF8);
+}
