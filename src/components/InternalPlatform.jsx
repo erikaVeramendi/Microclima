@@ -21,6 +21,12 @@ import {
   LogOut,
   MapPin,
   X,
+  TrendingUp,
+  BarChart3,
+  GitCompare,
+  AlertTriangle,
+  Calendar,
+  Building2,
 } from 'lucide-react'
 import './InternalPlatform.css'
 import {
@@ -43,42 +49,296 @@ import {
   PlanningScenariosScreen,
   ResearchReportsScreen,
 } from './panel/ScreensPart2'
+import { IndiceScreen } from './panel/IndiceScreen'
+import { ComparadorScreen } from './panel/ComparadorScreen'
+import { PlanificacionScreen } from './panel/PlanificacionScreen'
+import { SimuladorEquipamientosScreen } from './panel/SimuladorEquipamientosScreen'
 import FloatingAiAvatar from './panel/FloatingAiAvatar'
+
+// Definición de grupos y pestañas del menú reorganizado
+const MENU_GROUPS = [
+  {
+    id: 'inicio',
+    title: 'INICIO',
+    items: [
+      {
+        id: 'modo-detective',
+        title: 'Modo detective',
+        shortLabel: 'Modo detective',
+        icon: 'radar',
+        accent: '#65C8F2',
+        aiRole: 'Orientador de Investigaciones',
+        aiGreeting:
+          'Modo Detective activo. Superviso el radar de sensores, vacíos de observación y hallazgos prioritarios.',
+        aiPrompts: [
+          '¿Qué información ambiental tenemos disponible?',
+          '¿Cuáles son las alertas prioritarias en revisión?',
+        ],
+      },
+    ],
+  },
+  {
+    id: 'enfoque-1',
+    title: 'ENFOQUE 1 · CLIMA URBANO',
+    badge: 'NASA × IA',
+    color: 'var(--theme-accent)',
+    badgeBg: 'var(--theme-accent-subtle)',
+    badgeColor: 'var(--theme-accent)',
+    items: [
+      {
+        id: 'diagnostico-distrital',
+        title: '1 Diagnóstico distrital',
+        shortLabel: '1 Diagnóstico distrital',
+        icon: 'activity',
+        accent: '#38BDF8',
+        aiRole: 'Director de Telemetría Orbital',
+        aiGreeting:
+          'Diagnóstico Distrital activo. Analizo anomalías térmicas LST y vigor fotosintético NDVI.',
+        aiPrompts: [
+          '¿Cuál es la zona con mayor anomalía térmica?',
+          'Resumen rápido de vegetación vs. islas de calor',
+        ],
+      },
+      {
+        id: 'detective-tendencias',
+        title: '2 Detective de tendencias',
+        shortLabel: '2 Detective de tendencias',
+        icon: 'trending-up',
+        accent: '#FB923C',
+        aiRole: 'Especialista en Tendencias Térmicas',
+        aiGreeting:
+          'Detective de Tendencias activo. Analizo series multitemporales e iso-contornos térmicos.',
+        aiPrompts: [
+          '¿Dónde se concentran los núcleos cálidos persistentes?',
+          '¿Cómo evoluciona el pulso térmico en el tiempo?',
+        ],
+      },
+      {
+        id: 'red-monica',
+        title: '3 Red MÓNICA',
+        shortLabel: '3 Red MÓNICA',
+        icon: 'network',
+        accent: '#A78BFA',
+        aiRole: 'Analista de Calidad del Aire',
+        aiGreeting:
+          'Módulo Red MÓNICA activo. Cruzo calidad del aire (PM10/PM2.5) con islas de calor superficiales.',
+        aiPrompts: [
+          '¿Cómo se vincula el pico matutino de PM10 con la inversión térmica?',
+          '¿Qué intensidad tiene la relación inversa NDVI vs LST?',
+        ],
+      },
+      {
+        id: 'sensado-virtual-ia',
+        title: '4 Sensado virtual con IA',
+        shortLabel: '4 Sensado virtual con IA',
+        icon: 'shield-check',
+        accent: '#38BDF8',
+        aiRole: 'Auditor Científico de IA',
+        aiGreeting:
+          'Sensado Virtual con IA activo. Evalúo incertidumbre espectral, calibración y pasaporte de trazabilidad.',
+        aiPrompts: [
+          '¿Cuál es el nivel de confianza satelital en este sector?',
+          '¿Qué sensores faltan para calibrar en campo?',
+        ],
+      },
+      {
+        id: 'simulador-climatico',
+        title: '5 Simulador climático',
+        shortLabel: '5 Simulador climático',
+        icon: 'sliders',
+        accent: '#10B981',
+        aiRole: 'Simulador de Clima Urbano',
+        aiGreeting:
+          'Simulador Climático activo. Simulo rangos exploratorios de enfriamiento mediante infraestructura verde y albedo.',
+        aiPrompts: [
+          '¿Qué reducción térmica se proyecta al reforestar un 15%?',
+          '¿Cómo balancear techos fríos vs arbolado?',
+        ],
+      },
+    ],
+  },
+  {
+    id: 'enfoque-2',
+    title: 'ENFOQUE 2 · CIUDAD Y SERVICIOS',
+    badge: 'GAMC',
+    color: '#34D399',
+    badgeBg: 'rgba(52,211,153,0.15)',
+    badgeColor: '#A7F3D0',
+    items: [
+      {
+        id: 'indice-socioambiental',
+        title: '6 Índice socio-ambiental',
+        shortLabel: '6 Índice socio-ambiental',
+        icon: 'bar-chart',
+        accent: '#34D399',
+        aiRole: 'Analista Socio-Ambiental',
+        aiGreeting:
+          'Índice Socio-Ambiental en preparación. Evalúo calidad de vida, calor y acceso a servicios.',
+        aiPrompts: [
+          '¿Qué factores componen el índice socio-ambiental?',
+          '¿Cuáles son los distritos más vulnerables?',
+        ],
+      },
+      {
+        id: 'comparador-distritos',
+        title: '7 Comparador de distritos',
+        shortLabel: '7 Comparador de distritos',
+        icon: 'git-compare',
+        accent: '#6EE7B7',
+        aiRole: 'Analista de Comparación Territorial',
+        aiGreeting:
+          'Comparador de Distritos activo. Comparo indicadores socioambientales entre sectores.',
+        aiPrompts: [
+          'Comparar Distrito 9 frente a Distrito 12',
+          '¿Qué distritos tienen mayor déficit de servicios?',
+        ],
+      },
+      {
+        id: 'cobertura-servicios',
+        title: '8 Cobertura de servicios',
+        shortLabel: '8 Cobertura de servicios',
+        icon: 'map-pin',
+        accent: '#34D399',
+        aiRole: 'Asistente de Cobertura y Movilidad',
+        aiGreeting:
+          'Cobertura de Servicios activa. Analizo cartografía distrital, líneas de transporte y equipamientos.',
+        aiPrompts: [
+          '¿Dónde quedan los vacíos de cobertura de transporte?',
+          '¿Qué líneas conectan con centros de salud?',
+        ],
+      },
+      {
+        id: 'puntos-criticos',
+        title: '9 Puntos críticos',
+        shortLabel: '9 Puntos críticos',
+        icon: 'alert-triangle',
+        accent: '#F59E0B',
+        aiRole: 'Investigador de Puntos Críticos',
+        aiGreeting:
+          'Puntos Críticos activo. Detecto clústeres espaciales LISA, anomalías multivariables y contradicciones.',
+        aiPrompts: [
+          '¿Dónde se concentran los puntos críticos térmicos?',
+          '¿Qué hipótesis explican las anomalías?',
+        ],
+      },
+      {
+        id: 'planificacion-5-anos',
+        title: '10 Planificación a 5 años',
+        shortLabel: '10 Planificación a 5 años',
+        icon: 'calendar',
+        accent: '#818CF8',
+        aiRole: 'Planificador Quinquenal',
+        aiGreeting:
+          'Planificación a 5 Años activa. Proyecto el crecimiento demográfico acelerado y demandas de infraestructura.',
+        aiPrompts: [
+          '¿Cómo crecerá la población en el sur hacia 2030?',
+          '¿Cuántos equipamientos nuevos se requerirán?',
+        ],
+      },
+      {
+        id: 'simulador-equipamientos',
+        title: '11 Simulador de equipamientos',
+        shortLabel: '11 Simulador de equipamientos',
+        icon: 'building',
+        accent: '#06B6D4',
+        aiRole: 'Simulador de Equipamientos Urbanos',
+        aiGreeting:
+          'Simulador de Equipamientos activo. Evalúo coberturas de 1er y 2do nivel y escuelas a 15 minutos.',
+        aiPrompts: [
+          '¿Qué población se beneficiaría con un nuevo centro de 1er nivel?',
+          '¿Dónde ubicar un nuevo colegio?',
+        ],
+      },
+    ],
+  },
+  {
+    id: 'general',
+    title: 'GENERAL',
+    items: [
+      {
+        id: 'metodos-fuentes',
+        title: 'Métodos y fuentes',
+        shortLabel: 'Métodos y fuentes',
+        icon: 'database',
+        accent: '#FBBF24',
+        aiRole: 'Arquitecto de Datos Geoespaciales',
+        aiGreeting:
+          'Métodos y Fuentes activo. Catálogo de sensores satelitales NASA/ESA y capas GAMC.',
+        aiPrompts: [
+          '¿Qué resolución nativa aporta cada satélite?',
+          '¿Qué capas oficiales GAMC están conectadas?',
+        ],
+      },
+      {
+        id: 'informe',
+        title: 'Informe',
+        shortLabel: 'Informe',
+        icon: 'file-text',
+        accent: '#818CF8',
+        aiRole: 'Editor de Informes Ejecutivos',
+        aiGreeting:
+          'Módulo Informe activo. Compilo evidencias, mapas y métricas en reportes para el GAMC.',
+        aiPrompts: [
+          'Generar síntesis ejecutiva distrital',
+          '¿Qué advertencias metodológicas incluir?',
+        ],
+      },
+    ],
+  },
+]
+
+const ALL_MENU_ITEMS = MENU_GROUPS.flatMap((g) => g.items)
 
 function ModuleSidebarIcon({ type, isActive, accent }) {
   const iconColor = isActive ? accent : 'var(--color-icon)'
   const props = { size: 18, strokeWidth: 1.75, color: iconColor }
 
   switch (type) {
-    case 'pulse':
-      return <Activity {...props} />
     case 'radar':
       return <Radar {...props} />
+    case 'activity':
+    case 'pulse':
+      return <Activity {...props} />
+    case 'trending-up':
+      return <TrendingUp {...props} />
+    case 'network':
+      return <Network {...props} />
+    case 'shield-check':
+    case 'shield':
+      return <ShieldCheck {...props} />
+    case 'sliders':
+      return <SlidersHorizontal {...props} />
+    case 'bar-chart':
+      return <BarChart3 {...props} />
+    case 'git-compare':
+      return <GitCompare {...props} />
+    case 'map-pin':
+      return <MapPin {...props} />
+    case 'alert-triangle':
+      return <AlertTriangle {...props} />
+    case 'calendar':
+      return <Calendar {...props} />
+    case 'building':
+      return <Building2 {...props} />
+    case 'database':
+      return <Database {...props} />
+    case 'file-text':
+      return <FileText {...props} />
     case 'leaf':
       return <Leaf {...props} />
     case 'thermometer':
       return <Thermometer {...props} />
-    case 'network':
-      return <Network {...props} />
     case 'map':
       return <Map {...props} />
-    case 'sliders':
-      return <SlidersHorizontal {...props} />
-    case 'database':
-      return <Database {...props} />
-    case 'shield':
-      return <ShieldCheck {...props} />
     case 'sparkles':
       return <Sparkles {...props} />
-    case 'file-text':
-      return <FileText {...props} />
     default:
       return <FileText {...props} />
   }
 }
 
 export function InternalPlatform({ userSession, onLogout }) {
-  const [activeModuleId, setActiveModuleId] = useState('monitoreo-general')
+  const [activeModuleId, setActiveModuleId] = useState('modo-detective')
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
 
   // 1. MODO CLARO / OSCURO con persistencia en localStorage
@@ -106,7 +366,9 @@ export function InternalPlatform({ userSession, onLogout }) {
   const [glossaryOpen, setGlossaryOpen] = useState(false)
 
   const activeModule =
-    TEN_MODULES.find((m) => m.id === activeModuleId) || TEN_MODULES[0]
+    ALL_MENU_ITEMS.find((m) => m.id === activeModuleId) ||
+    TEN_MODULES.find((m) => m.id === activeModuleId) ||
+    ALL_MENU_ITEMS[0]
   const activeZone =
     COCHABAMBA_ZONES.find((z) => z.id === selectedZoneId) || COCHABAMBA_ZONES[0]
 
@@ -151,37 +413,65 @@ export function InternalPlatform({ userSession, onLogout }) {
     }
 
     switch (activeModuleId) {
-      case 'monitoreo-general':
-        return <MonitoreoGeneralScreen {...commonProps} />
+      // INICIO
+      case 'modo-detective':
       case 'centro-inteligencia':
         return <IntelligenceCenterScreen {...commonProps} />
-      case 'explorador-territorial':
-        return <TerritorialExplorerScreen {...commonProps} />
-      case 'inteligencia-vegetacion':
-        return <VegetationIntelligenceScreen {...commonProps} />
+
+      // ENFOQUE 1 · CLIMA URBANO
+      case 'diagnostico-distrital':
+      case 'monitoreo-general':
+        return <MonitoreoGeneralScreen {...commonProps} />
+      case 'detective-tendencias':
       case 'inteligencia-termica':
         return <ThermalIntelligenceScreen {...commonProps} />
+      case 'red-monica':
       case 'relaciones-ambientales':
         return <EnvironmentalRelationsScreen {...commonProps} />
-      case 'investigacion-descubrimiento':
-        return <ResearchDiscoveryScreen {...commonProps} />
+      case 'sensado-virtual-ia':
       case 'evidencia-validacion':
         return <EvidenceValidationScreen {...commonProps} />
-      case 'gestion-datos':
-        return <DataManagementScreen {...commonProps} />
+      case 'simulador-climatico':
       case 'planificacion-escenarios':
         return <PlanningScenariosScreen {...commonProps} />
+
+      // ENFOQUE 2 · CIUDAD Y SERVICIOS
+      case 'indice-socioambiental':
+        return <IndiceScreen {...commonProps} />
+      case 'comparador-distritos':
+        return <ComparadorScreen {...commonProps} />
+      case 'cobertura-servicios':
+      case 'explorador-territorial':
+        return <TerritorialExplorerScreen {...commonProps} />
+      case 'puntos-criticos':
+      case 'investigacion-descubrimiento':
+        return <ResearchDiscoveryScreen {...commonProps} />
+      case 'planificacion-5-anos':
+        return <PlanificacionScreen {...commonProps} />
+      case 'simulador-equipamientos':
+        return <SimuladorEquipamientosScreen {...commonProps} />
+
+      // GENERAL
+      case 'metodos-fuentes':
+      case 'gestion-datos':
+        return <DataManagementScreen {...commonProps} />
+      case 'informe':
       case 'investigaciones-informes':
         return <ResearchReportsScreen {...commonProps} />
+
+      // Pantalla de vegetación se preserva por compatibilidad
+      case 'inteligencia-vegetacion':
+        return <VegetationIntelligenceScreen {...commonProps} />
+
       default:
-        return <MonitoreoGeneralScreen {...commonProps} />
+        return <IntelligenceCenterScreen {...commonProps} />
     }
   }
 
   return (
     <div className="mon-shell">
       {/* =========================================================
-          BARRA LATERAL: 11 MÓDULOS AGRUPADOS EN 2 ENFOQUES
+          BARRA LATERAL: GRUPOS Y PESTAÑAS DEL MENÚ
          ========================================================= */}
       <aside
         className={`mon-sidebar ${sidebarCollapsed ? 'is-collapsed' : ''}`}
@@ -221,121 +511,70 @@ export function InternalPlatform({ userSession, onLogout }) {
         </div>
 
         <nav className="mon-sidebar-nav">
-          {/* BLOQUE ENFOQUE 1: MICROCLIMAS CON IA (NASA × IA) */}
-          <div className="mon-nav-group">
-            {!sidebarCollapsed && (
-              <div
-                className="mon-nav-group-title"
-                style={{
-                  color: 'var(--theme-accent)',
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
-                }}
-              >
-                <span>ENFOQUE 1 · MICROCLIMAS</span>
-                <span
+          {MENU_GROUPS.map((group) => (
+            <div
+              key={group.id}
+              className="mon-nav-group"
+              style={{ marginTop: group.id === 'inicio' ? 0 : '0.75rem' }}
+            >
+              {!sidebarCollapsed && (
+                <div
+                  className="mon-nav-group-title"
                   style={{
-                    fontSize: '0.75rem',
-                    padding: '0.1rem 0.4rem',
-                    borderRadius: '4px',
-                    background: 'var(--theme-accent-subtle)',
-                    color: 'var(--theme-accent)',
-                    fontWeight: 600,
+                    color: group.color || 'var(--color-text-muted)',
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
                   }}
                 >
-                  NASA × IA
-                </span>
-              </div>
-            )}
-            <div className="mon-nav-items">
-              {TEN_MODULES.filter((m) => m.enfoque === 1).map((mod) => {
-                const isActive = mod.id === activeModuleId
-                return (
-                  <button
-                    key={mod.id}
-                    type="button"
-                    className={`mon-nav-btn ${isActive ? 'is-active' : ''}`}
-                    onClick={() => setActiveModuleId(mod.id)}
-                    title={mod.title}
-                    style={
-                      isActive
-                        ? {
-                            borderColor: `${mod.accent}66`,
-                            boxShadow: `inset 3px 0 0 ${mod.accent}, 0 8px 22px -10px ${mod.accent}66`,
-                          }
-                        : undefined
-                    }
-                  >
-                    <span className="mon-nav-icon">
-                      <ModuleSidebarIcon type={mod.icon} isActive={isActive} accent={mod.accent} />
+                  <span>{group.title}</span>
+                  {group.badge && (
+                    <span
+                      style={{
+                        fontSize: '0.68rem',
+                        padding: '0.1rem 0.4rem',
+                        borderRadius: '4px',
+                        background: group.badgeBg || 'var(--theme-accent-subtle)',
+                        color: group.badgeColor || 'var(--theme-accent)',
+                        fontWeight: 600,
+                      }}
+                    >
+                      {group.badge}
                     </span>
-                    {!sidebarCollapsed && (
-                      <span className="mon-nav-label">{mod.shortLabel}</span>
-                    )}
-                  </button>
-                )
-              })}
-            </div>
-          </div>
-
-          {/* BLOQUE ENFOQUE 2: GESTIÓN DISTRITAL (GAMC × ALCALDÍA) */}
-          <div className="mon-nav-group" style={{ marginTop: '0.85rem' }}>
-            {!sidebarCollapsed && (
-              <div
-                className="mon-nav-group-title"
-                style={{
-                  color: '#34D399',
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
-                }}
-              >
-                <span>ENFOQUE 2 · GESTIÓN DISTRITAL</span>
-                <span
-                  style={{
-                    fontSize: '0.75rem',
-                    padding: '0.1rem 0.4rem',
-                    borderRadius: '4px',
-                    background: 'rgba(52,211,153,0.15)',
-                    color: '#A7F3D0',
-                    fontWeight: 600,
-                  }}
-                >
-                  GAMC
-                </span>
+                  )}
+                </div>
+              )}
+              <div className="mon-nav-items">
+                {group.items.map((mod) => {
+                  const isActive = mod.id === activeModuleId
+                  return (
+                    <button
+                      key={mod.id}
+                      type="button"
+                      className={`mon-nav-btn ${isActive ? 'is-active' : ''}`}
+                      onClick={() => setActiveModuleId(mod.id)}
+                      title={mod.title}
+                      style={
+                        isActive
+                          ? {
+                              borderColor: `${mod.accent}66`,
+                              boxShadow: `inset 3px 0 0 ${mod.accent}, 0 8px 22px -10px ${mod.accent}66`,
+                            }
+                          : undefined
+                      }
+                    >
+                      <span className="mon-nav-icon">
+                        <ModuleSidebarIcon type={mod.icon} isActive={isActive} accent={mod.accent} />
+                      </span>
+                      {!sidebarCollapsed && (
+                        <span className="mon-nav-label">{mod.shortLabel}</span>
+                      )}
+                    </button>
+                  )
+                })}
               </div>
-            )}
-            <div className="mon-nav-items">
-              {TEN_MODULES.filter((m) => m.enfoque === 2).map((mod) => {
-                const isActive = mod.id === activeModuleId
-                return (
-                  <button
-                    key={mod.id}
-                    type="button"
-                    className={`mon-nav-btn ${isActive ? 'is-active' : ''}`}
-                    onClick={() => setActiveModuleId(mod.id)}
-                    title={mod.title}
-                    style={
-                      isActive
-                        ? {
-                            borderColor: `${mod.accent}66`,
-                            boxShadow: `inset 3px 0 0 ${mod.accent}, 0 8px 22px -10px ${mod.accent}66`,
-                          }
-                        : undefined
-                    }
-                  >
-                    <span className="mon-nav-icon">
-                      <ModuleSidebarIcon type={mod.icon} isActive={isActive} accent={mod.accent} />
-                    </span>
-                    {!sidebarCollapsed && (
-                      <span className="mon-nav-label">{mod.shortLabel}</span>
-                    )}
-                  </button>
-                )
-              })}
             </div>
-          </div>
+          ))}
         </nav>
 
         {/* Contexto Territorial Compartido en el Pie de la Barra Lateral */}
