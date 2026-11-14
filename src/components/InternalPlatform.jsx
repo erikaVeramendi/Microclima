@@ -166,6 +166,7 @@ export function InternalPlatform({ userSession, onLogout }) {
         return <ThermalIntelligenceScreen {...commonProps} />
       case 'relaciones-ambientales':
         return <EnvironmentalRelationsScreen {...commonProps} />
+      case 'puntos-criticos':
       case 'investigacion-descubrimiento':
         return <ResearchDiscoveryScreen {...commonProps} />
       case 'evidencia-validacion':
