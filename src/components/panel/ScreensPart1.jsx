@@ -4,12 +4,12 @@ import {
   CANDIDATE_FINDINGS_LIST,
 } from '../../data/internalPanelData'
 import { SharedGeoCanvas } from './SharedGeoCanvas'
+import GamcMap from './GamcMap'
 import {
   NeonDonutChart,
   NeonSplineChart,
   NeonEqBarChart,
   ContouredIsoMap,
-  SatellitePatchStrip,
   NeonRadarChart,
   BivariateScatterPlot,
   RedMonicaDiurnalChart,
@@ -17,6 +17,20 @@ import {
 
 const YEAR_LABELS = ['19', '20', '21', '22', '23', '24', '25', '26']
 const HOUR_LABELS = ['03H', '06H', '09H', '12H', '15H', '18H', '21H', '24H']
+
+function haversineMeters(lon1, lat1, lon2, lat2) {
+  const R = 6371000
+  const dLat = ((lat2 - lat1) * Math.PI) / 180
+  const dLon = ((lon2 - lon1) * Math.PI) / 180
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos((lat1 * Math.PI) / 180) *
+      Math.cos((lat2 * Math.PI) / 180) *
+      Math.sin(dLon / 2) *
+      Math.sin(dLon / 2)
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
+  return R * c
+}
 
 /* =========================================================================
    COMPONENTE: TARJETA DE DATO CLAVE (100% REAL) PARA DIAGNÓSTICO GENERAL
@@ -1074,198 +1088,830 @@ export function IntelligenceCenterScreen({
 }
 
 /* =========================================================================
-   PANTALLA 02. EXPLORADOR TERRITORIAL
-   Mapa 70% + 6 Grupos de Capas + Opacidad + Viaje Temporal sin interpolar vacíos
+   PANTALLA 08. COBERTURA DE SERVICIOS (ENFOQUE 2 · GESTIÓN MUNICIPAL)
+   "Dónde hay y dónde faltan servicios: salud, colegios, transporte y áreas verdes"
+   Integra: GamcMap WMS + equipamientos.geojson + poblacion_grilla.json + indice_distritos.json
    ========================================================================= */
 export function TerritorialExplorerScreen({
   selectedZoneId,
   onSelectZone,
-  onNavigateModule,
 }) {
-  const [mapLayer, setMapLayer] = useState('parcelas')
-  const [opacity, setOpacity] = useState(88)
-  const [savedZones, setSavedZones] = useState(['corredor-rocha'])
+  const [indiceData, setIndiceData] = useState(null)
+  const [equipamientosData, setEquipamientosData] = useState(null)
+  const [grillaData, setGrillaData] = useState(null)
+  const [distritosGeoJson, setDistritosGeoJson] = useState(null)
+
+  // Radios de cobertura interactivos (metros)
+  const [radioSalud, setRadioSalud] = useState(1000)
+  const [radioColegios, setRadioColegios] = useState(1000)
+
+  // Carga de datos reales oficiales
+  useEffect(() => {
+    let isMounted = true
+
+    fetch('/data/indice_distritos.json')
+      .then((r) => (r.ok ? r.json() : null))
+      .then((d) => isMounted && d && setIndiceData(d))
+      .catch((err) => console.error('Error cargando indice_distritos.json:', err))
+
+    fetch('/data/equipamientos.geojson')
+      .then((r) => (r.ok ? r.json() : null))
+      .then((d) => isMounted && d && setEquipamientosData(d))
+      .catch((err) => console.error('Error cargando equipamientos.geojson:', err))
+
+    fetch('/data/poblacion_grilla.json')
+      .then((r) => (r.ok ? r.json() : null))
+      .then((d) => isMounted && d && setGrillaData(d))
+      .catch((err) => console.error('Error cargando poblacion_grilla.json:', err))
+
+    fetch('/data/distritos_indicadores_ambientales_2024.geojson')
+      .then((r) => (r.ok ? r.json() : null))
+      .then((d) => isMounted && d && setDistritosGeoJson(d))
+      .catch((err) => console.error('Error cargando distritos.geojson:', err))
+
+    return () => {
+      isMounted = false
+    }
+  }, [])
 
   const activeZone =
-    COCHABAMBA_ZONES.find((z) => z.id === selectedZoneId) || COCHABAMBA_ZONES[1]
+    COCHABAMBA_ZONES.find((z) => z.id === selectedZoneId) || COCHABAMBA_ZONES[0]
 
-  const toggleSaveZone = () => {
-    setSavedZones((prev) =>
-      prev.includes(selectedZoneId)
-        ? prev.filter((id) => id !== selectedZoneId)
-        : [...prev, selectedZoneId]
+  const distNum = parseInt(
+    String(activeZone.number || activeZone.id.replace('distrito-', '')),
+    10
+  )
+
+  const distritoInfo = useMemo(() => {
+    if (!indiceData?.distritos) return null
+    return (
+      indiceData.distritos.find((d) => parseInt(String(d.id), 10) === distNum) ||
+      indiceData.distritos[0]
     )
-  }
+  }, [indiceData, distNum])
+
+  const indicadores = distritoInfo?.indicadores
+
+  // Promedios municipales oficiales para referencia
+  const municipalAvg = useMemo(() => {
+    if (!indiceData?.distritos || indiceData.distritos.length === 0) {
+      return { salud: 61.9, colegio: 85.6, transporte: 94.6 }
+    }
+    const dists = indiceData.distritos
+    const sumS = dists.reduce(
+      (acc, d) => acc + (d.indicadores?.cobertura_salud || 0),
+      0
+    )
+    const sumC = dists.reduce(
+      (acc, d) => acc + (d.indicadores?.cobertura_colegio || 0),
+      0
+    )
+    const sumT = dists.reduce(
+      (acc, d) => acc + (d.indicadores?.cobertura_transporte || 0),
+      0
+    )
+    return {
+      salud: sumS / dists.length,
+      colegio: sumC / dists.length,
+      transporte: sumT / dists.length,
+    }
+  }, [indiceData])
+
+  // Centros de salud de 1er nivel y Unidades educativas
+  const saludPts = useMemo(() => {
+    if (!equipamientosData?.features) return []
+    return equipamientosData.features
+      .filter((f) => {
+        const p = f.properties
+        return (
+          p &&
+          p.tipo === 'salud' &&
+          p.nivel &&
+          String(p.nivel).includes('1') &&
+          f.geometry?.coordinates
+        )
+      })
+      .map((f) => ({
+        lng: f.geometry.coordinates[0],
+        lat: f.geometry.coordinates[1],
+        nombre: f.properties.nombre || 'Centro de Salud 1er nivel',
+      }))
+  }, [equipamientosData])
+
+  const colegioPts = useMemo(() => {
+    if (!equipamientosData?.features) return []
+    return equipamientosData.features
+      .filter((f) => {
+        const p = f.properties
+        return p && p.tipo === 'educacion' && f.geometry?.coordinates
+      })
+      .map((f) => ({
+        lng: f.geometry.coordinates[0],
+        lat: f.geometry.coordinates[1],
+        nombre: f.properties.nombre || 'Unidad Educativa',
+      }))
+  }, [equipamientosData])
+
+  // Recálculo dinámico de cobertura en el navegador con poblacion_grilla.json
+  const coberturaCalculada = useMemo(() => {
+    // Si no ha variado el radio (1000m por defecto) y ya tenemos los indicadores precargados
+    if (
+      radioSalud === 1000 &&
+      radioColegios === 1000 &&
+      indicadores?.cobertura_salud !== undefined
+    ) {
+      return {
+        salud: indicadores.cobertura_salud,
+        colegio: indicadores.cobertura_colegio,
+      }
+    }
+
+    if (!grillaData?.celdas || !distNum) {
+      return {
+        salud: indicadores?.cobertura_salud ?? 0,
+        colegio: indicadores?.cobertura_colegio ?? 0,
+      }
+    }
+
+    // Celdas del distrito activo con población > 0
+    const celdasDistrito = grillaData.celdas.filter(
+      (c) => Math.round(c[4]) === distNum && c[2] > 0
+    )
+    if (celdasDistrito.length === 0) {
+      return {
+        salud: indicadores?.cobertura_salud ?? 0,
+        colegio: indicadores?.cobertura_colegio ?? 0,
+      }
+    }
+
+    let totalPob = 0
+    let coveredPobSalud = 0
+    let coveredPobColegio = 0
+
+    const degBoxSalud = radioSalud / 100000
+    const degBoxColegio = radioColegios / 100000
+
+    for (let i = 0; i < celdasDistrito.length; i++) {
+      const c = celdasDistrito[i]
+      const cLon = c[0]
+      const cLat = c[1]
+      const cPob = c[2]
+      totalPob += cPob
+
+      // Verificación de salud
+      let isCoveredSalud = false
+      for (let j = 0; j < saludPts.length; j++) {
+        const sp = saludPts[j]
+        if (
+          Math.abs(cLat - sp.lat) <= degBoxSalud &&
+          Math.abs(cLon - sp.lng) <= degBoxSalud
+        ) {
+          if (haversineMeters(cLon, cLat, sp.lng, sp.lat) <= radioSalud) {
+            isCoveredSalud = true
+            break
+          }
+        }
+      }
+      if (isCoveredSalud) coveredPobSalud += cPob
+
+      // Verificación de colegios
+      let isCoveredColegio = false
+      for (let k = 0; k < colegioPts.length; k++) {
+        const cp = colegioPts[k]
+        if (
+          Math.abs(cLat - cp.lat) <= degBoxColegio &&
+          Math.abs(cLon - cp.lng) <= degBoxColegio
+        ) {
+          if (haversineMeters(cLon, cLat, cp.lng, cp.lat) <= radioColegios) {
+            isCoveredColegio = true
+            break
+          }
+        }
+      }
+      if (isCoveredColegio) coveredPobColegio += cPob
+    }
+
+    const pctSalud = totalPob > 0 ? (coveredPobSalud / totalPob) * 100 : 0
+    const pctColegio = totalPob > 0 ? (coveredPobColegio / totalPob) * 100 : 0
+
+    return {
+      salud: Number(pctSalud.toFixed(1)),
+      colegio: Number(pctColegio.toFixed(1)),
+    }
+  }, [
+    grillaData,
+    distNum,
+    indicadores,
+    radioSalud,
+    radioColegios,
+    saludPts,
+    colegioPts,
+  ])
+
+  // Círculos de radio de cobertura para GamcMap
+  const radiosCoverage = useMemo(() => {
+    const list = []
+    saludPts.forEach((p) => {
+      list.push({
+        lat: p.lat,
+        lng: p.lng,
+        radius: radioSalud,
+        color: '#EF4444',
+        fillColor: '#EF4444',
+        fillOpacity: 0.1,
+        label: `${p.nombre} (Radio salud: ${radioSalud} m)`,
+      })
+    })
+    colegioPts.forEach((p) => {
+      list.push({
+        lat: p.lat,
+        lng: p.lng,
+        radius: radioColegios,
+        color: '#F59E0B',
+        fillColor: '#F59E0B',
+        fillOpacity: 0.08,
+        label: `${p.nombre} (Radio colegio: ${radioColegios} m)`,
+      })
+    })
+    return list
+  }, [saludPts, colegioPts, radioSalud, radioColegios])
+
+  // GeoJSON con el distrito seleccionado resaltado
+  const distritosGeoJsonHighlight = useMemo(() => {
+    if (!distritosGeoJson?.features) return null
+    return {
+      ...distritosGeoJson,
+      features: distritosGeoJson.features.map((f) => ({
+        ...f,
+        properties: {
+          ...f.properties,
+          selected: parseInt(String(f.properties?.codigo_distrito), 10) === distNum,
+          color:
+            parseInt(String(f.properties?.codigo_distrito), 10) === distNum
+              ? 'var(--theme-accent, #38BDF8)'
+              : '#64748B',
+        },
+      })),
+    }
+  }, [distritosGeoJson, distNum])
 
   return (
     <div className="neo-screen">
-      {/* Barra superior compacta de herramientas espaciales y Viaje Temporal */}
-      <div className="neo-toolbar-row">
-        <div className="neo-pill-group">
-          {[
-            { id: 'lst', lbl: '🔥 Térmico (LST)' },
-            { id: 'ndvi', lbl: '🌿 Vegetación (NDVI)' },
-            { id: 'parcelas', lbl: '🏙 Territorio / OSM' },
-            { id: 'elevacion', lbl: '⛰ Geografía (NASADEM)' },
-            { id: 'dual', lbl: '👥 Población / Multicapa' },
-            { id: 'vacios', lbl: '🛡 Evidencia y Vacíos' },
-          ].map((c) => (
-            <button
-              key={c.id}
-              type="button"
-              className={`geo-hud-pill ${mapLayer === c.id ? 'is-active' : ''}`}
-              onClick={() => setMapLayer(c.id)}
-            >
-              {c.lbl}
-            </button>
-          ))}
-        </div>
-
-        <div className="neo-pill-group">
-          <span className="neo-pill-badge neo-pill--amber">
-            15 DISTRITOS GAMC: PENDIENTE CARTOGRAFÍA OFICIAL
-          </span>
-          <button type="button" className="geo-hud-pill" onClick={toggleSaveZone}>
-            {savedZones.includes(selectedZoneId) ? '★ Zona Guardada' : '☆ Guardar Zona'}
-          </button>
-        </div>
+      {/* 1. Línea bajo el título */}
+      <div style={{ marginBottom: '0.1rem' }}>
+        <p
+          style={{
+            margin: 0,
+            fontSize: '0.86rem',
+            color: 'var(--theme-text-muted)',
+            lineHeight: 1.45,
+          }}
+        >
+          Dónde hay y dónde faltan servicios: salud, colegios, transporte y áreas verdes.
+        </p>
       </div>
 
-      {/* Mapa 70% + Panel Derecho Contextual 30% */}
-      <section className="neo-explorer-studio">
-        <div className="neo-explorer-main">
-          <div style={{ opacity: opacity / 100, transition: 'opacity 0.2s' }}>
-            <SharedGeoCanvas
-              selectedZoneId={selectedZoneId}
-              onSelectZone={onSelectZone}
-              activeLayer={mapLayer}
-              onLayerChange={setMapLayer}
-              enableCurtain={true}
-              onNavigateModule={onNavigateModule}
-              height={455}
-            />
+      {/* 2. Tarjetas (3): Cobertura de salud, colegios y transporte con promedio municipal debajo */}
+      <section
+        style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(3, 1fr)',
+          gap: '0.75rem',
+        }}
+      >
+        {/* Tarjeta 1: Salud 1er nivel */}
+        <div className="hud-kpi-card" style={{ '--kpi-accent': '#EF4444' }}>
+          <div className="hud-kpi-top">
+            <span className="hud-kpi-label">POBLACIÓN CUBIERTA POR SALUD</span>
+            <span
+              className="hud-kpi-delta"
+              style={{ color: '#EF4444', borderColor: 'rgba(239, 68, 68, 0.44)' }}
+            >
+              1er nivel ({radioSalud} m)
+            </span>
           </div>
-
-          {/* INNOVACIÓN MICROCLIMA: «Viaje Temporal por Cochabamba» SIN INTERPOLAR VACÍOS */}
-          <article className="neo-glass-card">
-            <div className="neo-card-header">
-              <div>
-                <span className="neo-micro-tag">
-                  ✦ VIAJE TEMPORAL POR COCHABAMBA (SIN INTERPOLAR VACÍOS NUBOSOS)
-                </span>
-                <h3>Secuencia real de ventanas válidas vs. vacíos estacionales · Perfil Norte-Sur</h3>
-              </div>
-              <div className="neo-opacity-mini">
-                <span>Opacidad {opacity}%</span>
-                <input
-                  type="range"
-                  min="35"
-                  max="100"
-                  value={opacity}
-                  onChange={(e) => setOpacity(Number(e.target.value))}
-                />
-              </div>
-            </div>
-
-            {/* Cinta visual de períodos mostrando explícitamente vacíos de época húmeda */}
-            <div className="neo-temporal-gaps-strip">
-              {[
-                { p: 'SECA 2021', ok: true },
-                { p: 'LLUVIA 22 (VACÍO NUBES)', ok: false },
-                { p: 'SECA 2022', ok: true },
-                { p: 'SECA 2023', ok: true },
-                { p: 'LLUVIA 24 (VACÍO NUBES)', ok: false },
-                { p: 'SECA 2024', ok: true },
-                { p: 'SECA 2025', ok: true },
-              ].map((slot) => (
-                <span
-                  key={slot.p}
-                  className={`neo-gap-slot ${slot.ok ? 'is-valid' : 'is-gap'}`}
-                >
-                  {slot.ok ? '● ' : '⊘ '}
-                  {slot.p}
-                </span>
-              ))}
-            </div>
-
-            <NeonSplineChart
-              series={[
-                {
-                  name: 'Perfil Elevación / LST (°C)',
-                  data: COCHABAMBA_ZONES.map((z) => z.lstIllustrative),
-                  color: '#F28B50',
-                  unit: '°C',
-                },
-                {
-                  name: 'Vigor NDVI Escala',
-                  data: COCHABAMBA_ZONES.map((z) => +(z.ndviIllustrative * 42).toFixed(1)),
-                  color: '#43A875',
-                  unit: '',
-                },
-              ]}
-              labels={COCHABAMBA_ZONES.map((z) => z.shortName.slice(0, 9))}
-              height={118}
-            />
-          </article>
+          <div className="hud-kpi-val-row">
+            <strong className="hud-kpi-value">{coberturaCalculada.salud.toFixed(1)}%</strong>
+          </div>
+          <span
+            style={{
+              fontSize: '0.74rem',
+              color: 'var(--theme-text-muted)',
+              marginTop: '0.2rem',
+              display: 'block',
+            }}
+          >
+            Promedio municipal: {municipalAvg.salud.toFixed(1)}%
+          </span>
         </div>
 
-        {/* Panel Contextual Derecho */}
-        <aside className="neo-col-stack">
-          <article className="neo-glass-card">
+        {/* Tarjeta 2: Colegios */}
+        <div className="hud-kpi-card" style={{ '--kpi-accent': '#F59E0B' }}>
+          <div className="hud-kpi-top">
+            <span className="hud-kpi-label">POBLACIÓN CUBIERTA POR COLEGIOS</span>
+            <span
+              className="hud-kpi-delta"
+              style={{ color: '#F59E0B', borderColor: 'rgba(245, 158, 11, 0.44)' }}
+            >
+              Unidades educativas ({radioColegios} m)
+            </span>
+          </div>
+          <div className="hud-kpi-val-row">
+            <strong className="hud-kpi-value">{coberturaCalculada.colegio.toFixed(1)}%</strong>
+          </div>
+          <span
+            style={{
+              fontSize: '0.74rem',
+              color: 'var(--theme-text-muted)',
+              marginTop: '0.2rem',
+              display: 'block',
+            }}
+          >
+            Promedio municipal: {municipalAvg.colegio.toFixed(1)}%
+          </span>
+        </div>
+
+        {/* Tarjeta 3: Transporte */}
+        <div className="hud-kpi-card" style={{ '--kpi-accent': '#38BDF8' }}>
+          <div className="hud-kpi-top">
+            <span className="hud-kpi-label">POBLACIÓN CERCA DEL TRANSPORTE</span>
+            <span
+              className="hud-kpi-delta"
+              style={{ color: '#38BDF8', borderColor: 'rgba(56, 189, 248, 0.44)' }}
+            >
+              Radio fijo 300 m
+            </span>
+          </div>
+          <div className="hud-kpi-val-row">
+            <strong className="hud-kpi-value">
+              {(indicadores?.cobertura_transporte ?? municipalAvg.transporte).toFixed(1)}%
+            </strong>
+          </div>
+          <span
+            style={{
+              fontSize: '0.74rem',
+              color: 'var(--theme-text-muted)',
+              marginTop: '0.2rem',
+              display: 'block',
+            }}
+          >
+            Promedio municipal: {municipalAvg.transporte.toFixed(1)}%
+          </span>
+        </div>
+      </section>
+
+      {/* 3. Centro: GamcMap con capas WMS + Controles a la derecha */}
+      <section className="neo-split-7-5">
+        {/* Mapa interactivo con capas de la Alcaldía */}
+        <div
+          className="neo-glass-card"
+          style={{ padding: '0.5rem', overflow: 'hidden' }}
+        >
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              padding: '0.2rem 0.4rem 0.45rem',
+            }}
+          >
+            <div>
+              <span className="neo-micro-tag">MAPA OFICIAL GAMC CON COBERTURA</span>
+              <h3 style={{ margin: 0, fontSize: '0.88rem' }}>
+                Capas de la Alcaldía · {activeZone.name}
+              </h3>
+            </div>
+            <span className="neo-pill-badge neo-pill--cyan">
+              Radios: {radioSalud} m (Salud) · {radioColegios} m (Colegios)
+            </span>
+          </div>
+
+          <GamcMap
+            capasWms={[
+              'limite_distritos',
+              'centros_salud',
+              'unidades_educativas',
+              'areas_verdes',
+              'poblacion_manzanas',
+            ]}
+            geojson={distritosGeoJsonHighlight}
+            radios={radiosCoverage}
+            onClickDistrito={(feature) => {
+              const cod = feature?.properties?.codigo_distrito
+              if (cod) onSelectZone(`distrito-${cod}`)
+            }}
+            height="460px"
+          />
+        </div>
+
+        {/* Panel derecho: Controles de Radio dinámicos */}
+        <article
+          className="neo-glass-card"
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'space-between',
+          }}
+        >
+          <div>
             <div className="neo-card-header">
               <div>
-                <span className="neo-micro-tag">{activeZone.coords}</span>
-                <h3>{activeZone.shortName}</h3>
+                <span className="neo-micro-tag">SIMULADOR DE ALCANCE</span>
+                <h3>Radios de Cobertura</h3>
               </div>
-              <span className="neo-pill-badge neo-pill--cyan">{activeZone.elevation}</span>
+              <span className="neo-pill-badge neo-pill--emerald">
+                {activeZone.shortName}
+              </span>
             </div>
 
-            <NeonDonutChart
-              segments={[
-                { label: 'Dosel / Parque', value: activeZone.spectralSplit[0], color: '#43A875' },
-                { label: 'Eje Ripario', value: activeZone.spectralSplit[1], color: '#65C8F2' },
-                { label: 'Mixto', value: activeZone.spectralSplit[2], color: '#8875D8' },
-                { label: 'Construido', value: activeZone.spectralSplit[3], color: '#F28B50' },
-              ]}
-              centerValue={`${activeZone.validCoverage}%`}
-              centerLabel="QA VÁLIDO"
-              size={132}
-            />
-          </article>
+            <div
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '1rem',
+                marginTop: '0.85rem',
+              }}
+            >
+              {/* Control Radio Salud */}
+              <div
+                style={{
+                  padding: '0.75rem 0.85rem',
+                  borderRadius: '10px',
+                  background: 'rgba(239, 68, 68, 0.06)',
+                  border: '1px solid rgba(239, 68, 68, 0.22)',
+                }}
+              >
+                <div
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    marginBottom: '0.45rem',
+                  }}
+                >
+                  <span
+                    style={{
+                      fontSize: '0.8rem',
+                      fontWeight: 600,
+                      color: 'var(--theme-text-primary)',
+                    }}
+                  >
+                    Radio de salud (1er nivel)
+                  </span>
+                  <strong
+                    style={{
+                      fontSize: '0.85rem',
+                      fontFamily: 'var(--font-mono)',
+                      color: '#EF4444',
+                    }}
+                  >
+                    {radioSalud} m
+                  </strong>
+                </div>
+                <input
+                  type="range"
+                  min="500"
+                  max="2000"
+                  step="50"
+                  value={radioSalud}
+                  onChange={(e) => setRadioSalud(Number(e.target.value))}
+                  style={{ width: '100%', accentColor: '#EF4444' }}
+                />
+                <div
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    fontSize: '0.68rem',
+                    color: 'var(--theme-text-muted)',
+                    marginTop: '0.2rem',
+                  }}
+                >
+                  <span>500 m (caminable 6 min)</span>
+                  <span>2.000 m (24 min)</span>
+                </div>
+              </div>
 
-          <article className="neo-glass-card">
-            <div className="neo-card-header">
-              <div>
-                <span className="neo-micro-tag">FIRMA MULTIBANDA & ACCESOS</span>
-                <h3>Resolución S2 10m · L9 30m</h3>
+              {/* Control Radio Colegios */}
+              <div
+                style={{
+                  padding: '0.75rem 0.85rem',
+                  borderRadius: '10px',
+                  background: 'rgba(245, 158, 11, 0.06)',
+                  border: '1px solid rgba(245, 158, 11, 0.22)',
+                }}
+              >
+                <div
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    marginBottom: '0.45rem',
+                  }}
+                >
+                  <span
+                    style={{
+                      fontSize: '0.8rem',
+                      fontWeight: 600,
+                      color: 'var(--theme-text-primary)',
+                    }}
+                  >
+                    Radio de colegios
+                  </span>
+                  <strong
+                    style={{
+                      fontSize: '0.85rem',
+                      fontFamily: 'var(--font-mono)',
+                      color: '#F59E0B',
+                    }}
+                  >
+                    {radioColegios} m
+                  </strong>
+                </div>
+                <input
+                  type="range"
+                  min="500"
+                  max="2000"
+                  step="50"
+                  value={radioColegios}
+                  onChange={(e) => setRadioColegios(Number(e.target.value))}
+                  style={{ width: '100%', accentColor: '#F59E0B' }}
+                />
+                <div
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    fontSize: '0.68rem',
+                    color: 'var(--theme-text-muted)',
+                    marginTop: '0.2rem',
+                  }}
+                >
+                  <span>500 m (caminable 6 min)</span>
+                  <span>2.000 m (24 min)</span>
+                </div>
+              </div>
+
+              {/* Aclaración transporte fija */}
+              <div
+                style={{
+                  padding: '0.6rem 0.75rem',
+                  borderRadius: '8px',
+                  background: 'rgba(255, 255, 255, 0.02)',
+                  border: '1px solid var(--theme-border, rgba(56, 189, 248, 0.12))',
+                  fontSize: '0.74rem',
+                  color: 'var(--theme-text-muted)',
+                  lineHeight: 1.4,
+                }}
+              >
+                <strong style={{ color: 'var(--theme-text-primary)', display: 'block', marginBottom: '2px' }}>
+                  Transporte público (300 m fijo):
+                </strong>
+                La cobertura de transporte utiliza el estándar internacional de 300 m de caminata hacia paradas y líneas oficiales del GAMC.
               </div>
             </div>
+          </div>
 
-            <div className="neo-multicolor-bars">
-              {[
-                { band: 'B2', val: 34, color: '#65C8F2' },
-                { band: 'B3', val: 52, color: '#8BCB9A' },
-                { band: 'B4', val: 28, color: '#D95757' },
-                { band: 'NIR', val: Math.round(activeZone.ndviIllustrative * 115), color: '#43A875' },
-                { band: 'SWIR', val: 64, color: '#8875D8' },
-                { band: 'TIRS', val: Math.round(activeZone.lstIllustrative * 2.5), color: '#F28B50' },
-              ].map((b) => (
-                <div key={b.band} className="neo-mbar-col">
-                  <div className="neo-mbar-track">
+          <div style={{ marginTop: '1rem' }}>
+            <button
+              type="button"
+              onClick={() => {
+                setRadioSalud(1000)
+                setRadioColegios(1000)
+              }}
+              style={{
+                width: '100%',
+                padding: '0.55rem',
+                borderRadius: '8px',
+                border: '1px solid var(--theme-border, rgba(56, 189, 248, 0.25))',
+                background: 'transparent',
+                color: 'var(--theme-text-muted)',
+                fontSize: '0.78rem',
+                cursor: 'pointer',
+                transition: 'all 0.15s ease',
+              }}
+            >
+              Restablecer radios a 1.000 m
+            </button>
+          </div>
+        </article>
+      </section>
+
+      {/* 4. Abajo: (1) Barras de los 15 distritos cobertura salud + (2) Tabla pequeña del distrito */}
+      <section className="neo-split-6-6">
+        {/* Bloque 1: Barras horizontales de los 15 distritos por cobertura de salud */}
+        <article className="neo-glass-card">
+          <div className="neo-card-header">
+            <div>
+              <span className="neo-micro-tag">COMPARATIVA MUNICIPAL</span>
+              <h3>Cobertura de salud de 1er nivel por distrito</h3>
+            </div>
+            <span className="neo-pill-badge neo-pill--cyan">
+              Media: {municipalAvg.salud.toFixed(1)}%
+            </span>
+          </div>
+
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '0.35rem',
+              overflowY: 'auto',
+              maxHeight: '195px',
+              paddingRight: '0.3rem',
+            }}
+          >
+            {(indiceData?.distritos || []).map((d) => {
+              const dIdNum = parseInt(String(d.id), 10)
+              const isSelected = dIdNum === distNum
+              const cob = d.indicadores?.cobertura_salud || 0
+              const isAboveAvg = cob >= municipalAvg.salud
+
+              return (
+                <div
+                  key={d.id}
+                  onClick={() => onSelectZone(`distrito-${d.id}`)}
+                  style={{
+                    display: 'grid',
+                    gridTemplateColumns: '24px 105px 1fr 58px',
+                    alignItems: 'center',
+                    gap: '0.45rem',
+                    padding: '0.22rem 0.45rem',
+                    borderRadius: '6px',
+                    cursor: 'pointer',
+                    background: isSelected
+                      ? 'var(--theme-accent-subtle, rgba(56, 189, 248, 0.16))'
+                      : 'transparent',
+                    border: isSelected
+                      ? '1px solid var(--theme-accent, #38BDF8)'
+                      : '1px solid transparent',
+                    transition: 'all 0.15s ease',
+                  }}
+                  title={`Clic para seleccionar Distrito ${d.id}`}
+                >
+                  <span
+                    style={{
+                      fontSize: '0.72rem',
+                      fontWeight: 700,
+                      color: isSelected
+                        ? 'var(--theme-accent, #38BDF8)'
+                        : 'var(--theme-text-muted)',
+                    }}
+                  >
+                    D{d.id}
+                  </span>
+                  <span
+                    style={{
+                      fontSize: '0.76rem',
+                      whiteSpace: 'nowrap',
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                      fontWeight: isSelected ? 700 : 500,
+                      color: isSelected
+                        ? 'var(--theme-text-primary, #ffffff)'
+                        : 'var(--theme-text-muted)',
+                    }}
+                  >
+                    {d.nombre.replace(/^Distrito\s*\d+\s*[·-]\s*/, '') || `Distrito ${d.id}`}
+                  </span>
+                  <div
+                    style={{
+                      position: 'relative',
+                      width: '100%',
+                      height: '7px',
+                      background: 'rgba(255,255,255,0.06)',
+                      borderRadius: '4px',
+                      overflow: 'hidden',
+                    }}
+                  >
                     <div
-                      className="neo-mbar-fill"
-                      style={{ height: `${Math.min(100, b.val)}%`, backgroundColor: b.color }}
+                      style={{
+                        width: `${Math.min(100, cob)}%`,
+                        height: '100%',
+                        background: isSelected
+                          ? 'var(--theme-accent, #38BDF8)'
+                          : isAboveAvg
+                          ? '#10B981'
+                          : '#EF4444',
+                        borderRadius: '4px',
+                        transition: 'width 0.3s ease',
+                      }}
                     />
                   </div>
-                  <span>{b.band}</span>
+                  <span
+                    style={{
+                      fontSize: '0.74rem',
+                      fontFamily: 'var(--font-mono)',
+                      textAlign: 'right',
+                      fontWeight: isSelected ? 700 : 500,
+                      color: isSelected
+                        ? 'var(--theme-accent, #38BDF8)'
+                        : 'var(--theme-text-primary, #ffffff)',
+                    }}
+                  >
+                    {cob.toFixed(1)}%
+                  </span>
                 </div>
-              ))}
+              )
+            })}
+          </div>
+        </article>
+
+        {/* Bloque 2: Tabla pequeña del distrito seleccionado */}
+        <article
+          className="neo-glass-card"
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'space-between',
+          }}
+        >
+          <div>
+            <div className="neo-card-header">
+              <div>
+                <span className="neo-micro-tag">INVENTARIO DISTRITAL</span>
+                <h3>Equipamiento y áreas verdes · {activeZone.shortName}</h3>
+              </div>
+              <span className="neo-pill-badge neo-pill--cyan">
+                {indicadores?.personas ? `${(indicadores.personas).toLocaleString()} hab.` : 'Datos GAMC'}
+              </span>
             </div>
 
-            <SatellitePatchStrip zone={activeZone} />
-          </article>
-        </aside>
+            <table
+              style={{
+                width: '100%',
+                borderCollapse: 'collapse',
+                fontSize: '0.8rem',
+                marginTop: '0.65rem',
+              }}
+            >
+              <tbody>
+                <tr style={{ borderBottom: '1px solid var(--theme-border, rgba(255,255,255,0.06))' }}>
+                  <td style={{ padding: '0.45rem 0', color: 'var(--theme-text-muted)' }}>Población (Censo GHSL 2025)</td>
+                  <td style={{ padding: '0.45rem 0', textAlign: 'right', fontWeight: 600, color: 'var(--theme-text-primary)' }}>
+                    {indicadores?.personas ? `${indicadores.personas.toLocaleString()} personas` : '—'}
+                  </td>
+                </tr>
+                <tr style={{ borderBottom: '1px solid var(--theme-border, rgba(255,255,255,0.06))' }}>
+                  <td style={{ padding: '0.45rem 0', color: 'var(--theme-text-muted)' }}>Centros de salud (1er nivel)</td>
+                  <td style={{ padding: '0.45rem 0', textAlign: 'right', fontWeight: 600, color: 'var(--theme-text-primary)' }}>
+                    {indicadores?.salud_1er !== undefined ? `${indicadores.salud_1er} centros` : '—'}
+                  </td>
+                </tr>
+                <tr style={{ borderBottom: '1px solid var(--theme-border, rgba(255,255,255,0.06))' }}>
+                  <td style={{ padding: '0.45rem 0', color: 'var(--theme-text-muted)' }}>Unidades educativas oficiales</td>
+                  <td style={{ padding: '0.45rem 0', textAlign: 'right', fontWeight: 600, color: 'var(--theme-text-primary)' }}>
+                    {indicadores?.colegios !== undefined ? `${indicadores.colegios} colegios` : '—'}
+                  </td>
+                </tr>
+                <tr style={{ borderBottom: '1px solid var(--theme-border, rgba(255,255,255,0.06))' }}>
+                  <td style={{ padding: '0.45rem 0', color: 'var(--theme-text-muted)' }}>Superficie de áreas verdes</td>
+                  <td style={{ padding: '0.45rem 0', textAlign: 'right', fontWeight: 600, color: 'var(--theme-text-primary)' }}>
+                    {indicadores?.area_verde_m2
+                      ? `${(indicadores.area_verde_m2 / 10000).toFixed(2)} ha (${Math.round(indicadores.area_verde_m2).toLocaleString()} m²)`
+                      : '—'}
+                  </td>
+                </tr>
+                <tr>
+                  <td style={{ padding: '0.45rem 0', color: 'var(--theme-text-muted)' }}>Área verde por habitante</td>
+                  <td style={{ padding: '0.45rem 0', textAlign: 'right', fontWeight: 600, color: '#10B981' }}>
+                    {indicadores?.verde_por_hab !== undefined
+                      ? `${indicadores.verde_por_hab.toFixed(1)} m²/hab.`
+                      : '—'}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div
+            style={{
+              padding: '0.45rem 0.65rem',
+              borderRadius: '6px',
+              background: 'rgba(255,255,255,0.03)',
+              fontSize: '0.71rem',
+              color: 'var(--theme-text-muted)',
+              marginTop: '0.65rem',
+            }}
+          >
+            Fuente: Catastro de Áreas Verdes y Cartografía Oficial del GAMC.
+          </div>
+        </article>
       </section>
+
+      {/* 5. Aviso metodológico único en el pie */}
+      <div
+        style={{
+          padding: '0.55rem 0.85rem',
+          borderRadius: '8px',
+          background: 'rgba(255, 255, 255, 0.02)',
+          border: '1px solid var(--theme-border, rgba(56, 189, 248, 0.12))',
+          fontSize: '0.75rem',
+          color: 'var(--theme-text-muted)',
+          lineHeight: 1.4,
+          textAlign: 'center',
+        }}
+      >
+        La cobertura mide cercanía. Muchas personas usan servicios lejos de su casa (por ejemplo, estudiantes del sur que estudian en el centro).
+      </div>
     </div>
   )
 }
