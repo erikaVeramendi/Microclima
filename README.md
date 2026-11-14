@@ -1,16 +1,20 @@
-# React + Vite
+# LlajtaLab
+**Laboratorio climático urbano de Cochabamba**
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+Plataforma de inteligencia geoespacial, análisis bioclimático y planificación territorial para el Municipio de Cochabamba, desarrollada en el marco del NASA Space Apps Challenge 2026.
 
-Currently, two official plugins are available:
+## Características principales
+- **Enfoque 1 · Microclimas con IA (NASA × IA)**: Diagnóstico general y radar de alertas, centro de inteligencia bioclimática, huella verde, isla de calor superficial (LST) y correlaciones con la Red MÓNICA.
+- **Enfoque 2 · Gestión Distrital (GAMC × Alcaldía)**: Índice socio-ambiental, comparador territorial, cobertura de servicios básicos, puntos críticos, planificación a 5 años (2030), simulador de equipamientos e informe técnico oficial.
+- **Datos 100% reales**: Integración de datos orbitales de la NASA (MODIS, Landsat 8/9, Sentinel-2), grilla de población GHSL (Comisión Europea) y servicios cartográficos oficiales del Gobierno Autónomo Municipal de Cochabamba (GAMC).
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Ejecución local
+```bash
+npm install
+npm run dev
+```
 
-## React Compiler
-
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the Oxlint configuration
-
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and Oxlint's TypeScript related rules in your project.
+## Compilación de producción
+```bash
+npm run build
+```

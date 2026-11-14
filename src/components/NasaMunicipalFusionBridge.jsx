@@ -133,7 +133,7 @@ export function NasaMunicipalFusionBridge() {
             </h2>
             <p className="section-lead" style={{ maxWidth: '64ch' }}>
               Selecciona un satélite de observación terrestre y una API municipal para
-              explorar cómo MICROCLIMA sincroniza el espacio con las calles de Cochabamba.
+              explorar cómo LlajtaLab sincroniza el espacio con las calles de Cochabamba.
             </p>
           </div>
 

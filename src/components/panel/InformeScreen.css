@@ -1,0 +1,306 @@
+/* =========================================================================
+   ESTILOS PARA PANTALLA: INFORME SOCIO-AMBIENTAL
+   Soporte: Modo Oscuro, Modo Claro, Modo Documental y Vista de Impresión (@media print)
+   ========================================================================= */
+
+.informe-screen {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.informe-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  background: var(--theme-card-bg, #0b1329);
+  border: 1px solid var(--theme-border, rgba(56, 189, 248, 0.2));
+  border-radius: 8px;
+}
+
+.informe-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.informe-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.35rem 0.75rem;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: 1px solid var(--theme-border, rgba(255, 255, 255, 0.15));
+  background: var(--theme-card-bg-subtle, rgba(255, 255, 255, 0.04));
+  color: var(--theme-text-primary, #F1F5F9);
+}
+
+.informe-btn:hover {
+  background: var(--theme-border, rgba(56, 189, 248, 0.2));
+  border-color: var(--theme-accent, #38BDF8);
+  color: var(--theme-accent, #38BDF8);
+}
+
+.informe-btn-primary {
+  background: var(--theme-accent, #38BDF8);
+  color: #0B132B !important;
+  border-color: var(--theme-accent, #38BDF8);
+}
+
+.informe-btn-primary:hover {
+  background: #0284C7;
+  border-color: #0284C7;
+  color: #FFFFFF !important;
+}
+
+/* Contenedor de la hoja documental */
+.informe-doc-sheet {
+  background: var(--theme-card-bg, #0B132B);
+  border: 1px solid var(--theme-border, rgba(255, 255, 255, 0.1));
+  border-radius: 10px;
+  padding: 2rem 2.25rem;
+  color: var(--theme-text-primary, #F1F5F9);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+  transition: all 0.2s ease;
+}
+
+/* Modo Documental Claro oficial (#F8FAFC / #FFFFFF editorial) */
+.informe-doc-sheet.is-light-doc {
+  background: #FFFFFF !important;
+  color: #111827 !important;
+  border: 1px solid #D1D5DB !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08) !important;
+}
+
+.informe-doc-sheet.is-light-doc .informe-section {
+  border-bottom-color: #E5E7EB !important;
+}
+
+.informe-doc-sheet.is-light-doc .informe-text-muted {
+  color: #4B5563 !important;
+}
+
+.informe-doc-sheet.is-light-doc .informe-callout {
+  background: #F9FAFB !important;
+  border-color: #E5E7EB !important;
+  color: #1F2937 !important;
+}
+
+.informe-doc-sheet.is-light-doc .informe-table th {
+  background: #F3F4F6 !important;
+  color: #374151 !important;
+  border-bottom-color: #D1D5DB !important;
+}
+
+.informe-doc-sheet.is-light-doc .informe-table td {
+  border-bottom-color: #E5E7EB !important;
+  color: #111827 !important;
+}
+
+/* Secciones del informe */
+.informe-section {
+  padding-bottom: 1.5rem;
+  margin-bottom: 1.5rem;
+  border-bottom: 1px solid var(--theme-border, rgba(255, 255, 255, 0.08));
+  page-break-inside: avoid;
+  break-inside: avoid;
+}
+
+.informe-section:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+
+.informe-sec-title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  margin: 0 0 0.85rem 0;
+  color: var(--theme-accent, #38BDF8);
+}
+
+.informe-doc-sheet.is-light-doc .informe-sec-title {
+  color: #0284C7 !important;
+}
+
+.informe-text-muted {
+  color: var(--theme-text-muted, #94A3B8);
+}
+
+/* Callout para el resumen de 3 líneas */
+.informe-callout {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--theme-border, rgba(56, 189, 248, 0.2));
+  border-left: 4px solid var(--theme-accent, #38BDF8);
+  border-radius: 6px;
+  padding: 1rem 1.25rem;
+  line-height: 1.6;
+  font-size: 0.9rem;
+}
+
+.informe-callout ol, .informe-callout ul {
+  margin: 0;
+  padding-left: 1.25rem;
+}
+
+.informe-callout li {
+  margin-bottom: 0.4rem;
+}
+
+.informe-callout li:last-child {
+  margin-bottom: 0;
+}
+
+/* Tablas técnicas del informe */
+.informe-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.84rem;
+  margin-top: 0.5rem;
+}
+
+.informe-table th {
+  text-align: left;
+  padding: 0.55rem 0.75rem;
+  font-size: 0.74rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  background: rgba(255, 255, 255, 0.03);
+  border-bottom: 1px solid var(--theme-border, rgba(255, 255, 255, 0.12));
+  color: var(--theme-text-muted, #94A3B8);
+}
+
+.informe-table td {
+  padding: 0.55rem 0.75rem;
+  border-bottom: 1px solid var(--theme-border, rgba(255, 255, 255, 0.06));
+}
+
+.informe-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+  padding: 0.15rem 0.45rem;
+  border-radius: 4px;
+  border: 1px solid transparent;
+}
+
+/* Grid de datos ambientales */
+.informe-grid-2col {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+}
+
+@media (max-width: 768px) {
+  .informe-grid-2col {
+    grid-template-columns: 1fr;
+  }
+}
+
+.informe-stat-box {
+  padding: 0.85rem 1rem;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--theme-border, rgba(255, 255, 255, 0.08));
+}
+
+.informe-doc-sheet.is-light-doc .informe-stat-box {
+  background: #F9FAFB !important;
+  border-color: #E5E7EB !important;
+}
+
+/* =========================================================================
+   REGLAS EXCLUSIVAS PARA IMPRESIÓN Y PDF (@media print)
+   ========================================================================= */
+@media print {
+  /* Ocultar barra de navegación, header, asistente y barra de botones */
+  header,
+  nav,
+  aside,
+  .mon-sidebar,
+  .mon-topbar,
+  .neo-floating-avatar,
+  .mon-ai-drawer,
+  .informe-toolbar,
+  .no-print {
+    display: none !important;
+  }
+
+  body, html, #root, .mon-shell, .mon-content, .neo-screen, .informe-screen {
+    background: #FFFFFF !important;
+    color: #111827 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    overflow: visible !important;
+    width: 100% !important;
+  }
+
+  .informe-doc-sheet {
+    background: #FFFFFF !important;
+    color: #111827 !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0.5cm !important;
+    max-width: 100% !important;
+  }
+
+  .informe-section {
+    border-bottom: 1px solid #E5E7EB !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+    padding-bottom: 1.2rem !important;
+    margin-bottom: 1.2rem !important;
+  }
+
+  .informe-sec-title {
+    color: #0F172A !important;
+  }
+
+  .informe-callout {
+    background: #F8FAFC !important;
+    border-color: #CBD5E1 !important;
+    border-left-color: #0284C7 !important;
+    color: #0F172A !important;
+  }
+
+  .informe-table th {
+    background: #F1F5F9 !important;
+    color: #334155 !important;
+    border-bottom-color: #CBD5E1 !important;
+  }
+
+  .informe-table td {
+    border-bottom-color: #E2E8F0 !important;
+    color: #0F172A !important;
+  }
+
+  .informe-stat-box {
+    background: #F8FAFC !important;
+    border-color: #E2E8F0 !important;
+  }
+
+  .informe-text-muted {
+    color: #475569 !important;
+  }
+
+  /* Asegurar que las fuentes y colores se impriman nítidos */
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+}

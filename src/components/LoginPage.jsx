@@ -21,7 +21,7 @@ function AbstractGeoSymbol() {
 
 export function LoginPage({ onNavigateBack, onLoginSuccess }) {
   const [identifier, setIdentifier] = useState('investigador@cochabamba.bo')
-  const [password, setPassword] = useState('microclima2026')
+  const [password, setPassword] = useState('llajtalab2026')
   const [showPassword, setShowPassword] = useState(false)
   const [errors, setErrors] = useState({})
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -77,10 +77,10 @@ export function LoginPage({ onNavigateBack, onLoginSuccess }) {
               <AbstractGeoSymbol />
             </div>
             <h1 id="login-heading" className="login-title">
-              Iniciar sesión
+              LlajtaLab
             </h1>
             <p className="login-subtitle">
-              Ingresa tus credenciales para acceder a la plataforma
+              Laboratorio climático urbano de Cochabamba
             </p>
           </div>
 

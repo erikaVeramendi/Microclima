@@ -40,9 +40,12 @@ import {
   ResearchDiscoveryScreen,
   EvidenceValidationScreen,
   DataManagementScreen,
-  PlanningScenariosScreen,
   ResearchReportsScreen,
 } from './panel/ScreensPart2'
+import IndiceScreen from './panel/IndiceScreen'
+import ComparadorScreen from './panel/ComparadorScreen'
+import PlanificacionScreen from './panel/PlanificacionScreen'
+import SimuladorEquipamientosScreen from './panel/SimuladorEquipamientosScreen'
 import FloatingAiAvatar from './panel/FloatingAiAvatar'
 
 function ModuleSidebarIcon({ type, isActive, accent }) {
@@ -151,6 +154,10 @@ export function InternalPlatform({ userSession, onLogout }) {
     }
 
     switch (activeModuleId) {
+      case 'indice-socioambiental':
+        return <IndiceScreen {...commonProps} />
+      case 'comparador-distritos':
+        return <ComparadorScreen {...commonProps} />
       case 'monitoreo-general':
         return <MonitoreoGeneralScreen {...commonProps} />
       case 'centro-inteligencia':
@@ -163,14 +170,19 @@ export function InternalPlatform({ userSession, onLogout }) {
         return <ThermalIntelligenceScreen {...commonProps} />
       case 'relaciones-ambientales':
         return <EnvironmentalRelationsScreen {...commonProps} />
+      case 'puntos-criticos':
       case 'investigacion-descubrimiento':
         return <ResearchDiscoveryScreen {...commonProps} />
       case 'evidencia-validacion':
         return <EvidenceValidationScreen {...commonProps} />
       case 'gestion-datos':
         return <DataManagementScreen {...commonProps} />
+      case 'planificacion-5anios':
       case 'planificacion-escenarios':
-        return <PlanningScenariosScreen {...commonProps} />
+        return <PlanificacionScreen {...commonProps} />
+      case 'simulador-equipamientos':
+        return <SimuladorEquipamientosScreen {...commonProps} />
+      case 'informe':
       case 'investigaciones-informes':
         return <ResearchReportsScreen {...commonProps} />
       default:
@@ -202,8 +214,8 @@ export function InternalPlatform({ userSession, onLogout }) {
           </div>
           {!sidebarCollapsed && (
             <div className="mon-brand-text">
-              <strong>MICROCLIMA</strong>
-              <span>LABORATORIO AMBIENTAL</span>
+              <strong>LlajtaLab</strong>
+              <span>Laboratorio climático urbano de Cochabamba</span>
             </div>
           )}
           <button
