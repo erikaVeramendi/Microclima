@@ -5,6 +5,8 @@ import {
 } from '../../data/internalPanelData'
 import { SharedGeoCanvas } from './SharedGeoCanvas'
 import GamcMap from './GamcMap'
+import PopulationSourceSelector from './PopulationSourceSelector'
+import { getIneFactor } from './populationUtils'
 import {
   NeonDonutChart,
   NeonSplineChart,
@@ -1100,6 +1102,7 @@ export function TerritorialExplorerScreen({
   const [equipamientosData, setEquipamientosData] = useState(null)
   const [grillaData, setGrillaData] = useState(null)
   const [distritosGeoJson, setDistritosGeoJson] = useState(null)
+  const [basePoblacion, setBasePoblacion] = useState('ghsl')
 
   // Radios de cobertura interactivos (metros)
   const [radioSalud, setRadioSalud] = useState(1000)
@@ -1151,6 +1154,9 @@ export function TerritorialExplorerScreen({
   }, [indiceData, distNum])
 
   const indicadores = distritoInfo?.indicadores
+
+  const ineFactor = useMemo(() => getIneFactor(indiceData), [indiceData])
+  const pobFactor = basePoblacion === 'ine' ? ineFactor : 1
 
   // Promedios municipales oficiales para referencia
   const municipalAvg = useMemo(() => {
@@ -1357,8 +1363,17 @@ export function TerritorialExplorerScreen({
 
   return (
     <div className="neo-screen">
-      {/* 1. Línea bajo el título */}
-      <div style={{ marginBottom: '0.1rem' }}>
+      {/* 1. Línea bajo el título y selector de población */}
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          marginBottom: '0.1rem',
+          flexWrap: 'wrap',
+          gap: '0.5rem',
+        }}
+      >
         <p
           style={{
             margin: 0,
@@ -1369,6 +1384,11 @@ export function TerritorialExplorerScreen({
         >
           Dónde hay y dónde faltan servicios: salud, colegios, transporte y áreas verdes.
         </p>
+
+        <PopulationSourceSelector
+          value={basePoblacion}
+          onChange={setBasePoblacion}
+        />
       </div>
 
       {/* 2. Tarjetas (3): Cobertura de salud, colegios y transporte con promedio municipal debajo */}
@@ -1831,7 +1851,9 @@ export function TerritorialExplorerScreen({
                 <h3>Equipamiento y áreas verdes · {activeZone.shortName}</h3>
               </div>
               <span className="neo-pill-badge neo-pill--cyan">
-                {indicadores?.personas ? `${(indicadores.personas).toLocaleString()} hab.` : 'Datos GAMC'}
+                {indicadores?.personas
+                  ? `${Math.round(indicadores.personas * pobFactor).toLocaleString('es-BO')} hab.`
+                  : 'Datos GAMC'}
               </span>
             </div>
 
@@ -1845,9 +1867,13 @@ export function TerritorialExplorerScreen({
             >
               <tbody>
                 <tr style={{ borderBottom: '1px solid var(--theme-border, rgba(255,255,255,0.06))' }}>
-                  <td style={{ padding: '0.45rem 0', color: 'var(--theme-text-muted)' }}>Población (Censo GHSL 2025)</td>
+                  <td style={{ padding: '0.45rem 0', color: 'var(--theme-text-muted)' }}>
+                    Población ({basePoblacion === 'ine' ? 'Ajustada Censo INE 2024' : 'Censo GHSL 2025'})
+                  </td>
                   <td style={{ padding: '0.45rem 0', textAlign: 'right', fontWeight: 600, color: 'var(--theme-text-primary)' }}>
-                    {indicadores?.personas ? `${indicadores.personas.toLocaleString()} personas` : '—'}
+                    {indicadores?.personas
+                      ? `${Math.round(indicadores.personas * pobFactor).toLocaleString('es-BO')} personas`
+                      : '—'}
                   </td>
                 </tr>
                 <tr style={{ borderBottom: '1px solid var(--theme-border, rgba(255,255,255,0.06))' }}>
@@ -1866,7 +1892,7 @@ export function TerritorialExplorerScreen({
                   <td style={{ padding: '0.45rem 0', color: 'var(--theme-text-muted)' }}>Superficie de áreas verdes</td>
                   <td style={{ padding: '0.45rem 0', textAlign: 'right', fontWeight: 600, color: 'var(--theme-text-primary)' }}>
                     {indicadores?.area_verde_m2
-                      ? `${(indicadores.area_verde_m2 / 10000).toFixed(2)} ha (${Math.round(indicadores.area_verde_m2).toLocaleString()} m²)`
+                      ? `${(indicadores.area_verde_m2 / 10000).toFixed(2).replace('.', ',')} ha (${Math.round(indicadores.area_verde_m2).toLocaleString('es-BO')} m²)`
                       : '—'}
                   </td>
                 </tr>
@@ -1874,7 +1900,7 @@ export function TerritorialExplorerScreen({
                   <td style={{ padding: '0.45rem 0', color: 'var(--theme-text-muted)' }}>Área verde por habitante</td>
                   <td style={{ padding: '0.45rem 0', textAlign: 'right', fontWeight: 600, color: '#10B981' }}>
                     {indicadores?.verde_por_hab !== undefined
-                      ? `${indicadores.verde_por_hab.toFixed(1)} m²/hab.`
+                      ? `${(basePoblacion === 'ine' && indicadores?.area_verde_m2 && indicadores?.personas ? (indicadores.area_verde_m2 / (indicadores.personas * pobFactor)) : indicadores.verde_por_hab).toFixed(1).replace('.', ',')} m²/hab.`
                       : '—'}
                   </td>
                 </tr>

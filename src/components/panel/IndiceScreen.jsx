@@ -10,6 +10,8 @@ import {
   Activity,
 } from 'lucide-react'
 import GamcMap from './GamcMap'
+import PopulationSourceSelector from './PopulationSourceSelector'
+import { getIneFactor } from './populationUtils'
 import { COCHABAMBA_ZONES } from '../../data/internalPanelData'
 import './IndiceScreen.css'
 
@@ -91,8 +93,13 @@ export default function IndiceScreen({
 }) {
   const [indiceData, setIndiceData] = useState(null)
   const [distritosGeoJson, setDistritosGeoJson] = useState(null)
+  const [basePoblacion, setBasePoblacion] = useState('ghsl') // 'ghsl' | 'ine'
   const [loading, setLoading] = useState(true)
   const [activeTooltip, setActiveTooltip] = useState(null)
+
+  // Factor de ajuste al Censo INE 2024
+  const ineFactor = useMemo(() => getIneFactor(indiceData), [indiceData])
+  const pobFactor = basePoblacion === 'ine' ? ineFactor : 1
 
   // Estados interactivos para "Ajusta los pesos"
   const [pesoAmbiente, setPesoAmbiente] = useState(50) // 0 a 100%
@@ -336,8 +343,17 @@ export default function IndiceScreen({
 
   return (
     <div className="neo-screen">
-      {/* 1. Línea bajo el título */}
-      <div style={{ marginBottom: '0.1rem' }}>
+      {/* 1. Línea bajo el título y selector de población */}
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          marginBottom: '0.1rem',
+          flexWrap: 'wrap',
+          gap: '0.5rem',
+        }}
+      >
         <p
           style={{
             margin: 0,
@@ -348,6 +364,11 @@ export default function IndiceScreen({
         >
           Una nota de 1 a 100 para cada distrito: cómo está su ambiente y cuántos servicios tiene.
         </p>
+
+        <PopulationSourceSelector
+          value={basePoblacion}
+          onChange={setBasePoblacion}
+        />
       </div>
 
       {/* 2. Tarjetas (4): Índice · Ranking · Dimensión Ambiental · Dimensión Servicios */}
@@ -629,6 +650,13 @@ export default function IndiceScreen({
           >
             {Object.entries(COMPONENT_DEFINITIONS).map(([key, def]) => {
               const comp = activeDistrito.componentes[key] || { valor: 0, puntaje: 0 }
+              let compValor = comp.valor
+              if (
+                key === 'Habitantes por centro de salud de 1er nivel' ||
+                key === 'Habitantes por unidad educativa'
+              ) {
+                compValor = comp.valor * pobFactor
+              }
               const puntajeRound = Math.round(comp.puntaje)
               const barColor = getSemaphoreColor(puntajeRound)
 
@@ -706,7 +734,7 @@ export default function IndiceScreen({
                           color: 'var(--theme-text-muted)',
                         }}
                       >
-                        {def.format(comp.valor)}
+                        {def.format(compValor)}
                       </span>
                       <strong
                         style={{

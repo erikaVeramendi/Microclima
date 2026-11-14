@@ -8,6 +8,8 @@ import {
   Sparkles,
 } from 'lucide-react'
 import GamcMap from './GamcMap'
+import PopulationSourceSelector from './PopulationSourceSelector'
+import { getIneFactor } from './populationUtils'
 import { COCHABAMBA_ZONES } from '../../data/internalPanelData'
 import './IndiceScreen.css'
 
@@ -31,6 +33,7 @@ export default function PlanificacionScreen({
   const [indiceData, setIndiceData] = useState(null)
   const [distritosGeoJson, setDistritosGeoJson] = useState(null)
   const [scenarioId, setScenarioId] = useState('esperado')
+  const [basePoblacion, setBasePoblacion] = useState('ghsl') // 'ghsl' | 'ine'
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -69,13 +72,17 @@ export default function PlanificacionScreen({
     SCENARIOS.find((s) => s.id === scenarioId) || SCENARIOS[1]
   const mult = activeScenario.mult
 
-  // Cálculos dinámicos con el escenario activo
+  // Factor de ajuste al Censo INE 2024
+  const ineFactor = useMemo(() => getIneFactor(indiceData), [indiceData])
+  const pobFactor = basePoblacion === 'ine' ? ineFactor : 1
+
+  // Cálculos dinámicos con el escenario activo y base de población
   const distritosCalculados = useMemo(() => {
     if (!indiceData?.distritos) return []
 
     return indiceData.distritos.map((d) => {
       const ind = d.indicadores || {}
-      const pobHoy = ind.personas || 0
+      const pobHoy = Math.round((ind.personas || 0) * pobFactor)
       const baseGrowth = (ind.factor_2030 || 1.0) - 1.0 // e.g. 0.07 para 7%
       const scenarioGrowth = baseGrowth * mult
       const pob2030Calc = Math.round(pobHoy * (1 + scenarioGrowth))
@@ -98,7 +105,7 @@ export default function PlanificacionScreen({
         cobSalud2030: ind.cobertura_salud_2030 || 0,
       }
     })
-  }, [indiceData, mult])
+  }, [indiceData, mult, pobFactor])
 
   // Métricas agregadas municipales
   const municipalStats = useMemo(() => {
@@ -206,12 +213,19 @@ export default function PlanificacionScreen({
     )
   }
 
-  const anioCenso = indiceData?.meta?.anio_censo || 2024
-
   return (
     <div className="neo-screen">
-      {/* 1. Línea bajo el título */}
-      <div style={{ marginBottom: '0.1rem' }}>
+      {/* 1. Línea bajo el título y selector de población */}
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          marginBottom: '0.1rem',
+          flexWrap: 'wrap',
+          gap: '0.5rem',
+        }}
+      >
         <p
           style={{
             margin: 0,
@@ -222,6 +236,11 @@ export default function PlanificacionScreen({
         >
           Cómo crecerá cada distrito al 2030 y dónde faltarán servicios.
         </p>
+
+        <PopulationSourceSelector
+          value={basePoblacion}
+          onChange={setBasePoblacion}
+        />
       </div>
 
       {/* 2. Tarjetas (3): Población municipio · Distrito que más crece · Cobertura salud */}
@@ -790,7 +809,7 @@ export default function PlanificacionScreen({
             fontStyle: 'italic',
           }}
         >
-          Proyección basada en el censo {anioCenso} y el crecimiento estimado por la grilla de población GHSL. Es una estimación.
+          Población estimada con la grilla GHSL (Comisión Europea) para 2025 y 2030. Es una estimación, no un censo.
         </p>
       </footer>
     </div>
