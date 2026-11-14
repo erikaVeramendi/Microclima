@@ -45,6 +45,7 @@ import {
 import IndiceScreen from './panel/IndiceScreen'
 import ComparadorScreen from './panel/ComparadorScreen'
 import PlanificacionScreen from './panel/PlanificacionScreen'
+import SimuladorEquipamientosScreen from './panel/SimuladorEquipamientosScreen'
 import FloatingAiAvatar from './panel/FloatingAiAvatar'
 
 function ModuleSidebarIcon({ type, isActive, accent }) {
@@ -179,6 +180,8 @@ export function InternalPlatform({ userSession, onLogout }) {
       case 'planificacion-5anios':
       case 'planificacion-escenarios':
         return <PlanificacionScreen {...commonProps} />
+      case 'simulador-equipamientos':
+        return <SimuladorEquipamientosScreen {...commonProps} />
       case 'investigaciones-informes':
         return <ResearchReportsScreen {...commonProps} />
       default:

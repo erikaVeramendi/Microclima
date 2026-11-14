@@ -501,6 +501,34 @@ export default function GamcMap({
 
     if (geojson) {
       const vectorLayer = L.geoJSON(geojson, {
+        pointToLayer: (feature, latlng) => {
+          if (feature.properties?.isCandidate) {
+            const num = feature.properties?.candidateNumber || ''
+            const icon = L.divIcon({
+              className: 'candidate-marker',
+              html: `<div style="background:#8B5CF6; color:#fff; border-radius:50%; width:22px; height:22px; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:11px; border:2px solid #fff; box-shadow:0 2px 8px rgba(0,0,0,0.4);">${num}</div>`,
+              iconSize: [22, 22],
+              iconAnchor: [11, 11],
+            })
+            return L.marker(latlng, { icon })
+          }
+          if (feature.properties?.isNewSimulated) {
+            const icon = L.divIcon({
+              className: 'new-simulated-marker',
+              html: `<div style="background:#EF4444; color:#fff; border-radius:50%; width:26px; height:26px; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:14px; border:2px solid #fff; box-shadow:0 0 12px #EF4444;">★</div>`,
+              iconSize: [26, 26],
+              iconAnchor: [13, 13],
+            })
+            return L.marker(latlng, { icon })
+          }
+          return L.circleMarker(latlng, {
+            radius: 5,
+            fillColor: feature.properties?.fillColor || '#EF4444',
+            color: '#ffffff',
+            weight: 1.5,
+            fillOpacity: 0.85,
+          })
+        },
         style: (feature) => {
           const isSelected = feature?.properties?.selected
           const fillColor =
