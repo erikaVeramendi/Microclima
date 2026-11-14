@@ -27,6 +27,7 @@ import {
   AlertTriangle,
   Calendar,
   Building2,
+  CloudRain,
 } from 'lucide-react'
 import './InternalPlatform.css'
 import {
@@ -114,31 +115,31 @@ const MENU_GROUPS = [
         ],
       },
       {
-        id: 'red-monica',
-        title: '3 Red MÓNICA',
-        shortLabel: '3 Red MÓNICA',
-        icon: 'network',
-        accent: '#A78BFA',
-        aiRole: 'Analista de Calidad del Aire',
+        id: 'lluvias-inundaciones',
+        title: '3 Lluvias e inundaciones',
+        shortLabel: '3 Lluvias e inundaciones',
+        icon: 'cloud-rain',
+        accent: '#38BDF8',
+        aiRole: 'Analista Hidrometeorológico',
         aiGreeting:
-          'Módulo Red MÓNICA activo. Cruzo calidad del aire (PM10/PM2.5) con islas de calor superficiales.',
+          'Módulo de Lluvias e Inundaciones. Analizo relaciones entre precipitaciones, escorrentía e impermeabilización urbana.',
         aiPrompts: [
-          '¿Cómo se vincula el pico matutino de PM10 con la inversión térmica?',
-          '¿Qué intensidad tiene la relación inversa NDVI vs LST?',
+          '¿Qué distritos presentan mayor susceptibilidad de inundación?',
+          '¿Cómo influye la impermeabilización en los anegamientos?',
         ],
       },
       {
         id: 'sensado-virtual-ia',
-        title: '4 Sensado virtual con IA',
+        title: '4 Sensado virtual con IA (incluye Red MÓNICA)',
         shortLabel: '4 Sensado virtual con IA',
         icon: 'shield-check',
-        accent: '#38BDF8',
+        accent: '#A78BFA',
         aiRole: 'Auditor Científico de IA',
         aiGreeting:
-          'Sensado Virtual con IA activo. Evalúo incertidumbre espectral, calibración y pasaporte de trazabilidad.',
+          'Sensado Virtual con IA y Red MÓNICA activo. Evalúo incertidumbre espectral, calibración física en superficie y pasaporte de trazabilidad.',
         aiPrompts: [
+          '¿Cómo calibra la Red MÓNICA las estimaciones de IA?',
           '¿Cuál es el nivel de confianza satelital en este sector?',
-          '¿Qué sensores faltan para calibrar en campo?',
         ],
       },
       {
@@ -301,6 +302,8 @@ function ModuleSidebarIcon({ type, isActive, accent }) {
       return <Activity {...props} />
     case 'trending-up':
       return <TrendingUp {...props} />
+    case 'cloud-rain':
+      return <CloudRain {...props} />
     case 'network':
       return <Network {...props} />
     case 'shield-check':
@@ -425,6 +428,7 @@ export function InternalPlatform({ userSession, onLogout }) {
       case 'detective-tendencias':
       case 'inteligencia-termica':
         return <ThermalIntelligenceScreen {...commonProps} />
+      case 'lluvias-inundaciones':
       case 'red-monica':
       case 'relaciones-ambientales':
         return <EnvironmentalRelationsScreen {...commonProps} />
