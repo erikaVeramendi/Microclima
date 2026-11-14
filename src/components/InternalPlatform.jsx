@@ -40,11 +40,11 @@ import {
   ResearchDiscoveryScreen,
   EvidenceValidationScreen,
   DataManagementScreen,
-  PlanningScenariosScreen,
   ResearchReportsScreen,
 } from './panel/ScreensPart2'
 import IndiceScreen from './panel/IndiceScreen'
 import ComparadorScreen from './panel/ComparadorScreen'
+import PlanificacionScreen from './panel/PlanificacionScreen'
 import FloatingAiAvatar from './panel/FloatingAiAvatar'
 
 function ModuleSidebarIcon({ type, isActive, accent }) {
@@ -176,8 +176,9 @@ export function InternalPlatform({ userSession, onLogout }) {
         return <EvidenceValidationScreen {...commonProps} />
       case 'gestion-datos':
         return <DataManagementScreen {...commonProps} />
+      case 'planificacion-5anios':
       case 'planificacion-escenarios':
-        return <PlanningScenariosScreen {...commonProps} />
+        return <PlanificacionScreen {...commonProps} />
       case 'investigaciones-informes':
         return <ResearchReportsScreen {...commonProps} />
       default:
