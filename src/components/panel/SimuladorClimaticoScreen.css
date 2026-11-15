@@ -1,0 +1,1024 @@
+/* =========================================================================
+   SimuladorClimaticoScreen.css
+   Estilos específicos para la pestaña "5 Simulador climático"
+   Adaptable a tema oscuro y claro mediante variables globales
+   ========================================================================= */
+
+.sim-clim-screen {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  padding: 0.25rem 0 2rem;
+  color: var(--theme-text, #F8FAFC);
+  --sim-icon-color: #8A94A6;
+}
+
+[data-theme='light'] .sim-clim-screen {
+  --sim-icon-color: #6B6559;
+  color: #0F172A;
+}
+
+.sim-clim-icon {
+  color: var(--sim-icon-color);
+  flex-shrink: 0;
+}
+
+/* 1. ENCABEZADO */
+.sim-clim-header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.sim-clim-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.85rem;
+}
+
+.sim-clim-title-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.sim-clim-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  flex-wrap: wrap;
+}
+
+.sim-clim-title {
+  font-size: 1.45rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  margin: 0;
+  color: var(--theme-text, #F8FAFC);
+}
+
+[data-theme='light'] .sim-clim-title {
+  color: #0F172A;
+}
+
+.sim-clim-badge-estimacion {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  padding: 0.22rem 0.65rem;
+  border-radius: 999px;
+  background: rgba(92, 234, 0, 0.12);
+  color: #5CEA00;
+  border: 1px solid rgba(92, 234, 0, 0.35);
+}
+
+[data-theme='light'] .sim-clim-badge-estimacion {
+  background: #DCFCE7;
+  color: #166534;
+  border-color: #86EFAC;
+}
+
+.sim-clim-subtitle {
+  font-size: 0.92rem;
+  color: var(--theme-text-secondary, #94A3B8);
+  margin: 0;
+  line-height: 1.45;
+}
+
+[data-theme='light'] .sim-clim-subtitle {
+  color: #475569;
+}
+
+/* Selector de distrito */
+.sim-clim-dist-selector {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: var(--theme-card-bg, #0E172F);
+  padding: 0.35rem 0.75rem;
+  border-radius: 8px;
+  border: 1px solid var(--theme-border, rgba(56, 189, 248, 0.18));
+}
+
+[data-theme='light'] .sim-clim-dist-selector {
+  background: #FFFFFF;
+  border-color: #CBD5E1;
+}
+
+.sim-clim-selector-label {
+  font-size: 0.76rem;
+  font-weight: 600;
+  color: var(--theme-text-muted, #64748B);
+}
+
+.sim-clim-select {
+  background: transparent;
+  color: var(--theme-text, #F8FAFC);
+  border: none;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  outline: none;
+}
+
+[data-theme='light'] .sim-clim-select {
+  color: #0F172A;
+}
+
+.sim-clim-select option {
+  background: #0E172F;
+  color: #F8FAFC;
+}
+
+[data-theme='light'] .sim-clim-select option {
+  background: #FFFFFF;
+  color: #0F172A;
+}
+
+/* 2. CONTROL: DESLIZADOR */
+.sim-clim-control-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  padding: 1rem 1.25rem;
+  border-radius: 12px;
+  background: var(--theme-card-bg, rgba(14, 23, 47, 0.88));
+  border: 1px solid var(--theme-border, rgba(56, 189, 248, 0.18));
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.2);
+}
+
+[data-theme='light'] .sim-clim-control-card {
+  background: #FFFFFF;
+  border-color: #E2E8F0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.sim-clim-slider-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.sim-clim-slider-label-group {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.65rem;
+  flex: 1;
+  min-width: 240px;
+}
+
+.sim-clim-slider-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--theme-text, #F8FAFC);
+  display: block;
+}
+
+[data-theme='light'] .sim-clim-slider-title {
+  color: #0F172A;
+}
+
+.sim-clim-slider-hint {
+  font-size: 0.78rem;
+  color: var(--theme-text-muted, #64748B);
+  margin: 0.15rem 0 0;
+  line-height: 1.35;
+}
+
+[data-theme='light'] .sim-clim-slider-hint {
+  color: #64748B;
+}
+
+.sim-clim-slider-val-badge {
+  display: inline-flex;
+  align-items: center;
+  font-size: 1.05rem;
+  font-weight: 800;
+  font-family: var(--font-mono, monospace);
+  padding: 0.35rem 0.9rem;
+  border-radius: 8px;
+}
+
+.sim-clim-slider-val-badge.is-cooling {
+  background: rgba(34, 197, 94, 0.15);
+  color: #4ADE80;
+  border: 1px solid rgba(34, 197, 94, 0.4);
+}
+
+[data-theme='light'] .sim-clim-slider-val-badge.is-cooling {
+  background: #DCFCE7;
+  color: #15803D;
+  border-color: #86EFAC;
+}
+
+.sim-clim-slider-val-badge.is-warming {
+  background: rgba(239, 68, 68, 0.15);
+  color: #F87171;
+  border: 1px solid rgba(239, 68, 68, 0.4);
+}
+
+[data-theme='light'] .sim-clim-slider-val-badge.is-warming {
+  background: #FEE2E2;
+  color: #B91C1C;
+  border-color: #FCA5A5;
+}
+
+.sim-clim-slider-val-badge.is-neutral {
+  background: rgba(148, 163, 184, 0.12);
+  color: #94A3B8;
+  border: 1px solid rgba(148, 163, 184, 0.3);
+}
+
+[data-theme='light'] .sim-clim-slider-val-badge.is-neutral {
+  background: #F1F5F9;
+  color: #475569;
+  border-color: #CBD5E1;
+}
+
+/* Input range */
+.sim-clim-slider-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  padding: 0.25rem 0;
+}
+
+.sim-clim-range-input {
+  width: 100%;
+  height: 8px;
+  border-radius: 4px;
+  background: #1E293B;
+  outline: none;
+  cursor: pointer;
+  accent-color: #38BDF8;
+}
+
+[data-theme='light'] .sim-clim-range-input {
+  background: #E2E8F0;
+  accent-color: #0284C7;
+}
+
+.sim-clim-range-ticks {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.7rem;
+  color: var(--theme-text-muted, #64748B);
+  font-family: var(--font-mono, monospace);
+  padding: 0 2px;
+}
+
+.sim-clim-range-ticks .tick-zero {
+  font-weight: 700;
+  color: var(--theme-text, #F8FAFC);
+}
+
+[data-theme='light'] .sim-clim-range-ticks .tick-zero {
+  color: #0F172A;
+}
+
+/* Presets */
+.sim-clim-presets-row {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  flex-wrap: wrap;
+  padding-top: 0.4rem;
+  border-top: 1px solid var(--theme-border-subtle, rgba(255, 255, 255, 0.06));
+}
+
+[data-theme='light'] .sim-clim-presets-row {
+  border-top-color: #F1F5F9;
+}
+
+.sim-clim-presets-title {
+  font-size: 0.74rem;
+  font-weight: 600;
+  color: var(--theme-text-muted, #64748B);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.sim-clim-presets-list {
+  display: flex;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+}
+
+.sim-clim-preset-btn {
+  font-size: 0.72rem;
+  padding: 0.24rem 0.6rem;
+  border-radius: 6px;
+  border: 1px solid var(--theme-border, rgba(56, 189, 248, 0.2));
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--theme-text-secondary, #94A3B8);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+[data-theme='light'] .sim-clim-preset-btn {
+  background: #F8FAFC;
+  border-color: #CBD5E1;
+  color: #475569;
+}
+
+.sim-clim-preset-btn:hover {
+  background: rgba(56, 189, 248, 0.1);
+  color: #38BDF8;
+}
+
+[data-theme='light'] .sim-clim-preset-btn:hover {
+  background: #E0F2FE;
+  color: #0284C7;
+  border-color: #38BDF8;
+}
+
+.sim-clim-preset-btn.is-active {
+  background: var(--theme-accent, #38BDF8);
+  color: #040814;
+  font-weight: 700;
+  border-color: var(--theme-accent, #38BDF8);
+}
+
+[data-theme='light'] .sim-clim-preset-btn.is-active {
+  background: #0284C7;
+  color: #FFFFFF;
+  border-color: #0284C7;
+}
+
+/* 3. TARJETAS (3 KPI CARDS) */
+.sim-clim-kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+}
+
+@media (max-width: 900px) {
+  .sim-clim-kpi-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.sim-clim-kpi-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 0.6rem;
+  padding: 1rem 1.15rem;
+  border-radius: 12px;
+  background: var(--theme-card-bg, rgba(14, 23, 47, 0.88));
+  border: 1px solid var(--theme-border, rgba(56, 189, 248, 0.18));
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.15);
+}
+
+[data-theme='light'] .sim-clim-kpi-card {
+  background: #FFFFFF;
+  border-color: #E2E8F0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.sim-clim-kpi-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.sim-clim-kpi-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  color: var(--theme-text-muted, #64748B);
+  text-transform: uppercase;
+}
+
+.sim-clim-kpi-val-row {
+  display: flex;
+  align-items: baseline;
+  gap: 0.45rem;
+  flex-wrap: wrap;
+}
+
+.sim-clim-kpi-orig {
+  font-size: 0.95rem;
+  color: var(--theme-text-muted, #64748B);
+  text-decoration: line-through;
+  font-family: var(--font-mono, monospace);
+}
+
+.sim-clim-arrow {
+  color: var(--theme-text-muted, #64748B);
+}
+
+.sim-clim-kpi-val {
+  font-size: 1.45rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  font-family: var(--font-mono, monospace);
+  color: var(--theme-text, #F8FAFC);
+}
+
+[data-theme='light'] .sim-clim-kpi-val {
+  color: #0F172A;
+}
+
+.sim-clim-kpi-val.is-green {
+  color: #4ADE80;
+}
+
+[data-theme='light'] .sim-clim-kpi-val.is-green {
+  color: #15803D;
+}
+
+.sim-clim-kpi-val.is-cool {
+  color: #38BDF8;
+}
+
+[data-theme='light'] .sim-clim-kpi-val.is-cool {
+  color: #0284C7;
+}
+
+.sim-clim-kpi-val.is-warm {
+  color: #F87171;
+}
+
+[data-theme='light'] .sim-clim-kpi-val.is-warm {
+  color: #DC2626;
+}
+
+.sim-clim-kpi-val.is-cyan {
+  color: #00BEFC;
+}
+
+[data-theme='light'] .sim-clim-kpi-val.is-cyan {
+  color: #0369A1;
+}
+
+.sim-clim-kpi-sub {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.sim-clim-delta-chip {
+  font-size: 0.72rem;
+  font-weight: 700;
+  font-family: var(--font-mono, monospace);
+  padding: 0.15rem 0.45rem;
+  border-radius: 6px;
+}
+
+.sim-clim-delta-chip.chip-cool {
+  background: rgba(34, 197, 94, 0.15);
+  color: #4ADE80;
+}
+
+[data-theme='light'] .sim-clim-delta-chip.chip-cool {
+  background: #DCFCE7;
+  color: #15803D;
+}
+
+.sim-clim-delta-chip.chip-warm {
+  background: rgba(239, 68, 68, 0.15);
+  color: #F87171;
+}
+
+[data-theme='light'] .sim-clim-delta-chip.chip-warm {
+  background: #FEE2E2;
+  color: #B91C1C;
+}
+
+.sim-clim-delta-chip.chip-neut {
+  background: rgba(148, 163, 184, 0.12);
+  color: #94A3B8;
+}
+
+[data-theme='light'] .sim-clim-delta-chip.chip-neut {
+  background: #F1F5F9;
+  color: #475569;
+}
+
+.sim-clim-delta-chip.chip-info {
+  background: rgba(56, 189, 248, 0.15);
+  color: #38BDF8;
+}
+
+[data-theme='light'] .sim-clim-delta-chip.chip-info {
+  background: #E0F2FE;
+  color: #0284C7;
+}
+
+.sim-clim-kpi-desc {
+  font-size: 0.74rem;
+  color: var(--theme-text-muted, #64748B);
+}
+
+/* 4. CENTRO: MAPA + PANEL EXPLICATIVO */
+.sim-clim-center-grid {
+  display: grid;
+  grid-template-columns: 1.15fr 0.85fr;
+  gap: 1.25rem;
+}
+
+@media (max-width: 1040px) {
+  .sim-clim-center-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.sim-clim-map-card,
+.sim-clim-info-card {
+  display: flex;
+  flex-direction: column;
+  padding: 1.15rem;
+  border-radius: 12px;
+  background: var(--theme-card-bg, rgba(14, 23, 47, 0.88));
+  border: 1px solid var(--theme-border, rgba(56, 189, 248, 0.18));
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.15);
+}
+
+[data-theme='light'] .sim-clim-map-card,
+[data-theme='light'] .sim-clim-info-card {
+  background: #FFFFFF;
+  border-color: #E2E8F0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.sim-clim-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.65rem;
+  margin-bottom: 0.85rem;
+}
+
+.sim-clim-card-title {
+  font-size: 0.98rem;
+  font-weight: 700;
+  margin: 0.15rem 0 0;
+  color: var(--theme-text, #F8FAFC);
+}
+
+[data-theme='light'] .sim-clim-card-title {
+  color: #0F172A;
+}
+
+.sim-clim-map-badge {
+  font-size: 0.72rem;
+  font-weight: 600;
+  padding: 0.2rem 0.55rem;
+  border-radius: 6px;
+  background: rgba(56, 189, 248, 0.12);
+  color: #38BDF8;
+  border: 1px solid rgba(56, 189, 248, 0.25);
+}
+
+[data-theme='light'] .sim-clim-map-badge {
+  background: #E0F2FE;
+  color: #0284C7;
+  border-color: #BAE6FD;
+}
+
+/* SVG Map */
+.sim-clim-svg-map-stage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+.sim-clim-svg-map {
+  width: 100%;
+  max-height: 420px;
+  filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.35));
+}
+
+.sim-clim-map-polygon {
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.sim-clim-map-polygon:hover path {
+  fill-opacity: 1;
+  stroke: #FDE300;
+  stroke-width: 2.5;
+}
+
+.sim-clim-map-polygon.is-selected path {
+  filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.6));
+}
+
+.sim-clim-map-label {
+  pointer-events: none;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
+}
+
+.sim-clim-map-temp {
+  pointer-events: none;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
+}
+
+/* Map legend */
+.sim-clim-map-legend {
+  width: 100%;
+  margin-top: 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.sim-clim-legend-bar-wrap {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 0.72rem;
+  color: var(--theme-text-muted, #64748B);
+  font-family: var(--font-mono, monospace);
+}
+
+.sim-clim-legend-gradient {
+  flex: 1;
+  height: 8px;
+  border-radius: 4px;
+  background: linear-gradient(
+    90deg,
+    #0284C7 0%,
+    #06B6D4 25%,
+    #10B981 50%,
+    #EAB308 75%,
+    #EF4444 100%
+  );
+}
+
+.sim-clim-legend-bound {
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.sim-clim-legend-note {
+  font-size: 0.74rem;
+  color: var(--theme-text-muted, #64748B);
+  margin: 0;
+  line-height: 1.35;
+}
+
+/* Info Panel / Regresion */
+.sim-clim-info-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.sim-clim-formula-box {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  padding: 0.75rem 0.95rem;
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.25);
+  border: 1px solid var(--theme-border-subtle, rgba(255, 255, 255, 0.08));
+}
+
+[data-theme='light'] .sim-clim-formula-box {
+  background: #F8FAFC;
+  border-color: #E2E8F0;
+}
+
+.sim-clim-formula-tag {
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: var(--theme-accent, #38BDF8);
+}
+
+[data-theme='light'] .sim-clim-formula-tag {
+  color: #0284C7;
+}
+
+.sim-clim-formula-code {
+  font-size: 0.88rem;
+  font-weight: 700;
+  font-family: var(--font-mono, monospace);
+  color: var(--theme-text, #F8FAFC);
+}
+
+[data-theme='light'] .sim-clim-formula-code {
+  color: #0F172A;
+}
+
+.sim-clim-metrics-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.65rem;
+}
+
+.sim-clim-metric-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  padding: 0.6rem 0.75rem;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--theme-border-subtle, rgba(255, 255, 255, 0.06));
+}
+
+[data-theme='light'] .sim-clim-metric-item {
+  background: #F8FAFC;
+  border-color: #E2E8F0;
+}
+
+.sim-clim-metric-lbl {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--theme-text-muted, #64748B);
+}
+
+.sim-clim-metric-val {
+  font-size: 1.15rem;
+  font-weight: 800;
+  font-family: var(--font-mono, monospace);
+  color: var(--theme-text, #F8FAFC);
+}
+
+[data-theme='light'] .sim-clim-metric-val {
+  color: #0F172A;
+}
+
+.sim-clim-metric-val.is-orange {
+  color: #F97316;
+}
+
+.sim-clim-metric-val.is-cyan {
+  color: #38BDF8;
+}
+
+[data-theme='light'] .sim-clim-metric-val.is-cyan {
+  color: #0284C7;
+}
+
+.sim-clim-metric-val.is-green {
+  color: #4ADE80;
+}
+
+[data-theme='light'] .sim-clim-metric-val.is-green {
+  color: #15803D;
+}
+
+.sim-clim-metric-hint {
+  font-size: 0.68rem;
+  color: var(--theme-text-muted, #64748B);
+}
+
+.sim-clim-explanation-text {
+  font-size: 0.78rem;
+  color: var(--theme-text-secondary, #94A3B8);
+  line-height: 1.45;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+[data-theme='light'] .sim-clim-explanation-text {
+  color: #475569;
+}
+
+.sim-clim-district-snapshot {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  padding: 0.65rem 0.85rem;
+  border-radius: 8px;
+  background: rgba(56, 189, 248, 0.05);
+  border: 1px solid rgba(56, 189, 248, 0.18);
+}
+
+[data-theme='light'] .sim-clim-district-snapshot {
+  background: #F0F9FF;
+  border-color: #BAE6FD;
+}
+
+.sim-clim-snap-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.78rem;
+  color: var(--theme-text, #F8FAFC);
+}
+
+[data-theme='light'] .sim-clim-snap-header {
+  color: #0F172A;
+}
+
+.sim-clim-snap-badge {
+  font-size: 0.68rem;
+  padding: 0.12rem 0.45rem;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--theme-text-muted, #64748B);
+}
+
+.sim-clim-snap-stats {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.74rem;
+  color: var(--theme-text-muted, #64748B);
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.sim-clim-snap-stats strong {
+  color: var(--theme-text, #F8FAFC);
+  margin-left: 0.25rem;
+  font-family: var(--font-mono, monospace);
+}
+
+[data-theme='light'] .sim-clim-snap-stats strong {
+  color: #0F172A;
+}
+
+.sim-clim-snap-stats strong.is-cool {
+  color: #38BDF8;
+}
+
+[data-theme='light'] .sim-clim-snap-stats strong.is-cool {
+  color: #0284C7;
+}
+
+.sim-clim-snap-stats strong.is-warm {
+  color: #F87171;
+}
+
+[data-theme='light'] .sim-clim-snap-stats strong.is-warm {
+  color: #DC2626;
+}
+
+/* 5. ABAJO: DATO NOCTURNO REAL */
+.sim-clim-night-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 1.15rem 1.25rem;
+  border-radius: 12px;
+  background: var(--theme-card-bg, rgba(14, 23, 47, 0.88));
+  border: 1px solid var(--theme-border, rgba(56, 189, 248, 0.18));
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.15);
+}
+
+[data-theme='light'] .sim-clim-night-card {
+  background: #FFFFFF;
+  border-color: #E2E8F0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.sim-clim-night-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.65rem;
+  flex-wrap: wrap;
+}
+
+.sim-clim-night-title-group {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+.sim-clim-night-title {
+  font-size: 1.05rem;
+  font-weight: 700;
+  margin: 0;
+  color: var(--theme-text, #F8FAFC);
+}
+
+[data-theme='light'] .sim-clim-night-title {
+  color: #0F172A;
+}
+
+.sim-clim-sig-pill {
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 0.22rem 0.65rem;
+  border-radius: 999px;
+}
+
+.sim-clim-sig-pill.is-sig {
+  background: rgba(34, 197, 94, 0.15);
+  color: #4ADE80;
+  border: 1px solid rgba(34, 197, 94, 0.35);
+}
+
+[data-theme='light'] .sim-clim-sig-pill.is-sig {
+  background: #DCFCE7;
+  color: #15803D;
+  border-color: #86EFAC;
+}
+
+.sim-clim-night-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.25rem;
+  flex-wrap: wrap;
+  padding: 0.85rem 1rem;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--theme-border-subtle, rgba(255, 255, 255, 0.06));
+}
+
+[data-theme='light'] .sim-clim-night-content {
+  background: #F8FAFC;
+  border-color: #E2E8F0;
+}
+
+.sim-clim-night-sentence-box {
+  flex: 1;
+  min-width: 280px;
+}
+
+.sim-clim-night-sentence {
+  font-size: 0.98rem;
+  color: var(--theme-text, #F8FAFC);
+  margin: 0;
+  font-style: italic;
+  line-height: 1.45;
+}
+
+[data-theme='light'] .sim-clim-night-sentence {
+  color: #0F172A;
+}
+
+.sim-clim-night-highlight {
+  color: #F59E0B;
+  font-weight: 800;
+  font-style: normal;
+  font-family: var(--font-mono, monospace);
+}
+
+[data-theme='light'] .sim-clim-night-highlight {
+  color: #D97706;
+}
+
+.sim-clim-night-metrics {
+  display: flex;
+  gap: 1.25rem;
+  flex-wrap: wrap;
+}
+
+.sim-clim-night-metric {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  font-size: 0.72rem;
+  color: var(--theme-text-muted, #64748B);
+}
+
+.sim-clim-night-metric strong {
+  font-size: 0.88rem;
+  color: var(--theme-text, #F8FAFC);
+  font-family: var(--font-mono, monospace);
+}
+
+[data-theme='light'] .sim-clim-night-metric strong {
+  color: #0F172A;
+}
+
+.sim-clim-night-note {
+  font-size: 0.76rem;
+  color: var(--theme-text-secondary, #94A3B8);
+  margin: 0;
+  line-height: 1.4;
+}
+
+[data-theme='light'] .sim-clim-night-note {
+  color: #475569;
+}
+
+/* 6. AVISO METODOLÓGICO ÚNICO */
+.sim-clim-footer-notice {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.65rem;
+  padding: 0.65rem 1rem;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--theme-border, rgba(56, 189, 248, 0.12));
+  font-size: 0.76rem;
+  color: var(--theme-text-muted, #64748B);
+  line-height: 1.4;
+  text-align: center;
+}
+
+[data-theme='light'] .sim-clim-footer-notice {
+  background: #F8FAFC;
+  border-color: #E2E8F0;
+  color: #64748B;
+}
