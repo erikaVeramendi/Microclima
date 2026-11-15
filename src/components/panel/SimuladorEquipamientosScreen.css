@@ -94,7 +94,8 @@
   transform: translateY(-1px);
 }
 
-.sim-type-btn.type-salud.is-active {
+.sim-type-btn.type-salud.is-active,
+[data-theme='light'] .sim-type-btn.type-salud.is-active {
   background: #DC2626 !important;
   border-color: #B91C1C !important;
   color: #FFFFFF !important;
@@ -102,12 +103,16 @@
   box-shadow: 0 3px 10px rgba(220, 38, 38, 0.35);
 }
 
+.sim-type-btn.type-salud.is-active span,
+[data-theme='light'] .sim-type-btn.type-salud.is-active span,
 .sim-type-btn.type-salud.is-active svg {
   color: #FFFFFF !important;
   stroke: #FFFFFF !important;
+  font-weight: 800 !important;
 }
 
-.sim-type-btn.type-colegio.is-active {
+.sim-type-btn.type-colegio.is-active,
+[data-theme='light'] .sim-type-btn.type-colegio.is-active {
   background: #2563EB !important;
   border-color: #1D4ED8 !important;
   color: #FFFFFF !important;
@@ -115,12 +120,16 @@
   box-shadow: 0 3px 10px rgba(37, 99, 235, 0.35);
 }
 
+.sim-type-btn.type-colegio.is-active span,
+[data-theme='light'] .sim-type-btn.type-colegio.is-active span,
 .sim-type-btn.type-colegio.is-active svg {
   color: #FFFFFF !important;
   stroke: #FFFFFF !important;
+  font-weight: 800 !important;
 }
 
-.sim-type-btn.type-parque.is-active {
+.sim-type-btn.type-parque.is-active,
+[data-theme='light'] .sim-type-btn.type-parque.is-active {
   background: #059669 !important;
   border-color: #047857 !important;
   color: #FFFFFF !important;
@@ -128,9 +137,12 @@
   box-shadow: 0 3px 10px rgba(5, 150, 105, 0.35);
 }
 
+.sim-type-btn.type-parque.is-active span,
+[data-theme='light'] .sim-type-btn.type-parque.is-active span,
 .sim-type-btn.type-parque.is-active svg {
   color: #FFFFFF !important;
   stroke: #FFFFFF !important;
+  font-weight: 800 !important;
 }
 
 /* PILLS DE AÑO DE CÁLCULO */
@@ -163,16 +175,19 @@
   color: #94A3B8;
 }
 
-.sim-year-btn.is-active {
-  background: #FFFFFF;
-  color: #0284C7;
-  font-weight: 700;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+.sim-year-btn.is-active,
+[data-theme='light'] .sim-year-btn.is-active,
+[data-theme='dark'] .sim-year-btn.is-active {
+  background: #0284C7 !important;
+  color: #FFFFFF !important;
+  font-weight: 800 !important;
+  box-shadow: 0 2px 6px rgba(2, 132, 199, 0.25);
 }
 
-[data-theme='dark'] .sim-year-btn.is-active {
-  background: #0284C7;
-  color: #FFFFFF;
+.sim-year-btn.is-active span,
+[data-theme='light'] .sim-year-btn.is-active span {
+  color: #FFFFFF !important;
+  font-weight: 800 !important;
 }
 
 /* GRID PRINCIPAL: MAPA INTERACTIVO (1.3) Y PANEL DE IMPACTO (1) */
@@ -266,11 +281,20 @@
   color: #0284C7;
 }
 
-.sim-candidate-pill.is-active {
+.sim-candidate-pill.is-active,
+[data-theme='light'] .sim-candidate-pill.is-active {
   background: #0284C7 !important;
   color: #FFFFFF !important;
+  font-weight: 800 !important;
   border-color: #0284C7 !important;
   box-shadow: 0 2px 6px rgba(2, 132, 199, 0.3);
+}
+
+.sim-candidate-pill.is-active span,
+[data-theme='light'] .sim-candidate-pill.is-active span,
+.sim-candidate-pill.is-active svg {
+  color: #FFFFFF !important;
+  font-weight: 800 !important;
 }
 
 /* LEYENDA DEL SIMULADOR */
@@ -433,7 +457,8 @@
 }
 
 /* BOTÓN DE GUARDAR Y COMPARAR (ALTO CONTRASTE BLANCO PURO) */
-.sim-btn-save {
+.sim-btn-save,
+[data-theme='light'] .sim-btn-save {
   width: 100%;
   padding: 0.65rem;
   border-radius: 8px;
@@ -451,15 +476,64 @@
   box-shadow: 0 2px 6px rgba(2, 132, 199, 0.25);
 }
 
+.sim-btn-save span,
+[data-theme='light'] .sim-btn-save span,
 .sim-btn-save svg {
   color: #FFFFFF !important;
   stroke: #FFFFFF !important;
+  font-weight: 800 !important;
 }
 
 .sim-btn-save:hover {
   background: #0369A1 !important;
   border-color: #0369A1 !important;
   box-shadow: 0 4px 12px rgba(2, 132, 199, 0.35);
+}
+
+/* BANNER DE VEREDICTO DE VIABILIDAD EN EL PANEL DERECHO */
+.sim-verdict-banner {
+  padding: 0.65rem 0.75rem;
+  border-radius: 10px;
+  border: 1.5px solid transparent;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.sim-verdict-banner.verdict-green {
+  background: #ECFDF5;
+  border-color: #10B981;
+  color: #065F46;
+}
+
+.sim-verdict-banner.verdict-yellow {
+  background: #FFFBEB;
+  border-color: #F59E0B;
+  color: #92400E;
+}
+
+.sim-verdict-banner.verdict-red {
+  background: #FEF2F2;
+  border-color: #EF4444;
+  color: #991B1B;
+}
+
+[data-theme='dark'] .sim-verdict-banner.verdict-green {
+  background: rgba(16, 185, 129, 0.14);
+  border-color: #10B981;
+  color: #6EE7B7;
+}
+
+[data-theme='dark'] .sim-verdict-banner.verdict-yellow {
+  background: rgba(245, 158, 11, 0.14);
+  border-color: #F59E0B;
+  color: #FDE68A;
+}
+
+[data-theme='dark'] .sim-verdict-banner.verdict-red {
+  background: rgba(239, 68, 68, 0.14);
+  border-color: #EF4444;
+  color: #FCA5A5;
 }
 
 /* SECCIÓN INFERIOR: COMPARADOR DE ESCENARIOS (HASTA 3) */

@@ -201,6 +201,7 @@ export default function SimuladorEquipamientosScreen({
   const [indiceData, setIndiceData] = useState(null)
   const [referenciasGeo, setReferenciasGeo] = useState(null)
   const [transporteGeo, setTransporteGeo] = useState(null)
+  const [distritosGeoJson, setDistritosGeoJson] = useState(null)
   const [loading, setLoading] = useState(true)
 
   // Controles principales del simulador
@@ -208,6 +209,7 @@ export default function SimuladorEquipamientosScreen({
   const [radio, setRadio] = useState(1000) // 500 a 2000 m
   const [anio, setAnio] = useState(2025) // 2025 | 2030 | 2035
   const [modoUbicacion, setModoUbicacion] = useState('candidato') // 'candidato' | 'manual'
+  const [climateMode, setClimateMode] = useState('none') // 'none' | 'lst' | 'pm10' | 'flood'
 
   // Punto activo simulado: { lat, lng, isFromCandidate, candidateIdx, areaTerreno, nombre }
   const [activePoint, setActivePoint] = useState(null)
@@ -252,8 +254,11 @@ export default function SimuladorEquipamientosScreen({
       fetch('/data/transporte_lineas_143.geojson').then((r) =>
         r.ok ? r.json() : null
       ),
+      fetch('/data/distritos_indicadores_ambientales_2024.geojson').then((r) =>
+        r.ok ? r.json() : null
+      ),
     ])
-      .then(([cand, equip, grilla, areas, idx, refs, transp]) => {
+      .then(([cand, equip, grilla, areas, idx, refs, transp, distritos]) => {
         if (!isMounted) return
         if (cand) setCandidatosRaw(cand)
         if (equip) setEquipamientosData(equip)
@@ -262,6 +267,7 @@ export default function SimuladorEquipamientosScreen({
         if (idx) setIndiceData(idx)
         if (refs) setReferenciasGeo(refs)
         if (transp) setTransporteGeo(transp)
+        if (distritos) setDistritosGeoJson(distritos)
         setLoading(false)
       })
       .catch((err) => {
@@ -636,6 +642,109 @@ export default function SimuladorEquipamientosScreen({
     return 30.2 // Zona Central
   }, [effectivePoint])
 
+  // Veredicto Integral de Viabilidad según Capa Climática e Infraestructura
+  const viabilityVerdict = useMemo(() => {
+    if (!effectivePoint) return null
+
+    const distRocha = distRochaMeters ?? 9999
+    const isFloodDistrict = [1, 4, 5, 8, 9, 13, 15].includes(calculationResult?.distritoId)
+    const isHighHeat = lstEstimada > 31
+    const isBadAir = pm10Estimado.val > 65
+
+    if (climateMode === 'flood') {
+      if (distRocha < 200) {
+        return {
+          level: 'red',
+          badge: '🔴 NO RECOMENDADO',
+          title: 'Alto Riesgo Hídrico — Franja Inundable Río Rocha',
+          desc: `Ubicado a solo ${distRocha} m del eje del Río Rocha. Se desaconseja ubicar infraestructura crítica en zona con recurrencia de desbordes pluviales.`,
+        }
+      }
+      if (isFloodDistrict) {
+        return {
+          level: 'yellow',
+          badge: '🟡 VIABLE CON MITIGACIÓN',
+          title: 'Distrito con Susceptibilidad de Anegamiento',
+          desc: `Distrito ${calculationResult?.distritoId} requiere rasante de piso elevada (+40 cm) y drenaje pluvial conectado a colectores secundarios.`,
+        }
+      }
+      return {
+        level: 'green',
+        badge: '🟢 UBICACIÓN ÓPTIMA',
+        title: 'Cota Segura ante Inundaciones',
+        desc: `A ${distRocha} m del cauce, emplazado sobre cota segura sin antecedentes de anegamiento estructural.`,
+      }
+    }
+
+    if (climateMode === 'lst') {
+      if (tipo === 'parque') {
+        return {
+          level: 'green',
+          badge: '🟢 UBICACIÓN ESTRATÉGICA ÓPTIMA',
+          title: 'Máximo Beneficio de Refrescamiento Urbano',
+          desc: `El parque aportará una reducción estimada de ${Math.abs(calculationResult?.enfriamientoLst || 2.0)} °C en la isla de calor local.`,
+        }
+      }
+      if (isHighHeat) {
+        return {
+          level: 'yellow',
+          badge: '🟡 VIABLE CON MITIGACIÓN TÉRMICA',
+          title: 'Severa Isla de Calor Superficial (LST)',
+          desc: `Temperatura superficial de ${lstEstimada} °C. Se exige incorporar techos reflectivos, arbolado exterior y ventilación cruzada.`,
+        }
+      }
+      return {
+        level: 'green',
+        badge: '🟢 UBICACIÓN ÓPTIMA',
+        title: 'Confort Térmico Adecuado',
+        desc: `LST moderada (${lstEstimada} °C). Emplazamiento apto para desarrollo de servicios públicos.`,
+      }
+    }
+
+    if (climateMode === 'pm10') {
+      if (isBadAir) {
+        return {
+          level: 'yellow',
+          badge: '🟡 VIABLE CON MITIGACIÓN AMBIENTAL',
+          title: 'Carga de Partículas en Suspensión Elevada',
+          desc: `Nivel PM10 de ${pm10Estimado.val} µg/m³. Es mandatorio proyectar cortinas arbóreas densas como filtro contra polución.`,
+        }
+      }
+      return {
+        level: 'green',
+        badge: '🟢 UBICACIÓN ÓPTIMA',
+        title: 'Buena Dispersión Atmosférica',
+        desc: `Nivel PM10 aceptable (${pm10Estimado.val} µg/m³). Ambiente saludable para usuarios permanentes.`,
+      }
+    }
+
+    // Modo Normal / General
+    if (distRocha < 200) {
+      return {
+        level: 'red',
+        badge: '🔴 NO RECOMENDADO',
+        title: 'Proximidad Crítica a Cauce de Río (<200m)',
+        desc: `Distancia de ${distRocha} m al Río Rocha presenta vulnerabilidad pluvial no mitigable para equipamiento prioritario.`,
+      }
+    }
+    if (isInsideMunicipal && calculationResult?.personasGanan > 0) {
+      return {
+        level: 'green',
+        badge: '🟢 UBICACIÓN ÓPTIMA',
+        title: 'Suelo Municipal GAMC y Alta Cobertura',
+        desc: `Predio público verificado sin costo de expropiación (+${calculationResult.personasGanan.toLocaleString('es-BO')} habitantes beneficiados).`,
+      }
+    }
+    return {
+      level: 'yellow',
+      badge: '🟡 VIABLE CON MITIGACIÓN',
+      title: isInsideMunicipal ? 'Viabilidad Técnica Favorable' : 'Requiere Gestión Predial',
+      desc: isInsideMunicipal
+        ? 'Suelo público disponible; verificar acometidas de agua potable y red de alcantarillado.'
+        : 'Predio privado; requiere proceso de declaratoria de utilidad pública y expropiación.',
+    }
+  }, [effectivePoint, distRochaMeters, calculationResult, lstEstimada, pm10Estimado, climateMode, tipo, isInsideMunicipal])
+
   // Manejo de clic en el mapa para posicionar manualmente el equipamiento
   const handleMapClick = useCallback((coords) => {
     setModoUbicacion('manual')
@@ -750,30 +859,39 @@ export default function SimuladorEquipamientosScreen({
               className={`sim-type-btn type-salud ${
                 tipo === 'salud' ? 'is-active' : ''
               }`}
+              style={tipo === 'salud' ? { color: '#FFFFFF', backgroundColor: '#DC2626', borderColor: '#B91C1C' } : {}}
               onClick={() => setTipo('salud')}
             >
-              <HeartPulse size={14} />
-              <span>Centro de Salud 1er Nivel</span>
+              <HeartPulse size={14} style={tipo === 'salud' ? { color: '#FFFFFF', stroke: '#FFFFFF' } : {}} />
+              <span style={tipo === 'salud' ? { color: '#FFFFFF', fontWeight: 800 } : {}} className={tipo === 'salud' ? 'font-bold' : ''}>
+                Centro de Salud 1er Nivel
+              </span>
             </button>
             <button
               type="button"
               className={`sim-type-btn type-colegio ${
                 tipo === 'educacion' ? 'is-active' : ''
               }`}
+              style={tipo === 'educacion' ? { color: '#FFFFFF', backgroundColor: '#2563EB', borderColor: '#1D4ED8' } : {}}
               onClick={() => setTipo('educacion')}
             >
-              <BookOpen size={14} />
-              <span>Unidad Educativa</span>
+              <BookOpen size={14} style={tipo === 'educacion' ? { color: '#FFFFFF', stroke: '#FFFFFF' } : {}} />
+              <span style={tipo === 'educacion' ? { color: '#FFFFFF', fontWeight: 800 } : {}} className={tipo === 'educacion' ? 'font-bold' : ''}>
+                Unidad Educativa
+              </span>
             </button>
             <button
               type="button"
               className={`sim-type-btn type-parque ${
                 tipo === 'parque' ? 'is-active' : ''
               }`}
+              style={tipo === 'parque' ? { color: '#FFFFFF', backgroundColor: '#059669', borderColor: '#047857' } : {}}
               onClick={() => setTipo('parque')}
             >
-              <Trees size={14} />
-              <span>Parque Urbano</span>
+              <Trees size={14} style={tipo === 'parque' ? { color: '#FFFFFF', stroke: '#FFFFFF' } : {}} />
+              <span style={tipo === 'parque' ? { color: '#FFFFFF', fontWeight: 800 } : {}} className={tipo === 'parque' ? 'font-bold' : ''}>
+                Parque Urbano
+              </span>
             </button>
           </div>
         </div>
@@ -785,23 +903,26 @@ export default function SimuladorEquipamientosScreen({
             <button
               type="button"
               className={`sim-year-btn ${anio === 2025 ? 'is-active' : ''}`}
+              style={anio === 2025 ? { color: '#FFFFFF', backgroundColor: '#0284C7', fontWeight: 800 } : {}}
               onClick={() => setAnio(2025)}
             >
-              Hoy (2025)
+              <span style={anio === 2025 ? { color: '#FFFFFF', fontWeight: 800 } : {}}>Hoy (2025)</span>
             </button>
             <button
               type="button"
               className={`sim-year-btn ${anio === 2030 ? 'is-active' : ''}`}
+              style={anio === 2030 ? { color: '#FFFFFF', backgroundColor: '#0284C7', fontWeight: 800 } : {}}
               onClick={() => setAnio(2030)}
             >
-              En 5 años (2030)
+              <span style={anio === 2030 ? { color: '#FFFFFF', fontWeight: 800 } : {}}>En 5 años (2030)</span>
             </button>
             <button
               type="button"
               className={`sim-year-btn ${anio === 2035 ? 'is-active' : ''}`}
+              style={anio === 2035 ? { color: '#FFFFFF', backgroundColor: '#0284C7', fontWeight: 800 } : {}}
               onClick={() => setAnio(2035)}
             >
-              En 10 años (2035)
+              <span style={anio === 2035 ? { color: '#FFFFFF', fontWeight: 800 } : {}}>En 10 años (2035)</span>
             </button>
           </div>
         </div>
@@ -892,10 +1013,11 @@ export default function SimuladorEquipamientosScreen({
                   key={c.num}
                   type="button"
                   className={`sim-candidate-pill ${isSelected ? 'is-active' : ''}`}
+                  style={isSelected ? { color: '#FFFFFF', backgroundColor: '#0284C7', borderColor: '#0284C7', fontWeight: 800 } : {}}
                   onClick={() => handleSelectCandidate(c)}
                   title={`D${c.distrito} · ${c.area_terreno_m2} m²`}
                 >
-                  #{c.num}
+                  <span style={isSelected ? { color: '#FFFFFF', fontWeight: 800 } : {}}>#{c.num}</span>
                 </button>
               )
             })}
@@ -910,11 +1032,12 @@ export default function SimuladorEquipamientosScreen({
                 display: 'inline-flex',
                 alignItems: 'center',
                 gap: '0.25rem',
+                ...(modoUbicacion === 'manual' ? { color: '#FFFFFF', backgroundColor: '#0284C7', borderColor: '#0284C7', fontWeight: 800 } : {}),
               }}
               onClick={() => setModoUbicacion('manual')}
             >
-              <MapPin size={11} />
-              <span>Clic Libre</span>
+              <MapPin size={11} style={modoUbicacion === 'manual' ? { color: '#FFFFFF' } : {}} />
+              <span style={modoUbicacion === 'manual' ? { color: '#FFFFFF', fontWeight: 800 } : {}}>Clic Libre</span>
             </button>
           </div>
 
@@ -929,11 +1052,15 @@ export default function SimuladorEquipamientosScreen({
             areasEquipData={areasEquipData}
             referenciasGeo={referenciasGeo}
             transporteGeo={transporteGeo}
+            equipamientosData={equipamientosData}
             existingPoints={existingPoints}
             calculationResult={calculationResult}
             isInsideMunicipal={isInsideMunicipal}
             distTranspMeters={distTranspMeters}
             distRochaMeters={distRochaMeters}
+            distritosGeoData={distritosGeoJson}
+            climateMode={climateMode}
+            onClimateModeChange={setClimateMode}
           />
 
           {/* Leyenda y Datos del Punto Activo */}
@@ -1007,6 +1134,20 @@ export default function SimuladorEquipamientosScreen({
               {calculationResult.distritoNombre}
             </span>
           </div>
+
+          {/* BANNER DESTACADO DE VEREDICTO DE VIABILIDAD DECISIONAL */}
+          {viabilityVerdict && (
+            <div className={`sim-verdict-banner verdict-${viabilityVerdict.level}`} style={{ margin: '0.4rem 0 0.55rem' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 2 }}>
+                <strong style={{ fontSize: '0.8rem', letterSpacing: '0.02em' }}>{viabilityVerdict.badge}</strong>
+                <span style={{ fontSize: '0.67rem', opacity: 0.9, fontWeight: 700 }}>
+                  Filtro: {climateMode === 'none' ? 'General' : climateMode === 'lst' ? 'Calor LST' : climateMode === 'pm10' ? 'Aire PM10' : 'Riesgo Inundación'}
+                </span>
+              </div>
+              <div style={{ fontSize: '0.76rem', fontWeight: 800, marginBottom: 2 }}>{viabilityVerdict.title}</div>
+              <p style={{ margin: 0, fontSize: '0.7rem', lineHeight: 1.35 }}>{viabilityVerdict.desc}</p>
+            </div>
+          )}
 
           {/* KPI Principal: Población Beneficiada */}
           <div className="sim-kpi-main-box">
@@ -1188,11 +1329,19 @@ export default function SimuladorEquipamientosScreen({
           {/* Botón para Guardar en Escenarios */}
           <button
             type="button"
-            className="sim-btn-save"
+            className="sim-btn-save font-bold"
+            style={{
+              color: '#FFFFFF',
+              backgroundColor: '#0284C7',
+              borderColor: '#0284C7',
+              fontWeight: 800,
+            }}
             onClick={handleSaveScenario}
           >
-            <Save size={14} />
-            <span>Guardar en Escenarios ({savedScenarios.length}/3)</span>
+            <Save size={14} style={{ color: '#FFFFFF', stroke: '#FFFFFF' }} />
+            <span style={{ color: '#FFFFFF', fontWeight: 800 }} className="font-bold">
+              Guardar en Escenarios ({savedScenarios.length}/3)
+            </span>
           </button>
         </div>
       </div>

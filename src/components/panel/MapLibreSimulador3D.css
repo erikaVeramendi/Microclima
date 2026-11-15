@@ -6,52 +6,155 @@
 .maplibre-sim-wrapper {
   position: relative;
   width: 100%;
-  height: 490px;
+  height: 580px;
+  min-height: 550px;
   border-radius: 14px;
   overflow: hidden;
-  border: 1.5px solid var(--theme-border, #E2E8F0);
-  background-color: var(--theme-card-bg, #F8FAFC);
+  border: 1.5px solid var(--theme-border, #CBD5E1);
+  background-color: #E2E8F0;
   box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.08);
 }
 
 [data-theme='dark'] .maplibre-sim-wrapper {
   background-color: #0B1329;
-  border-color: rgba(56, 189, 248, 0.2);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+  border-color: rgba(56, 189, 248, 0.25);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
 }
 
 .maplibre-sim-canvas {
-  width: 100%;
-  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100% !important;
+  height: 100% !important;
+  min-height: 550px !important;
   outline: none;
 }
 
-/* CONTROLES FLOTANTES SUPERIORES (VISTA 3D / 2D / COMPÁS / ZOOM) */
+/* =========================================================================
+   BARRA SUPERIOR DE CAPAS E INFRAESTRUCTURA + SELECTOR CLIMÁTICO
+   ========================================================================= */
+.mls-top-bar {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  right: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 8px;
+  z-index: 20;
+  flex-wrap: wrap;
+  pointer-events: none;
+}
+
+.mls-layer-pills,
+.mls-climate-pills {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-wrap: wrap;
+  background: rgba(255, 255, 255, 0.96);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  padding: 5px 7px;
+  border-radius: 10px;
+  border: 1.5px solid #CBD5E1;
+  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.12);
+  pointer-events: auto;
+}
+
+[data-theme='dark'] .mls-layer-pills,
+[data-theme='dark'] .mls-climate-pills {
+  background: rgba(15, 23, 42, 0.94);
+  border-color: rgba(56, 189, 248, 0.3);
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.45);
+}
+
+.mls-layer-pill,
+.mls-climate-pill {
+  padding: 4px 9px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  border-radius: 7px;
+  border: 1px solid #E2E8F0;
+  background: #F8FAFC;
+  color: #334155;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  transition: all 0.15s ease;
+  user-select: none;
+  line-height: 1.2;
+}
+
+[data-theme='dark'] .mls-layer-pill,
+[data-theme='dark'] .mls-climate-pill {
+  background: #1E293B;
+  border-color: rgba(148, 163, 184, 0.25);
+  color: #E2E8F0;
+}
+
+.mls-layer-pill:hover,
+.mls-climate-pill:hover {
+  border-color: #0284C7;
+  transform: translateY(-1px);
+}
+
+.mls-layer-pill.is-on {
+  background: #0F172A !important;
+  border-color: #0F172A !important;
+  color: #FFFFFF !important;
+  font-weight: 800 !important;
+  box-shadow: 0 2px 6px rgba(15, 23, 42, 0.25);
+}
+
+.mls-layer-pill.is-on span,
+.mls-layer-pill.is-on svg {
+  color: #FFFFFF !important;
+}
+
+.mls-climate-pill.is-on {
+  background: #0284C7 !important;
+  border-color: #0369A1 !important;
+  color: #FFFFFF !important;
+  font-weight: 800 !important;
+  box-shadow: 0 2px 8px rgba(2, 132, 199, 0.35);
+}
+
+.mls-climate-pill.is-on span,
+.mls-climate-pill.is-on svg {
+  color: #FFFFFF !important;
+}
+
+/* =========================================================================
+   CONTROLES FLOTANTES LATERALES (VISTA 3D / 2D / COMPÁS / ZOOM)
+   ========================================================================= */
 .maplibre-floating-controls {
   position: absolute;
-  top: 14px;
-  right: 14px;
+  top: 58px;
+  right: 12px;
   display: flex;
   flex-direction: column;
   gap: 6px;
-  z-index: 10;
+  z-index: 18;
 }
 
 .maplibre-view-toggle-group {
   display: flex;
-  background: rgba(255, 255, 255, 0.92);
+  background: rgba(255, 255, 255, 0.96);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
-  border: 1px solid rgba(226, 232, 240, 0.9);
+  border: 1.5px solid #CBD5E1;
   border-radius: 9px;
   padding: 3px;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.1);
 }
 
 [data-theme='dark'] .maplibre-view-toggle-group {
-  background: rgba(15, 23, 42, 0.88);
+  background: rgba(15, 23, 42, 0.94);
   border-color: rgba(56, 189, 248, 0.25);
-  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.35);
 }
 
 .maplibre-view-btn {
@@ -65,7 +168,7 @@
   cursor: pointer;
   display: inline-flex;
   align-items: center;
-  gap: 5px;
+  gap: 4px;
   transition: all 0.18s ease;
   user-select: none;
 }
@@ -74,42 +177,32 @@
   color: #94A3B8;
 }
 
-.maplibre-view-btn:hover {
-  color: #0284C7;
-  background: rgba(2, 132, 199, 0.08);
-}
-
-[data-theme='dark'] .maplibre-view-btn:hover {
-  color: #38BDF8;
-  background: rgba(56, 189, 248, 0.12);
-}
-
 .maplibre-view-btn.is-active {
-  background: #0284C7;
+  background: #0284C7 !important;
   color: #FFFFFF !important;
+  font-weight: 800 !important;
   box-shadow: 0 2px 8px rgba(2, 132, 199, 0.35);
 }
 
-[data-theme='dark'] .maplibre-view-btn.is-active {
-  background: #0284C7;
+.maplibre-view-btn.is-active span,
+.maplibre-view-btn.is-active svg {
   color: #FFFFFF !important;
 }
 
 .maplibre-nav-buttons {
   display: flex;
   flex-direction: column;
-  background: rgba(255, 255, 255, 0.92);
+  background: rgba(255, 255, 255, 0.96);
   backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  border: 1px solid rgba(226, 232, 240, 0.9);
+  border: 1.5px solid #CBD5E1;
   border-radius: 9px;
   overflow: hidden;
   align-self: flex-end;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.1);
 }
 
 [data-theme='dark'] .maplibre-nav-buttons {
-  background: rgba(15, 23, 42, 0.88);
+  background: rgba(15, 23, 42, 0.94);
   border-color: rgba(56, 189, 248, 0.25);
 }
 
@@ -118,7 +211,7 @@
   height: 32px;
   border: none;
   background: transparent;
-  color: #475569;
+  color: #334155;
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -126,11 +219,11 @@
   font-size: 0.9rem;
   font-weight: 700;
   transition: all 0.15s ease;
-  border-bottom: 1px solid rgba(226, 232, 240, 0.6);
+  border-bottom: 1px solid rgba(203, 213, 225, 0.7);
 }
 
 [data-theme='dark'] .maplibre-icon-btn {
-  color: #94A3B8;
+  color: #E2E8F0;
   border-bottom-color: rgba(56, 189, 248, 0.15);
 }
 
@@ -139,39 +232,35 @@
 }
 
 .maplibre-icon-btn:hover {
-  background: rgba(2, 132, 199, 0.1);
+  background: rgba(2, 132, 199, 0.12);
   color: #0284C7;
 }
 
-[data-theme='dark'] .maplibre-icon-btn:hover {
-  background: rgba(56, 189, 248, 0.15);
-  color: #38BDF8;
-}
-
-/* TARJETA FLOTANTE RESUMEN EN LA ESQUINA INFERIOR IZQUIERDA */
+/* =========================================================================
+   TARJETA FLOTANTE RESUMEN (HUD) EN LA ESQUINA INFERIOR IZQUIERDA
+   ========================================================================= */
 .maplibre-floating-summary {
   position: absolute;
-  bottom: 14px;
-  left: 14px;
-  max-width: 380px;
-  background: rgba(255, 255, 255, 0.94);
+  bottom: 12px;
+  left: 12px;
+  max-width: 430px;
+  background: rgba(255, 255, 255, 0.96);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
-  border: 1px solid rgba(226, 232, 240, 0.9);
+  border: 1.5px solid #CBD5E1;
   border-radius: 12px;
   padding: 10px 14px;
-  z-index: 10;
-  box-shadow: 0 8px 24px -4px rgba(0, 0, 0, 0.12);
+  z-index: 16;
+  box-shadow: 0 8px 24px -4px rgba(0, 0, 0, 0.16);
   display: flex;
   flex-direction: column;
-  gap: 5px;
-  transition: all 0.25s ease;
+  gap: 6px;
 }
 
 [data-theme='dark'] .maplibre-floating-summary {
-  background: rgba(15, 23, 42, 0.92);
-  border-color: rgba(56, 189, 248, 0.25);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
+  background: rgba(15, 23, 42, 0.95);
+  border-color: rgba(56, 189, 248, 0.3);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
 }
 
 .maplibre-summary-badge-row {
@@ -184,14 +273,14 @@
 .maplibre-summary-title {
   font-size: 0.8rem;
   font-weight: 800;
-  color: #0F172A;
+  color: #0F172A !important;
   display: flex;
   align-items: center;
   gap: 5px;
 }
 
 [data-theme='dark'] .maplibre-summary-title {
-  color: #F8FAFC;
+  color: #F8FAFC !important;
 }
 
 .maplibre-summary-kpis {
@@ -199,12 +288,7 @@
   align-items: center;
   gap: 6px;
   font-size: 0.72rem;
-  color: #475569;
   flex-wrap: wrap;
-}
-
-[data-theme='dark'] .maplibre-summary-kpis {
-  color: #CBD5E1;
 }
 
 .maplibre-summary-pill {
@@ -212,41 +296,90 @@
   align-items: center;
   gap: 3px;
   font-size: 0.68rem;
-  font-weight: 700;
-  padding: 2px 7px;
+  font-weight: 800;
+  padding: 2px 8px;
   border-radius: 5px;
 }
 
 .maplibre-summary-pill.pill-beneficiarios {
-  background: rgba(2, 132, 199, 0.12);
-  color: #0284C7;
-  border: 1px solid rgba(2, 132, 199, 0.25);
+  background: rgba(2, 132, 199, 0.14);
+  color: #0369A1 !important;
+  border: 1px solid rgba(2, 132, 199, 0.3);
 }
 
 [data-theme='dark'] .maplibre-summary-pill.pill-beneficiarios {
-  color: #38BDF8;
-  border-color: rgba(56, 189, 248, 0.35);
+  color: #38BDF8 !important;
 }
 
 .maplibre-summary-pill.pill-municipal {
-  background: rgba(16, 185, 129, 0.12);
-  color: #059669;
-  border: 1px solid rgba(16, 185, 129, 0.25);
+  background: rgba(16, 185, 129, 0.14);
+  color: #047857 !important;
+  border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+[data-theme='dark'] .maplibre-summary-pill.pill-municipal {
+  color: #34D399 !important;
 }
 
 .maplibre-summary-pill.pill-privado {
-  background: rgba(217, 119, 6, 0.12);
-  color: #D97706;
-  border: 1px solid rgba(217, 119, 6, 0.25);
+  background: rgba(217, 119, 6, 0.14);
+  color: #B45309 !important;
+  border: 1px solid rgba(217, 119, 6, 0.3);
+}
+
+[data-theme='dark'] .maplibre-summary-pill.pill-privado {
+  color: #FBBF24 !important;
 }
 
 .maplibre-summary-pill.pill-transporte {
-  background: rgba(124, 58, 237, 0.12);
-  color: #7C3AED;
-  border: 1px solid rgba(124, 58, 237, 0.25);
+  background: rgba(124, 58, 237, 0.14);
+  color: #6D28D9 !important;
+  border: 1px solid rgba(124, 58, 237, 0.3);
 }
 
-/* MARCADORES 3D ILUSTRADOS */
+[data-theme='dark'] .maplibre-summary-pill.pill-transporte {
+  color: #C4B5FD !important;
+}
+
+/* =========================================================================
+   BANNER DE VEREDICTO CLIMÁTICO EN EL MAPA (ESQUINA INFERIOR DERECHA)
+   ========================================================================= */
+.mls-climate-verdict {
+  position: absolute;
+  bottom: 12px;
+  right: 12px;
+  max-width: 310px;
+  padding: 8px 12px;
+  border-radius: 10px;
+  font-size: 0.72rem;
+  font-weight: 800;
+  z-index: 16;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.18);
+  border: 1.5px solid transparent;
+  line-height: 1.35;
+}
+
+.mls-climate-verdict.verdict-green {
+  background: #ECFDF5;
+  border-color: #10B981;
+  color: #065F46 !important;
+}
+
+.mls-climate-verdict.verdict-yellow {
+  background: #FFFBEB;
+  border-color: #F59E0B;
+  color: #92400E !important;
+}
+
+.mls-climate-verdict.verdict-red {
+  background: #FEF2F2;
+  border-color: #EF4444;
+  color: #991B1B !important;
+}
+
+/* =========================================================================
+   MARCADORES 3D ILUSTRADOS DEL EQUIPAMIENTO SIMULADO
+   ========================================================================= */
 .sim-3d-model-marker {
   cursor: pointer;
   transform-origin: bottom center;
@@ -254,6 +387,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  z-index: 30;
 }
 
 .sim-3d-model-marker:hover {
@@ -261,44 +395,23 @@
 }
 
 .sim-3d-label {
-  background: rgba(15, 23, 42, 0.9);
-  color: #FFFFFF;
-  font-size: 0.65rem;
+  background: #0F172A;
+  color: #FFFFFF !important;
+  font-size: 0.68rem;
   font-weight: 800;
-  padding: 3px 8px;
+  padding: 3px 9px;
   border-radius: 12px;
   white-space: nowrap;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-  margin-bottom: 4px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+  margin-bottom: 3px;
   letter-spacing: 0.02em;
-  border: 1.5px solid rgba(255, 255, 255, 0.3);
+  border: 1.5px solid #FFFFFF;
   pointer-events: none;
 }
 
-/* ANIMACIÓN DE HALO DE COBERTURA RADIAL CON ONDAS SUAVES */
-.sim-coverage-radar {
-  position: absolute;
-  border-radius: 50%;
-  pointer-events: none;
-  transform: translate(-50%, -50%);
-  animation: simPulseRadar 3s ease-out infinite;
-}
-
-@keyframes simPulseRadar {
-  0% {
-    transform: translate(-50%, -50%) scale(0.92);
-    opacity: 0.65;
-  }
-  50% {
-    opacity: 0.35;
-  }
-  100% {
-    transform: translate(-50%, -50%) scale(1.05);
-    opacity: 0.15;
-  }
-}
-
-/* PINES FLOTANTES 3D NUMERADOS (TOP 10 CANDIDATOS) */
+/* =========================================================================
+   PINES FLOTANTES 3D NUMERADOS (TOP 10 CANDIDATOS)
+   ========================================================================= */
 .sim-candidate-3d-pin {
   display: flex;
   flex-direction: column;
@@ -308,29 +421,28 @@
 }
 
 .sim-candidate-3d-pin:hover {
-  transform: translateY(-6px) scale(1.15);
-  z-index: 50 !important;
+  transform: translateY(-5px) scale(1.15);
+  z-index: 45 !important;
 }
 
 .sim-pin-badge {
   width: 26px;
   height: 26px;
   border-radius: 50%;
-  color: #FFFFFF;
+  color: #FFFFFF !important;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 0.75rem;
-  font-weight: 800;
+  font-size: 0.74rem;
+  font-weight: 800 !important;
   border: 2px solid #FFFFFF;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.28);
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.35);
   font-family: var(--font-mono, monospace);
-  transition: all 0.2s ease;
 }
 
 .sim-pin-stem {
   width: 2.5px;
-  height: 8px;
+  height: 7px;
   background: #FFFFFF;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.25);
   border-radius: 1px;
@@ -338,42 +450,65 @@
 
 .sim-candidate-3d-pin.is-active .sim-pin-badge {
   transform: scale(1.22);
-  box-shadow: 0 0 14px rgba(255, 255, 255, 0.8), 0 6px 14px rgba(0, 0, 0, 0.35);
-  border-color: #FFFFFF;
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.9), 0 6px 14px rgba(0, 0, 0, 0.45);
 }
 
-/* MICRO-ÍCONOS 3D DE EQUIPAMIENTOS EXISTENTES */
-.sim-existing-dot {
-  width: 9px;
-  height: 9px;
+/* =========================================================================
+   ETIQUETAS DE DISTRITOS (D1 A D15) Y EQUIPAMIENTOS EXISTENTES
+   ========================================================================= */
+.sim-district-label {
+  background: rgba(15, 23, 42, 0.86);
+  color: #FFFFFF !important;
+  border: 1.5px solid rgba(255, 255, 255, 0.85);
+  font-size: 0.68rem;
+  font-weight: 800;
+  padding: 2px 7px;
+  border-radius: 6px;
+  white-space: nowrap;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+  pointer-events: none;
+  letter-spacing: 0.02em;
+}
+
+.sim-district-label.is-selected {
+  background: #0284C7 !important;
+  border-color: #FFFFFF !important;
+  color: #FFFFFF !important;
+  transform: scale(1.15);
+  box-shadow: 0 0 12px rgba(2, 132, 199, 0.65);
+}
+
+.sim-equip-marker {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   border-radius: 50%;
   border: 1.5px solid #FFFFFF;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.25);
-  transition: transform 0.15s ease;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.35);
+  color: #FFFFFF !important;
+  font-weight: 900;
   cursor: pointer;
+  transition: transform 0.15s ease;
+  user-select: none;
 }
 
-.sim-existing-dot:hover {
-  transform: scale(1.6);
+.sim-equip-marker:hover {
+  transform: scale(1.55);
   z-index: 40 !important;
 }
 
-/* BRISA FRESCA ANIMADA PARA PARQUES */
-.sim-fresh-breeze-ring {
-  position: absolute;
-  width: 60px;
-  height: 60px;
-  border: 2px dashed #34D399;
-  border-radius: 50%;
-  animation: simRotateBreeze 12s linear infinite;
-  opacity: 0.6;
+.sim-equip-marker.marker-salud {
+  width: 16px;
+  height: 16px;
+  background: #DC2626;
+  font-size: 11px;
+  line-height: 1;
 }
 
-@keyframes simRotateBreeze {
-  from {
-    transform: translate(-50%, -50%) rotate(0deg);
-  }
-  to {
-    transform: translate(-50%, -50%) rotate(360deg);
-  }
+.sim-equip-marker.marker-colegio {
+  width: 13px;
+  height: 13px;
+  background: #2563EB;
+  font-size: 8px;
+  line-height: 1;
 }

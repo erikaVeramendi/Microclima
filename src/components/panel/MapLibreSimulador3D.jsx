@@ -6,224 +6,139 @@ import {
   Compass,
   Plus,
   Minus,
-  Sparkles,
   HeartPulse,
   BookOpen,
   Trees,
   Bus,
-  CheckCircle2,
-  AlertTriangle,
-  RotateCcw,
   Layers,
+  Thermometer,
+  Wind,
+  Droplets,
+  Building2,
+  MapPin,
 } from 'lucide-react'
 import './MapLibreSimulador3D.css'
 
-const { Map, Marker, Popup, NavigationControl, LngLatBounds } = maplibregl
+const { Map, Marker, Popup } = maplibregl
 
-// Generador de polígono circular exacto en metros para el halo de cobertura radial
-function createGeoJsonCircle(center, radiusInMeters, points = 64) {
-  if (!center || !radiusInMeters) return null
-  const [lng, lat] = center
-  const km = radiusInMeters / 1000
-  const distanceX = km / (111.32 * Math.cos((lat * Math.PI) / 180))
-  const distanceY = km / 110.574
-  const ret = []
-  for (let i = 0; i < points; i++) {
-    const theta = (i / points) * (2 * Math.PI)
-    const x = distanceX * Math.cos(theta)
-    const y = distanceY * Math.sin(theta)
-    ret.push([lng + x, lat + y])
-  }
-  ret.push(ret[0])
-  return {
-    type: 'Feature',
-    geometry: {
-      type: 'Polygon',
-      coordinates: [ret],
-    },
-    properties: {},
-  }
+// ─── Centroides aproximados de los 15 distritos de Cochabamba ────────────────
+const DISTRICT_CENTROIDS = {
+  1:  { lat: -17.364, lng: -66.128, label: 'D1' },
+  2:  { lat: -17.352, lng: -66.174, label: 'D2' },
+  3:  { lat: -17.373, lng: -66.184, label: 'D3' },
+  4:  { lat: -17.396, lng: -66.189, label: 'D4' },
+  5:  { lat: -17.425, lng: -66.168, label: 'D5' },
+  6:  { lat: -17.410, lng: -66.140, label: 'D6' },
+  7:  { lat: -17.378, lng: -66.212, label: 'D7' },
+  8:  { lat: -17.455, lng: -66.112, label: 'D8' },
+  9:  { lat: -17.430, lng: -66.185, label: 'D9' },
+  10: { lat: -17.396, lng: -66.158, label: 'D10' },
+  11: { lat: -17.387, lng: -66.140, label: 'D11' },
+  12: { lat: -17.380, lng: -66.166, label: 'D12' },
+  13: { lat: -17.323, lng: -66.151, label: 'D13' },
+  14: { lat: -17.441, lng: -66.110, label: 'D14' },
+  15: { lat: -17.486, lng: -66.128, label: 'D15' },
 }
 
-// Estilo Raster público limpio y sin restricciones (CartoDB Voyager / Dark Matter)
-function getRasterStyle(isLight) {
+// Distritos con alta susceptibilidad a anegamiento / desborde del Río Rocha
+const FLOOD_RISK_DISTRICTS = new Set([1, 4, 5, 8, 9, 13, 15])
+
+// ─── Estilo Base 100% Público (OSM / Esri) — Prohibido CartoDB ────────────────
+function getBaseStyle(isDark) {
   return {
     version: 8,
-    name: isLight ? 'Carto Voyager Clean' : 'Carto Dark Clean',
+    name: isDark ? 'Esri Dark Gray' : 'OpenStreetMap Official',
     sources: {
-      'carto-tiles': {
+      osm: {
         type: 'raster',
-        tiles: isLight
-          ? [
-              'https://a.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png',
-              'https://b.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png',
-              'https://c.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png',
-              'https://d.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png',
-            ]
-          : [
-              'https://a.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png',
-              'https://b.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png',
-              'https://c.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png',
-              'https://d.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png',
-            ],
+        tiles: [
+          isDark
+            ? 'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}'
+            : 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+        ],
         tileSize: 256,
-        attribution:
-          '&copy; <a href="https://carto.com/">CARTO</a> &copy; <a href="https://openstreetmap.org">OpenStreetMap</a>',
+        attribution: isDark
+          ? '© Esri, OpenStreetMap'
+          : '© OpenStreetMap contributors',
+        maxzoom: 19,
       },
     },
     layers: [
       {
-        id: 'carto-raster-layer',
+        id: 'osm-tiles',
         type: 'raster',
-        source: 'carto-tiles',
+        source: 'osm',
         minzoom: 0,
-        maxzoom: 20,
+        maxzoom: 22,
       },
     ],
   }
 }
 
-// Ilustración SVG 3D Isométrica para Hospital / Centro de Salud
-function renderHospitalSvg() {
-  return `
-    <div class="sim-3d-model-marker">
-      <div class="sim-3d-label" style="background:#DC2626; border-color:#EF4444;">
-        🏥 CENTRO DE SALUD 1ER NIVEL
-      </div>
-      <svg width="84" height="84" viewBox="0 0 84 84" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <!-- Sombra proyectada volumétrica -->
-        <ellipse cx="42" cy="72" rx="36" ry="10" fill="rgba(15, 23, 42, 0.28)" filter="blur(2px)"/>
-        
-        <!-- Bloque Principal Isométrico -->
-        <!-- Fachada Izquierda (Luz) -->
-        <polygon points="18,48 42,60 42,36 18,24" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.2"/>
-        <!-- Fachada Derecha (Sombra arquitectónica) -->
-        <polygon points="42,60 66,48 66,24 42,36" fill="#F1F5F9" stroke="#94A3B8" stroke-width="1.2"/>
-        <!-- Techo Moderno Coral -->
-        <polygon points="18,24 42,12 66,24 42,36" fill="#DC2626" stroke="#B91C1C" stroke-width="1.2"/>
-        
-        <!-- Helipuerto en el techo -->
-        <ellipse cx="42" cy="24" rx="14" ry="7" fill="#EF4444" stroke="#FFFFFF" stroke-width="1.2"/>
-        <text x="42" y="27" font-size="9" font-weight="900" fill="#FFFFFF" text-anchor="middle" font-family="sans-serif">H</text>
-
-        <!-- Ventanas frontales modernas -->
-        <polygon points="23,43 31,47 31,39 23,35" fill="#38BDF8" opacity="0.85"/>
-        <polygon points="33,48 39,51 39,43 33,40" fill="#38BDF8" opacity="0.85"/>
-        <polygon points="45,51 51,48 51,40 45,43" fill="#0284C7" opacity="0.75"/>
-        <polygon points="53,47 61,43 61,35 53,39" fill="#0284C7" opacity="0.75"/>
-
-        <!-- Entrada principal con marquesina blanca -->
-        <polygon points="36,57 42,60 48,57 42,54" fill="#FFFFFF" stroke="#DC2626" stroke-width="1"/>
-        <rect x="40.5" y="58" width="3" height="4" fill="#0F172A"/>
-
-        <!-- Cruz Médica Luminosa Flotante en la Cima -->
-        <g style="filter: drop-shadow(0 0 6px #EF4444);">
-          <circle cx="42" cy="6" r="8" fill="#FFFFFF" stroke="#DC2626" stroke-width="1.5"/>
-          <path d="M40 3h4v6h-4z M37 6h10v2h-10z" fill="#DC2626"/>
-        </g>
-      </svg>
-    </div>
-  `
+// ─── Generación de polígono circular exacto en metros ─────────────────────────
+function createCircleGeoJSON(center, radiusMeters, points = 64) {
+  if (!center || !radiusMeters) return null
+  const [lng, lat] = center
+  const km = radiusMeters / 1000
+  const dX = km / (111.32 * Math.cos((lat * Math.PI) / 180))
+  const dY = km / 110.574
+  const coords = []
+  for (let i = 0; i < points; i++) {
+    const theta = (i / points) * 2 * Math.PI
+    coords.push([lng + dX * Math.cos(theta), lat + dY * Math.sin(theta)])
+  }
+  coords.push(coords[0])
+  return {
+    type: 'Feature',
+    geometry: { type: 'Polygon', coordinates: [coords] },
+    properties: {},
+  }
 }
 
-// Ilustración SVG 3D Isométrica para Colegio / Unidad Educativa
-function renderColegioSvg() {
+// ─── Marcador SVG 3D Ilustrado del Equipamiento Simulado ──────────────────────
+function getSvgMarkerHTML(tipo) {
+  const configs = {
+    salud: {
+      bg: '#DC2626', border: '#EF4444',
+      label: '🏥 Centro de Salud 1er Nivel',
+      svg: `<svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="24" cy="24" r="22" fill="#DC2626" stroke="#FFFFFF" stroke-width="2.5" filter="drop-shadow(0 4px 10px rgba(220,38,38,0.5))"/>
+        <rect x="21" y="12" width="6" height="24" rx="2" fill="#FFFFFF"/>
+        <rect x="12" y="21" width="24" height="6" rx="2" fill="#FFFFFF"/>
+      </svg>`,
+    },
+    educacion: {
+      bg: '#2563EB', border: '#3B82F6',
+      label: '🎓 Unidad Educativa / Colegio',
+      svg: `<svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="24" cy="24" r="22" fill="#2563EB" stroke="#FFFFFF" stroke-width="2.5" filter="drop-shadow(0 4px 10px rgba(37,99,235,0.5))"/>
+        <text x="24" y="32" font-size="20" font-weight="900" fill="#FFFFFF" text-anchor="middle" font-family="sans-serif">🎓</text>
+      </svg>`,
+    },
+    parque: {
+      bg: '#059669', border: '#10B981',
+      label: '🌳 Parque Urbano Distrital',
+      svg: `<svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="24" cy="24" r="22" fill="#059669" stroke="#FFFFFF" stroke-width="2.5" filter="drop-shadow(0 4px 10px rgba(5,150,105,0.5))"/>
+        <text x="24" y="32" font-size="20" font-weight="900" fill="#FFFFFF" text-anchor="middle" font-family="sans-serif">🌳</text>
+      </svg>`,
+    },
+  }
+  const c = configs[tipo] || configs.salud
   return `
     <div class="sim-3d-model-marker">
-      <div class="sim-3d-label" style="background:#2563EB; border-color:#3B82F6;">
-        🎓 UNIDAD EDUCATIVA
-      </div>
-      <svg width="88" height="84" viewBox="0 0 88 84" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <!-- Sombra proyectada -->
-        <ellipse cx="44" cy="72" rx="38" ry="10" fill="rgba(15, 23, 42, 0.28)" filter="blur(2px)"/>
-
-        <!-- Cancha deportiva polifuncional exterior (futsal/básquet) -->
-        <polygon points="12,56 36,68 54,58 30,46" fill="#10B981" stroke="#059669" stroke-width="1.2"/>
-        <polygon points="14,56 36,67 52,58 30,47" fill="#059669" opacity="0.3"/>
-        <!-- Líneas de la cancha -->
-        <ellipse cx="33" cy="57" rx="6" ry="3" fill="none" stroke="#FFFFFF" stroke-width="0.8"/>
-        <line x1="23" y1="51" x2="43" y2="63" stroke="#FFFFFF" stroke-width="0.8"/>
-
-        <!-- Pabellón de aulas en 3D (Bloque Principal) -->
-        <polygon points="34,44 58,56 58,32 34,20" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.2"/>
-        <polygon points="58,56 78,46 78,22 58,32" fill="#F1F5F9" stroke="#94A3B8" stroke-width="1.2"/>
-        <polygon points="34,20 58,8 78,22 58,32" fill="#2563EB" stroke="#1D4ED8" stroke-width="1.2"/>
-
-        <!-- Filas de ventanas de aulas -->
-        <polygon points="38,40 45,43 45,35 38,32" fill="#60A5FA" opacity="0.9"/>
-        <polygon points="48,45 55,48 55,40 48,37" fill="#60A5FA" opacity="0.9"/>
-        <polygon points="61,47 67,44 67,36 61,39" fill="#1D4ED8" opacity="0.8"/>
-        <polygon points="70,43 75,40 75,32 70,35" fill="#1D4ED8" opacity="0.8"/>
-
-        <!-- Campanario / Torre del Reloj Escolar -->
-        <polygon points="46,16 52,19 52,6 46,3" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1"/>
-        <polygon points="52,19 56,17 56,4 52,6" fill="#E2E8F0" stroke="#94A3B8" stroke-width="1"/>
-        <polygon points="46,3 49,0 56,4 52,6" fill="#EA580C"/>
-        <circle cx="49" cy="8" r="2.2" fill="#2563EB"/>
-
-        <!-- Asta con Bandera -->
-        <line x1="28" y1="46" x2="28" y2="34" stroke="#64748B" stroke-width="1.5"/>
-        <polygon points="28,34 35,36 28,39" fill="#EF4444"/>
-      </svg>
-    </div>
-  `
+      <div class="sim-3d-label" style="background:${c.bg};border-color:${c.border};">${c.label}</div>
+      ${c.svg}
+    </div>`
 }
 
-// Ilustración SVG 3D Isométrica para Parque / Área Verde Urbana
-function renderParqueSvg() {
-  return `
-    <div class="sim-3d-model-marker">
-      <div class="sim-3d-label" style="background:#059669; border-color:#10B981;">
-        🌳 PARQUE URBANO MULTIDISTRITAL
-      </div>
-      <svg width="88" height="86" viewBox="0 0 88 86" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <!-- Sombra proyectada del parque -->
-        <ellipse cx="44" cy="74" rx="38" ry="10" fill="rgba(15, 23, 42, 0.28)" filter="blur(2px)"/>
+const TIPO_COLORS = { salud: '#DC2626', educacion: '#2563EB', parque: '#059669' }
 
-        <!-- Plataforma de Césped Isométrica -->
-        <polygon points="12,48 44,66 76,48 44,30" fill="#10B981" stroke="#059669" stroke-width="1.5"/>
-        <polygon points="12,48 44,66 44,70 12,52" fill="#047857"/>
-        <polygon points="44,66 76,48 76,52 44,70" fill="#065F46"/>
-
-        <!-- Senderos peatonales curvos dentro del parque -->
-        <path d="M18 50 Q44 62 70 46" stroke="#FDE68A" stroke-width="3" stroke-linecap="round" fill="none" opacity="0.9"/>
-        <path d="M44 32 Q46 48 44 66" stroke="#FDE68A" stroke-width="2.2" stroke-linecap="round" fill="none" opacity="0.8"/>
-
-        <!-- Estanque de agua central con reflejos -->
-        <ellipse cx="44" cy="48" rx="9" ry="5" fill="#38BDF8" stroke="#0284C7" stroke-width="1"/>
-        <ellipse cx="44" cy="48" rx="4" ry="2" fill="#BAE6FD" opacity="0.7"/>
-
-        <!-- Árbol 1 (Copa grande Verde Esmeralda) -->
-        <g>
-          <ellipse cx="28" cy="48" rx="8" ry="4" fill="rgba(0,0,0,0.25)"/>
-          <line x1="28" y1="48" x2="28" y2="40" stroke="#78350F" stroke-width="2.5" stroke-linecap="round"/>
-          <circle cx="28" cy="36" r="10" fill="#059669"/>
-          <circle cx="26" cy="33" r="6" fill="#34D399" opacity="0.85"/>
-        </g>
-
-        <!-- Árbol 2 (Pino cónico verde oscuro) -->
-        <g>
-          <ellipse cx="58" cy="44" rx="7" ry="3.5" fill="rgba(0,0,0,0.25)"/>
-          <line x1="58" y1="44" x2="58" y2="38" stroke="#78350F" stroke-width="2" stroke-linecap="round"/>
-          <polygon points="58,22 52,38 64,38" fill="#047857"/>
-          <polygon points="58,26 53,34 63,34" fill="#10B981" opacity="0.75"/>
-        </g>
-
-        <!-- Árbol 3 (Copa frondosa Verde Lima) -->
-        <g>
-          <ellipse cx="40" cy="36" rx="6" ry="3" fill="rgba(0,0,0,0.25)"/>
-          <line x1="40" y1="36" x2="40" y2="30" stroke="#78350F" stroke-width="1.8" stroke-linecap="round"/>
-          <circle cx="40" cy="27" r="8" fill="#10B981"/>
-          <circle cx="38" cy="25" r="4.5" fill="#6EE7B7"/>
-        </g>
-
-        <!-- Brisa fresca / Partículas de aire puro flotantes -->
-        <path d="M22 28 Q34 22 46 26" stroke="#38BDF8" stroke-width="1.4" stroke-linecap="round" fill="none" stroke-dasharray="3 3"/>
-        <circle cx="48" cy="26" r="1.5" fill="#38BDF8"/>
-        <circle cx="56" cy="23" r="1.2" fill="#34D399"/>
-      </svg>
-    </div>
-  `
+function getLSTColor(lst) {
+  if (lst >= 30) return '#DC2626'
+  if (lst >= 27) return '#F97316'
+  if (lst >= 24) return '#FACC15'
+  return '#38BDF8'
 }
 
 export default function MapLibreSimulador3D({
@@ -236,375 +151,553 @@ export default function MapLibreSimulador3D({
   areasEquipData = null,
   referenciasGeo = null,
   transporteGeo = null,
+  equipamientosData = null,
   existingPoints = [],
   calculationResult = null,
   isInsideMunicipal = false,
   distTranspMeters = null,
   distRochaMeters = null,
+  distritosGeoData = null,
+  climateMode = 'none',
+  onClimateModeChange,
 }) {
   const mapContainerRef = useRef(null)
-  const mapInstanceRef = useRef(null)
+  const mapRef = useRef(null)
+  const popupRef = useRef(new Popup({ closeButton: false, closeOnClick: false, offset: 12 }))
   const simulatedMarkerRef = useRef(null)
   const candidateMarkersRef = useRef([])
-  const existingMarkersRef = useRef([])
+  const districtLabelMarkersRef = useRef([])
+  const isLoadedRef = useRef(false)
 
-  // Tema de la interfaz
-  const [theme, setTheme] = useState(() => {
-    return document.documentElement.getAttribute('data-theme') || 'light'
+  // Respaldo de datos locales para garantizar que NUNCA falte ninguna capa
+  const [localDistritos, setLocalDistritos] = useState(null)
+  const [localEquipamientos, setLocalEquipamientos] = useState(null)
+  const [localAreas, setLocalAreas] = useState(null)
+  const [localRefs, setLocalRefs] = useState(null)
+  const [localTransp, setLocalTransp] = useState(null)
+
+  const [theme, setTheme] = useState(
+    () => document.documentElement.getAttribute('data-theme') || 'light'
+  )
+  const [cameraMode, setCameraMode] = useState('3d')
+
+  // Interruptores de capas visibles encima del mapa
+  const [visLayers, setVisLayers] = useState({
+    distritos: true,
+    salud: true,
+    colegios: true,
+    parques: true,
+    transporte: true,
+    terrenos: true,
   })
 
-  // Modo de cámara (3D Isométrico vs 2D Aéreo)
-  const [cameraMode, setCameraMode] = useState('3d') // '3d' | '2d'
+  const isDark = theme === 'dark'
+  const tipoColor = TIPO_COLORS[tipo] || '#DC2626'
 
-  // Motor de estilo: siempre 'carto-raster' (raster público, sin API key, carga garantizada)
-  const [styleMode, setStyleMode] = useState('carto-raster')
+  // Carga interna de respaldo de GeoJSON si el componente padre no los pasó de inmediato
+  useEffect(() => {
+    let active = true
+    if (!distritosGeoData) {
+      fetch('/data/distritos_indicadores_ambientales_2024.geojson')
+        .then((r) => (r.ok ? r.json() : null))
+        .then((d) => active && d && setLocalDistritos(d))
+        .catch(() => {})
+    }
+    if (!equipamientosData) {
+      fetch('/data/equipamientos.geojson')
+        .then((r) => (r.ok ? r.json() : null))
+        .then((d) => active && d && setLocalEquipamientos(d))
+        .catch(() => {})
+    }
+    if (!areasEquipData) {
+      fetch('/data/areas_equipamiento.geojson')
+        .then((r) => (r.ok ? r.json() : null))
+        .then((d) => active && d && setLocalAreas(d))
+        .catch(() => {})
+    }
+    if (!referenciasGeo) {
+      fetch('/data/referencias_geograficas.geojson')
+        .then((r) => (r.ok ? r.json() : null))
+        .then((d) => active && d && setLocalRefs(d))
+        .catch(() => {})
+    }
+    if (!transporteGeo) {
+      fetch('/data/transporte_lineas_143.geojson')
+        .then((r) => (r.ok ? r.json() : null))
+        .then((d) => active && d && setLocalTransp(d))
+        .catch(() => {})
+    }
+    return () => { active = false }
+  }, [distritosGeoData, equipamientosData, areasEquipData, referenciasGeo, transporteGeo])
 
-  // Color de identidad
-  const tipoColor = useMemo(() => {
-    if (tipo === 'salud') return '#DC2626'
-    if (tipo === 'educacion') return '#2563EB'
-    return '#059669'
-  }, [tipo])
+  const effectiveDistritos = distritosGeoData || localDistritos
+  const effectiveEquip = equipamientosData || localEquipamientos
+  const effectiveAreas = areasEquipData || localAreas
+  const effectiveRefs = referenciasGeo || localRefs
+  const effectiveTransp = transporteGeo || localTransp
 
   // Escuchar cambios de tema (Modo Claro vs Modo Oscuro)
   useEffect(() => {
     const observer = new MutationObserver(() => {
-      const cur = document.documentElement.getAttribute('data-theme') || 'light'
-      setTheme(cur)
+      setTheme(document.documentElement.getAttribute('data-theme') || 'light')
     })
-    observer.observe(document.documentElement, {
-      attributes: true,
-      attributeFilter: ['data-theme'],
-    })
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] })
     return () => observer.disconnect()
   }, [])
 
-  // Inicialización de MapLibre GL — CartoDB Raster como estilo base garantizado
-  useEffect(() => {
-    if (!mapContainerRef.current) return
-    if (mapInstanceRef.current) return
+  // ── Preparar datos de distritos con atributos climáticos ────────────────────
+  const distritosEnriquecidos = useMemo(() => {
+    if (!effectiveDistritos?.features) return null
+    const activeDistId = calculationResult?.distritoId
 
-    const isLight = theme === 'light'
+    const features = effectiveDistritos.features.map((f) => {
+      const cod = parseInt(String(f.properties?.codigo_distrito || '0'), 10)
+      const lst = parseFloat(f.properties?.LST_C_mean || '26')
+      const isSelected = cod === activeDistId
+
+      let color = isSelected ? '#0284C7' : '#94A3B8'
+      let opacity = isSelected ? 0.22 : 0.08
+
+      if (climateMode === 'lst') {
+        color = getLSTColor(lst)
+        opacity = isSelected ? 0.6 : 0.45
+      } else if (climateMode === 'pm10') {
+        const lat = f.properties?.latitud || -17.4
+        color = lat < -17.41 ? '#EF4444' : lat > -17.375 ? '#10B981' : '#F59E0B'
+        opacity = isSelected ? 0.55 : 0.42
+      } else if (climateMode === 'flood') {
+        const hasRisk = FLOOD_RISK_DISTRICTS.has(cod)
+        color = hasRisk ? '#0284C7' : '#94A3B8'
+        opacity = hasRisk ? (isSelected ? 0.6 : 0.42) : 0.04
+      }
+
+      return {
+        ...f,
+        properties: {
+          ...f.properties,
+          _color: color,
+          _opacity: opacity,
+          _selected: isSelected,
+        },
+      }
+    })
+
+    return { type: 'FeatureCollection', features }
+  }, [effectiveDistritos, climateMode, calculationResult])
+
+  // Separar salud y educación desde el GeoJSON de equipamientos oficiales
+  const saludGeoJson = useMemo(() => {
+    if (!effectiveEquip?.features) return { type: 'FeatureCollection', features: [] }
+    return {
+      type: 'FeatureCollection',
+      features: effectiveEquip.features.filter(
+        (f) => f.properties?.tipo === 'salud' && f.geometry?.coordinates
+      ),
+    }
+  }, [effectiveEquip])
+
+  const colegiosGeoJson = useMemo(() => {
+    if (!effectiveEquip?.features) return { type: 'FeatureCollection', features: [] }
+    return {
+      type: 'FeatureCollection',
+      features: effectiveEquip.features.filter(
+        (f) => f.properties?.tipo === 'educacion' && f.geometry?.coordinates
+      ),
+    }
+  }, [effectiveEquip])
+
+  // ── Sincronizar fuentes y capas sobre MapLibre ──────────────────────────────
+  const syncLayers = useCallback(() => {
+    const map = mapRef.current
+    if (!map || !map.isStyleLoaded()) return
+
+    const safeSource = (id, data) => {
+      if (map.getSource(id)) {
+        if (data) map.getSource(id).setData(data)
+      } else if (data) {
+        map.addSource(id, { type: 'geojson', data })
+      }
+    }
+
+    const safeLayer = (layerSpec, beforeId) => {
+      if (!map.getLayer(layerSpec.id)) {
+        if (beforeId && map.getLayer(beforeId)) {
+          map.addLayer(layerSpec, beforeId)
+        } else {
+          map.addLayer(layerSpec)
+        }
+      }
+    }
+
+    // 1. Distritos
+    if (distritosEnriquecidos) {
+      safeSource('distritos-src', distritosEnriquecidos)
+
+      safeLayer({
+        id: 'distritos-fill',
+        type: 'fill',
+        source: 'distritos-src',
+        paint: {
+          'fill-color': ['get', '_color'],
+          'fill-opacity': ['get', '_opacity'],
+        },
+      })
+
+      safeLayer({
+        id: 'distritos-line',
+        type: 'line',
+        source: 'distritos-src',
+        paint: {
+          'line-color': '#1E293B',
+          'line-width': ['case', ['get', '_selected'], 3.2, 1.8],
+          'line-opacity': 0.85,
+        },
+      })
+    }
+
+    // 2. Parques y Áreas Verdes (2.353 espacios en verde esmeralda #10B981, opacidad 55%)
+    if (effectiveAreas) {
+      safeSource('parques-src', effectiveAreas)
+
+      safeLayer({
+        id: 'parques-fill',
+        type: 'fill',
+        source: 'parques-src',
+        paint: {
+          'fill-color': '#10B981',
+          'fill-opacity': 0.55,
+        },
+      })
+
+      safeLayer({
+        id: 'parques-line',
+        type: 'line',
+        source: 'parques-src',
+        paint: {
+          'line-color': '#059669',
+          'line-width': 1.2,
+        },
+      })
+    }
+
+    // 3. Terrenos Municipales GAMC (verde menta con borde punteado)
+    if (effectiveAreas) {
+      safeSource('terrenos-src', effectiveAreas)
+
+      safeLayer({
+        id: 'terrenos-fill',
+        type: 'fill',
+        source: 'terrenos-src',
+        paint: {
+          'fill-color': '#A7F3D0',
+          'fill-opacity': 0.35,
+        },
+      })
+
+      safeLayer({
+        id: 'terrenos-line',
+        type: 'line',
+        source: 'terrenos-src',
+        paint: {
+          'line-color': '#059669',
+          'line-width': 1.8,
+          'line-dasharray': [2, 2],
+        },
+      })
+    }
+
+    // 4. Río Rocha (línea azul brillante #0EA5E9 con franja de alerta de 200m)
+    if (effectiveRefs) {
+      safeSource('rocha-src', effectiveRefs)
+
+      safeLayer({
+        id: 'rocha-buffer-line',
+        type: 'line',
+        source: 'rocha-src',
+        filter: ['==', ['get', 'id'], 'rio_rocha'],
+        paint: {
+          'line-color': '#38BDF8',
+          'line-width': 28,
+          'line-opacity': 0.22,
+        },
+      })
+
+      safeLayer({
+        id: 'rocha-main-line',
+        type: 'line',
+        source: 'rocha-src',
+        filter: ['==', ['get', 'id'], 'rio_rocha'],
+        paint: {
+          'line-color': '#0EA5E9',
+          'line-width': 4.5,
+          'line-opacity': 0.95,
+        },
+      })
+    }
+
+    // 5. Líneas de Transporte (143 líneas)
+    if (effectiveTransp) {
+      safeSource('transporte-src', effectiveTransp)
+
+      safeLayer({
+        id: 'transporte-lines',
+        type: 'line',
+        source: 'transporte-src',
+        paint: {
+          'line-color': '#8B5CF6',
+          'line-width': 1.4,
+          'line-opacity': 0.38,
+        },
+      })
+    }
+
+    // 6. Colegios existentes (264 puntos en azul #2563EB)
+    if (colegiosGeoJson) {
+      safeSource('colegios-src', colegiosGeoJson)
+
+      safeLayer({
+        id: 'colegios-circle',
+        type: 'circle',
+        source: 'colegios-src',
+        paint: {
+          'circle-radius': 5.5,
+          'circle-color': '#2563EB',
+          'circle-stroke-width': 1.8,
+          'circle-stroke-color': '#FFFFFF',
+        },
+      })
+    }
+
+    // 7. Hospitales y Centros de Salud (67 puntos en rojo coral #DC2626)
+    if (saludGeoJson) {
+      safeSource('salud-src', saludGeoJson)
+
+      safeLayer({
+        id: 'salud-circle',
+        type: 'circle',
+        source: 'salud-src',
+        paint: {
+          'circle-radius': 6.5,
+          'circle-color': '#DC2626',
+          'circle-stroke-width': 2,
+          'circle-stroke-color': '#FFFFFF',
+        },
+      })
+    }
+
+    // 8. Círculo de cobertura radial
+    const circleData = activePoint
+      ? createCircleGeoJSON([activePoint.lng, activePoint.lat], radio)
+      : { type: 'FeatureCollection', features: [] }
+
+    safeSource('coverage-src', circleData)
+
+    safeLayer({
+      id: 'coverage-fill',
+      type: 'fill',
+      source: 'coverage-src',
+      paint: {
+        'fill-color': tipoColor,
+        'fill-opacity': 0.22,
+      },
+    })
+
+    safeLayer({
+      id: 'coverage-line',
+      type: 'line',
+      source: 'coverage-src',
+      paint: {
+        'line-color': tipoColor,
+        'line-width': 2.5,
+        'line-dasharray': [3, 2],
+      },
+    })
+
+    // Actualizar propiedades de visibilidad según estado de botones
+    const setVis = (id, show) => {
+      if (map.getLayer(id)) {
+        map.setLayoutProperty(id, 'visibility', show ? 'visible' : 'none')
+      }
+    }
+    setVis('distritos-fill', visLayers.distritos)
+    setVis('distritos-line', visLayers.distritos)
+    setVis('parques-fill', visLayers.parques)
+    setVis('parques-line', visLayers.parques)
+    setVis('terrenos-fill', visLayers.terrenos)
+    setVis('terrenos-line', visLayers.terrenos)
+    setVis('rocha-buffer-line', visLayers.distritos)
+    setVis('rocha-main-line', visLayers.distritos)
+    setVis('transporte-lines', visLayers.transporte)
+    setVis('salud-circle', visLayers.salud)
+    setVis('colegios-circle', visLayers.colegios)
+
+    // Tooltips interactivos al posar el cursor sobre salud y colegios
+    const setupHover = (layerId, icon, label) => {
+      map.off('mouseenter', layerId)
+      map.off('mouseleave', layerId)
+      map.on('mouseenter', layerId, (e) => {
+        map.getCanvas().style.cursor = 'pointer'
+        const p = e.features?.[0]?.properties || {}
+        popupRef.current
+          .setLngLat(e.lngLat)
+          .setHTML(`
+            <div style="font-family: system-ui, sans-serif; font-size: 11px; padding: 2px 4px; min-width: 140px;">
+              <strong style="color:#0F172A; display:block; margin-bottom: 2px;">${icon} ${p.nombre || label}</strong>
+              <span style="color:#64748B; font-size: 10px;">${p.nivel ? p.nivel + ' · ' : ''}Distrito ${p.codigo_distrito || 'Cochabamba'}</span>
+            </div>
+          `)
+          .addTo(map)
+      })
+      map.on('mouseleave', layerId, () => {
+        map.getCanvas().style.cursor = ''
+        popupRef.current.remove()
+      })
+    }
+
+    setupHover('salud-circle', '🏥', 'Centro de Salud')
+    setupHover('colegios-circle', '🎓', 'Unidad Educativa')
+  }, [
+    distritosEnriquecidos,
+    effectiveAreas,
+    effectiveRefs,
+    effectiveTransp,
+    saludGeoJson,
+    colegiosGeoJson,
+    activePoint,
+    radio,
+    tipoColor,
+    visLayers,
+  ])
+
+  // ── Inicialización del Mapa MapLibre GL JS ──────────────────────────────────
+  useEffect(() => {
+    if (!mapContainerRef.current || mapRef.current) return
+
     const initialCenter = activePoint
       ? [activePoint.lng, activePoint.lat]
       : [-66.158, -17.408]
 
-    // Estilo raster válido version:8 — carga instantánea sin API key ni CDN externa
     const map = new Map({
       container: mapContainerRef.current,
-      style: getRasterStyle(isLight),
+      style: getBaseStyle(isDark),
       center: initialCenter,
-      zoom: 13.5,
-      pitch: cameraMode === '3d' ? 48 : 0,
-      bearing: cameraMode === '3d' ? -15 : 0,
-      maxPitch: 75,
+      zoom: 13,
+      pitch: 45,
+      bearing: -15,
+      maxPitch: 65,
       attributionControl: false,
     })
 
-    map.on('style.load', () => {
-      setupLayers(map, isLight)
+    map.on('load', () => {
+      isLoadedRef.current = true
+      syncLayers()
     })
 
-    // Manejo de clic sobre el mapa
     map.on('click', (e) => {
       onMapClick?.({ lat: e.lngLat.lat, lng: e.lngLat.lng })
     })
 
-    mapInstanceRef.current = map
+    mapRef.current = map
 
-    // Auto-ajuste de tamaño con ResizeObserver
-    const ro = new ResizeObserver(() => {
-      map.resize()
-    })
+    const ro = new ResizeObserver(() => map.resize())
     ro.observe(mapContainerRef.current)
 
     return () => {
       ro.disconnect()
       map.remove()
-      mapInstanceRef.current = null
+      mapRef.current = null
+      isLoadedRef.current = false
     }
-  }, [])
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
-  // Cambio de tema dinámico (Light / Dark) — siempre usa CartoDB Raster
+  // Cambio dinámico de estilo al alternar Tema Claro / Oscuro
   useEffect(() => {
-    const map = mapInstanceRef.current
+    const map = mapRef.current
     if (!map) return
 
-    const isLight = theme === 'light'
-    map.setStyle(getRasterStyle(isLight))
+    map.setStyle(getBaseStyle(isDark))
     map.once('style.load', () => {
-      setupLayers(map, isLight)
-      updateCoverageCircle(map)
+      syncLayers()
     })
-  }, [theme])
+  }, [isDark]) // eslint-disable-line react-hooks/exhaustive-deps
 
-  // Configuración de capas 3D y contextuales del GAMC
-  const setupLayers = useCallback(
-    (map, isLight) => {
-      if (!map) return
-
-      // 1. Capa de Edificios 3D (fill-extrusion) si OpenFreeMap está activo
-      if (map.getSource('openmaptiles') && !map.getLayer('3d-buildings-openmaptiles')) {
-        map.addLayer({
-          id: '3d-buildings-openmaptiles',
-          source: 'openmaptiles',
-          'source-layer': 'building',
-          type: 'fill-extrusion',
-          minzoom: 13,
-          paint: {
-            'fill-extrusion-color': isLight ? '#E2E8F0' : '#1E293B',
-            'fill-extrusion-height': [
-              'interpolate',
-              ['linear'],
-              ['zoom'],
-              13,
-              0,
-              15.5,
-              ['coalesce', ['get', 'render_height'], ['get', 'height'], 12],
-            ],
-            'fill-extrusion-base': [
-              'interpolate',
-              ['linear'],
-              ['zoom'],
-              13,
-              0,
-              15.5,
-              ['coalesce', ['get', 'render_min_height'], ['get', 'min_height'], 0],
-            ],
-            'fill-extrusion-opacity': isLight ? 0.88 : 0.72,
-          },
-        })
-      }
-
-      // 2. Terrenos Municipales GAMC disponibles (áreas de equipamiento)
-      if (areasEquipData?.features && !map.getSource('gamc-terrenos-source')) {
-        map.addSource('gamc-terrenos-source', {
-          type: 'geojson',
-          data: areasEquipData,
-        })
-
-        // Relleno verde menta translúcido
-        map.addLayer({
-          id: 'gamc-terrenos-fill',
-          type: 'fill',
-          source: 'gamc-terrenos-source',
-          paint: {
-            'fill-color': '#A7F3D0',
-            'fill-opacity': isLight ? 0.38 : 0.25,
-          },
-        })
-
-        // Borde verde punteado
-        map.addLayer({
-          id: 'gamc-terrenos-line',
-          type: 'line',
-          source: 'gamc-terrenos-source',
-          paint: {
-            'line-color': '#059669',
-            'line-width': 1.8,
-            'line-dasharray': [2, 2],
-          },
-        })
-
-        // Extrusión 3D sutil para parcelas públicas
-        map.addLayer({
-          id: 'gamc-terrenos-extrusion',
-          type: 'fill-extrusion',
-          source: 'gamc-terrenos-source',
-          paint: {
-            'fill-extrusion-color': isLight ? '#D1FAE5' : '#064E3B',
-            'fill-extrusion-height': 6,
-            'fill-extrusion-opacity': 0.35,
-          },
-        })
-      }
-
-      // 3. Río Rocha y Franja de Seguridad de 200m
-      if (referenciasGeo?.features && !map.getSource('referencias-geo-source')) {
-        map.addSource('referencias-geo-source', {
-          type: 'geojson',
-          data: referenciasGeo,
-        })
-
-        // Buffer de seguridad 200m (halo azul agua tenue)
-        map.addLayer({
-          id: 'rio-rocha-buffer-200m',
-          type: 'line',
-          source: 'referencias-geo-source',
-          filter: ['==', ['get', 'id'], 'rio_rocha'],
-          paint: {
-            'line-color': '#38BDF8',
-            'line-width': 22,
-            'line-opacity': 0.16,
-          },
-        })
-
-        // Trazado del Río Rocha
-        map.addLayer({
-          id: 'rio-rocha-main-line',
-          type: 'line',
-          source: 'referencias-geo-source',
-          filter: ['==', ['get', 'id'], 'rio_rocha'],
-          paint: {
-            'line-color': '#0EA5E9',
-            'line-width': 4.5,
-            'line-opacity': 0.95,
-          },
-        })
-      }
-
-      // 4. Líneas de Transporte Público
-      if (transporteGeo?.features && !map.getSource('transporte-lines-source')) {
-        map.addSource('transporte-lines-source', {
-          type: 'geojson',
-          data: transporteGeo,
-        })
-
-        map.addLayer({
-          id: 'transporte-lines-layer',
-          type: 'line',
-          source: 'transporte-lines-source',
-          paint: {
-            'line-color': '#C4B5FD',
-            'line-width': 1.4,
-            'line-opacity': isLight ? 0.32 : 0.22,
-          },
-        })
-      }
-
-      // 5. Fuente y Capa de Halo de Cobertura Radial
-      if (!map.getSource('sim-coverage-circle-source')) {
-        map.addSource('sim-coverage-circle-source', {
-          type: 'geojson',
-          data: { type: 'FeatureCollection', features: [] },
-        })
-
-        // Relleno degradado del halo
-        map.addLayer({
-          id: 'sim-coverage-circle-fill',
-          type: 'fill',
-          source: 'sim-coverage-circle-source',
-          paint: {
-            'fill-color': tipoColor,
-            'fill-opacity': 0.18,
-          },
-        })
-
-        // Borde circular nítido
-        map.addLayer({
-          id: 'sim-coverage-circle-stroke',
-          type: 'line',
-          source: 'sim-coverage-circle-source',
-          paint: {
-            'line-color': tipoColor,
-            'line-width': 2.5,
-            'line-dasharray': [3, 2],
-          },
-        })
-      }
-    },
-    [areasEquipData, referenciasGeo, transporteGeo, tipoColor]
-  )
-
-  // Actualización del círculo de cobertura radial
-  const updateCoverageCircle = useCallback(
-    (map) => {
-      if (!map || !map.getSource('sim-coverage-circle-source')) return
-
-      if (activePoint && activePoint.lat && activePoint.lng) {
-        const circleFeat = createGeoJsonCircle(
-          [activePoint.lng, activePoint.lat],
-          radio
-        )
-
-        map
-          .getSource('sim-coverage-circle-source')
-          .setData({ type: 'FeatureCollection', features: [circleFeat] })
-
-        if (map.getLayer('sim-coverage-circle-fill')) {
-          map.setPaintProperty('sim-coverage-circle-fill', 'fill-color', tipoColor)
-        }
-        if (map.getLayer('sim-coverage-circle-stroke')) {
-          map.setPaintProperty(
-            'sim-coverage-circle-stroke',
-            'line-color',
-            tipoColor
-          )
-        }
-      } else {
-        map
-          .getSource('sim-coverage-circle-source')
-          .setData({ type: 'FeatureCollection', features: [] })
-      }
-    },
-    [activePoint, radio, tipoColor]
-  )
-
+  // Re-sincronizar capas ante cualquier cambio de datos, visibilidad, punto o radio
   useEffect(() => {
-    const map = mapInstanceRef.current
-    if (map && map.isStyleLoaded()) {
-      updateCoverageCircle(map)
+    if (mapRef.current && mapRef.current.isStyleLoaded()) {
+      syncLayers()
     }
-  }, [updateCoverageCircle])
+  }, [syncLayers])
 
-  // Actualización del Marcador 3D Ilustrado del Equipamiento Simulado
+  // ── Actualizar Etiquetas D1..D15 de los distritos ──────────────────────────
   useEffect(() => {
-    const map = mapInstanceRef.current
+    const map = mapRef.current
     if (!map) return
 
-    // Limpiar marcador anterior
-    if (simulatedMarkerRef.current) {
-      simulatedMarkerRef.current.remove()
-      simulatedMarkerRef.current = null
-    }
+    districtLabelMarkersRef.current.forEach((m) => m.remove())
+    districtLabelMarkersRef.current = []
+
+    if (!visLayers.distritos) return
+
+    const activeDistId = calculationResult?.distritoId
+
+    Object.entries(DISTRICT_CENTROIDS).forEach(([numStr, pos]) => {
+      const num = parseInt(numStr, 10)
+      const isSelected = num === activeDistId
+
+      const el = document.createElement('div')
+      el.className = `sim-district-label ${isSelected ? 'is-selected' : ''}`
+      el.textContent = pos.label
+
+      const marker = new Marker({ element: el, anchor: 'center' })
+        .setLngLat([pos.lng, pos.lat])
+        .addTo(map)
+
+      districtLabelMarkersRef.current.push(marker)
+    })
+  }, [visLayers.distritos, calculationResult?.distritoId])
+
+  // ── Actualizar Marcador 3D Ilustrado del Equipamiento Simulado ───────────────
+  useEffect(() => {
+    const map = mapRef.current
+    if (!map) return
+
+    simulatedMarkerRef.current?.remove()
+    simulatedMarkerRef.current = null
 
     if (!activePoint) return
 
     const el = document.createElement('div')
-    if (tipo === 'salud') {
-      el.innerHTML = renderHospitalSvg()
-    } else if (tipo === 'educacion') {
-      el.innerHTML = renderColegioSvg()
-    } else {
-      el.innerHTML = renderParqueSvg()
-    }
+    el.innerHTML = getSvgMarkerHTML(tipo)
 
-    const marker = new Marker({
-      element: el,
-      anchor: 'bottom',
-    })
+    const marker = new Marker({ element: el, anchor: 'bottom' })
       .setLngLat([activePoint.lng, activePoint.lat])
       .addTo(map)
 
     simulatedMarkerRef.current = marker
 
-    // Pan suave de la cámara al nuevo equipamiento
     map.flyTo({
       center: [activePoint.lng, activePoint.lat],
       zoom: 14.5,
-      pitch: cameraMode === '3d' ? 48 : 0,
-      duration: 850,
-      essential: true,
+      pitch: 45,
+      duration: 800,
     })
-  }, [activePoint, tipo, cameraMode])
+  }, [activePoint, tipo])
 
-  // Actualización de los Pines Flotantes 3D Numerados (Top 10 Candidatos)
+  // ── Actualizar Pines 3D de Candidatos (#1 a #10) ───────────────────────────
   useEffect(() => {
-    const map = mapInstanceRef.current
+    const map = mapRef.current
     if (!map) return
 
-    // Limpiar pines anteriores
     candidateMarkersRef.current.forEach((m) => m.remove())
     candidateMarkersRef.current = []
 
     candidatos.forEach((c) => {
-      const isSelected =
-        activePoint?.lat === c.lat && activePoint?.lng === c.lon
+      const isSelected = activePoint?.lat === c.lat && activePoint?.lng === c.lon
 
       const el = document.createElement('div')
       el.className = `sim-candidate-3d-pin ${isSelected ? 'is-active' : ''}`
       el.innerHTML = `
-        <div class="sim-pin-badge" style="background: ${tipoColor};">
+        <div class="sim-pin-badge" style="background:${tipoColor};color:#FFFFFF;font-weight:800;">
           ${c.num}
         </div>
         <div class="sim-pin-stem"></div>
@@ -615,10 +708,7 @@ export default function MapLibreSimulador3D({
         onSelectCandidate?.(c)
       })
 
-      const marker = new Marker({
-        element: el,
-        anchor: 'bottom',
-      })
+      const marker = new Marker({ element: el, anchor: 'bottom' })
         .setLngLat([c.lon, c.lat])
         .addTo(map)
 
@@ -626,129 +716,182 @@ export default function MapLibreSimulador3D({
     })
   }, [candidatos, activePoint, tipoColor, onSelectCandidate])
 
-  // Actualización de micro-íconos discretos de equipamientos existentes
-  useEffect(() => {
-    const map = mapInstanceRef.current
-    if (!map) return
-
-    existingMarkersRef.current.forEach((m) => m.remove())
-    existingMarkersRef.current = []
-
-    // Mostrar una muestra representativa (máx 60) para no saturar
-    existingPoints.slice(0, 60).forEach((ep) => {
-      const el = document.createElement('div')
-      el.className = 'sim-existing-dot'
-      el.style.backgroundColor =
-        tipo === 'salud'
-          ? '#EF4444'
-          : tipo === 'educacion'
-          ? '#3B82F6'
-          : '#10B981'
-      el.title = `${ep.nombre} (Existente)`
-
-      const marker = new Marker({
-        element: el,
-        anchor: 'center',
-      })
-        .setLngLat([ep.lng, ep.lat])
-        .addTo(map)
-
-      existingMarkersRef.current.push(marker)
-    })
-  }, [existingPoints, tipo])
-
-  // Alternar vista de cámara 3D vs 2D
-  const toggleCameraMode = (mode) => {
-    const map = mapInstanceRef.current
+  // Alternar vista de cámara 3D inclinada vs 2D aérea
+  const toggleCamera = (mode) => {
+    const map = mapRef.current
     if (!map) return
     setCameraMode(mode)
-    if (mode === '3d') {
-      map.easeTo({ pitch: 48, bearing: -15, duration: 1000 })
-    } else {
-      map.easeTo({ pitch: 0, bearing: 0, duration: 1000 })
-    }
+    map.easeTo({
+      pitch: mode === '3d' ? 45 : 0,
+      bearing: mode === '3d' ? -15 : 0,
+      duration: 900,
+    })
   }
 
-  // Controles de navegación
-  const handleZoomIn = () => mapInstanceRef.current?.zoomIn()
-  const handleZoomOut = () => mapInstanceRef.current?.zoomOut()
-  const handleResetNorth = () =>
-    mapInstanceRef.current?.easeTo({ bearing: 0, duration: 600 })
+  const toggleLayer = (key) => {
+    setVisLayers((p) => ({ ...p, [key]: !p[key] }))
+  }
+
+  const handleClimateSelect = (mode) => {
+    onClimateModeChange?.(mode)
+  }
 
   return (
     <div className="maplibre-sim-wrapper">
-      {/* Contenedor Canvas WebGL de MapLibre */}
+      {/* Contenedor Canvas WebGL MapLibre */}
       <div ref={mapContainerRef} className="maplibre-sim-canvas" />
 
-      {/* CONTROLES FLOTANTES EN LA ESQUINA SUPERIOR DERECHA */}
-      <div className="maplibre-floating-controls">
-        {/* Toggle Vista 3D Inclinada / Vista 2D Aérea */}
-        <div className="maplibre-view-toggle-group">
+      {/* BARRA SUPERIOR DE CAPAS E INFRAESTRUCTURA + SELECTOR CLIMÁTICO */}
+      <div className="mls-top-bar">
+        {/* Interruptores de Capas Oficiales */}
+        <div className="mls-layer-pills">
           <button
             type="button"
-            className={`maplibre-view-btn ${cameraMode === '3d' ? 'is-active' : ''}`}
-            onClick={() => toggleCameraMode('3d')}
-            title="Vista Isométrica 3D con extrusión de edificios"
+            className={`mls-layer-pill ${visLayers.distritos ? 'is-on' : ''}`}
+            onClick={() => toggleLayer('distritos')}
           >
-            <Box size={13} />
-            <span>Vista 3D</span>
+            <MapPin size={11} />
+            <span>Distritos</span>
           </button>
           <button
             type="button"
-            className={`maplibre-view-btn ${cameraMode === '2d' ? 'is-active' : ''}`}
-            onClick={() => toggleCameraMode('2d')}
-            title="Vista cenital 2D tradicional"
+            className={`mls-layer-pill ${visLayers.salud ? 'is-on' : ''}`}
+            onClick={() => toggleLayer('salud')}
           >
-            <span>Vista 2D</span>
+            <span>🏥 Salud ({saludGeoJson.features.length || 67})</span>
+          </button>
+          <button
+            type="button"
+            className={`mls-layer-pill ${visLayers.colegios ? 'is-on' : ''}`}
+            onClick={() => toggleLayer('colegios')}
+          >
+            <span>🎓 Colegios ({colegiosGeoJson.features.length || 264})</span>
+          </button>
+          <button
+            type="button"
+            className={`mls-layer-pill ${visLayers.parques ? 'is-on' : ''}`}
+            onClick={() => toggleLayer('parques')}
+          >
+            <span>🌳 Parques (2.353)</span>
+          </button>
+          <button
+            type="button"
+            className={`mls-layer-pill ${visLayers.transporte ? 'is-on' : ''}`}
+            onClick={() => toggleLayer('transporte')}
+          >
+            <span>🚌 Transporte</span>
+          </button>
+          <button
+            type="button"
+            className={`mls-layer-pill ${visLayers.terrenos ? 'is-on' : ''}`}
+            onClick={() => toggleLayer('terrenos')}
+          >
+            <span>🏛️ Terrenos GAMC</span>
           </button>
         </div>
 
-        {/* Botones de Navegación (Zoom y Compás) */}
-        <div className="maplibre-nav-buttons">
+        {/* Selector Climático Socio-Ambiental */}
+        <div className="mls-climate-pills">
+          <span style={{ fontSize: '0.66rem', fontWeight: 800, color: '#64748B', marginRight: 2 }}>
+            CLIMA:
+          </span>
           <button
             type="button"
-            className="maplibre-icon-btn"
-            onClick={handleZoomIn}
-            title="Acercar mapa"
+            className={`mls-climate-pill ${climateMode === 'none' ? 'is-on' : ''}`}
+            onClick={() => handleClimateSelect('none')}
           >
-            <Plus size={15} />
+            <span>Normal</span>
           </button>
           <button
             type="button"
-            className="maplibre-icon-btn"
-            onClick={handleZoomOut}
-            title="Alejar mapa"
+            className={`mls-climate-pill ${climateMode === 'lst' ? 'is-on' : ''}`}
+            onClick={() => handleClimateSelect('lst')}
           >
-            <Minus size={15} />
+            <span>🌡️ Calor LST</span>
           </button>
           <button
             type="button"
-            className="maplibre-icon-btn"
-            onClick={handleResetNorth}
-            title="Restablecer orientación al Norte"
+            className={`mls-climate-pill ${climateMode === 'pm10' ? 'is-on' : ''}`}
+            onClick={() => handleClimateSelect('pm10')}
           >
-            <Compass size={15} />
+            <span>💨 Aire PM10</span>
+          </button>
+          <button
+            type="button"
+            className={`mls-climate-pill ${climateMode === 'flood' ? 'is-on' : ''}`}
+            onClick={() => handleClimateSelect('flood')}
+          >
+            <span>🌊 Inundación</span>
           </button>
         </div>
       </div>
 
-      {/* TARJETA FLOTANTE COMPACTA EN LA ESQUINA INFERIOR IZQUIERDA */}
+      {/* CONTROLES DE CÁMARA Y NAVEGACIÓN (SUPERIOR DERECHA) */}
+      <div className="maplibre-floating-controls">
+        <div className="maplibre-view-toggle-group">
+          <button
+            type="button"
+            className={`maplibre-view-btn ${cameraMode === '3d' ? 'is-active' : ''}`}
+            onClick={() => toggleCamera('3d')}
+            title="Vista 3D Isométrica"
+          >
+            <Box size={13} />
+            <span>3D</span>
+          </button>
+          <button
+            type="button"
+            className={`maplibre-view-btn ${cameraMode === '2d' ? 'is-active' : ''}`}
+            onClick={() => toggleCamera('2d')}
+            title="Vista 2D Cenital"
+          >
+            <span>2D</span>
+          </button>
+        </div>
+        <div className="maplibre-nav-buttons">
+          <button
+            type="button"
+            className="maplibre-icon-btn"
+            onClick={() => mapRef.current?.zoomIn()}
+            title="Acercar"
+          >
+            <Plus size={14} />
+          </button>
+          <button
+            type="button"
+            className="maplibre-icon-btn"
+            onClick={() => mapRef.current?.zoomOut()}
+            title="Alejar"
+          >
+            <Minus size={14} />
+          </button>
+          <button
+            type="button"
+            className="maplibre-icon-btn"
+            onClick={() => mapRef.current?.easeTo({ bearing: 0, pitch: 0, duration: 600 })}
+            title="Orientar al Norte"
+          >
+            <Compass size={14} />
+          </button>
+        </div>
+      </div>
+
+      {/* HUD COMPACTO INFERIOR IZQUIERDO */}
       {activePoint && (
         <div className="maplibre-floating-summary">
           <div className="maplibre-summary-badge-row">
             <span className="maplibre-summary-title">
-              {tipo === 'salud' && '🏥 Nuevo Centro de Salud 1er Nivel'}
-              {tipo === 'educacion' && '🎓 Nueva Unidad Educativa'}
-              {tipo === 'parque' && '🌳 Nuevo Parque Urbano Distrital'}
+              {tipo === 'salud' && '🏥 Centro de Salud 1er Nivel'}
+              {tipo === 'educacion' && '🎓 Unidad Educativa'}
+              {tipo === 'parque' && '🌳 Parque Urbano Distrital'}
             </span>
             <span
               style={{
                 fontSize: '0.66rem',
                 fontWeight: 800,
-                color: tipoColor,
-                background: `${tipoColor}18`,
-                padding: '2px 6px',
-                borderRadius: 4,
+                color: '#FFFFFF',
+                background: tipoColor,
+                padding: '2px 8px',
+                borderRadius: 5,
               }}
             >
               Radio {radio}m
@@ -757,24 +900,28 @@ export default function MapLibreSimulador3D({
 
           <div className="maplibre-summary-kpis">
             <span className="maplibre-summary-pill pill-beneficiarios">
-              +{calculationResult?.personasGanan?.toLocaleString('es-BO') || '0'}{' '}
-              hab. beneficiados
+              +{calculationResult?.personasGanan?.toLocaleString('es-BO') || '0'} hab. cubiertos
             </span>
-
             {isInsideMunicipal ? (
               <span className="maplibre-summary-pill pill-municipal">
-                ✓ Terreno GAMC
+                ✓ Suelo Municipal GAMC
               </span>
             ) : (
               <span className="maplibre-summary-pill pill-privado">
                 ⚠️ Suelo Privado
               </span>
             )}
-
             {distTranspMeters !== null && distTranspMeters <= 300 && (
               <span className="maplibre-summary-pill pill-transporte">
-                <Bus size={10} />
-                Bus a {distTranspMeters}m
+                <Bus size={10} /> Bus a {distTranspMeters}m
+              </span>
+            )}
+            {distRochaMeters !== null && distRochaMeters < 200 && (
+              <span
+                className="maplibre-summary-pill"
+                style={{ background: '#FEF2F2', color: '#DC2626', border: '1px solid #FCA5A5' }}
+              >
+                ⚠️ Río Rocha a {distRochaMeters}m
               </span>
             )}
           </div>
