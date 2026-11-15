@@ -5,7 +5,7 @@
  * Usa datos reales de tendencias_distritos.json y cálculo estadístico de tendencias.js
  */
 
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import {
   TrendingUp,
   TrendingDown,
@@ -253,11 +253,18 @@ function formatSigned(val, decimals = 2) {
 export function DetectiveTendenciasScreen({
   selectedZoneId = 'distrito-1',
   onSelectZone,
+  initialVarId,
 }) {
   const { datos: tj, cargando, error } = useJSON('tendencias_distritos.json')
 
   // Variable seleccionada (NDVI por defecto para toda la pantalla)
-  const [selectedVarId, setSelectedVarId] = useState('ndvi')
+  const [selectedVarId, setSelectedVarId] = useState(initialVarId || 'ndvi')
+
+  useEffect(() => {
+    if (initialVarId) {
+      setSelectedVarId(initialVarId)
+    }
+  }, [initialVarId])
   const varConfig = VARIABLES_CONFIG[selectedVarId] || VARIABLES_CONFIG.ndvi
 
   // Rango de años activo personalizado (si es null, usa minYear y maxYear de la variable)

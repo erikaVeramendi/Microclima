@@ -194,11 +194,18 @@ export default function PuntosCriticosScreen({
   selectedZoneId,
   onSelectZone,
   onNavigateModule,
+  initialFilter,
 }) {
   const [indiceData, setIndiceData] = useState(null)
   const [distritosGeoJson, setDistritosGeoJson] = useState(null)
   const [referenciasData, setReferenciasData] = useState(null)
-  const [activeFilter, setActiveFilter] = useState('todas')
+  const [activeFilter, setActiveFilter] = useState(initialFilter || 'todas')
+
+  useEffect(() => {
+    if (initialFilter) {
+      setActiveFilter(initialFilter)
+    }
+  }, [initialFilter])
   const [sortBy, setSortBy] = useState('alertas') // 'alertas' | 'indice' | 'crecimiento'
   const [loading, setLoading] = useState(true)
 
