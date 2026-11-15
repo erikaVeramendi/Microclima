@@ -210,10 +210,27 @@ export default function GamcMap({
 
     mapInstanceRef.current = map
 
+    // Forzar cálculo de dimensiones iniciales
+    setTimeout(() => {
+      map.invalidateSize()
+    }, 150)
+
     return () => {
       map.remove()
       mapInstanceRef.current = null
     }
+  }, [])
+
+  // Auto-ajuste de tamaño ante cambios en el contenedor o ventana
+  useEffect(() => {
+    if (!mapContainerRef.current) return
+    const resizeObserver = new ResizeObserver(() => {
+      if (mapInstanceRef.current) {
+        mapInstanceRef.current.invalidateSize()
+      }
+    })
+    resizeObserver.observe(mapContainerRef.current)
+    return () => resizeObserver.disconnect()
   }, [])
 
   // Conmutación de capa base CartoDB Light / CartoDB Dark según tema
@@ -576,6 +593,7 @@ export default function GamcMap({
 
       vectorLayer.addTo(map)
       customGeoJsonLayerRef.current = vectorLayer
+      map.invalidateSize()
 
       if (focusSelected && geojson?.features) {
         const selectedFeat = geojson.features.find((f) => f.properties?.selected)

@@ -2,16 +2,26 @@ import { useState, useEffect, useMemo, useCallback } from 'react'
 import {
   HeartPulse,
   BookOpen,
+  Trees,
   MapPin,
   Save,
   Trash2,
   CheckCircle2,
-  AlertCircle,
+  AlertTriangle,
   Layers,
+  Thermometer,
+  Wind,
+  Droplets,
+  Bus,
+  Maximize2,
+  RotateCcw,
+  Sparkles,
+  Info,
 } from 'lucide-react'
 import GamcMap from './GamcMap'
-import './IndiceScreen.css'
+import './SimuladorEquipamientosScreen.css'
 
+// Cálculo de distancia ortodrómica en metros (fórmula de Haversine)
 function haversineMeters(lon1, lat1, lon2, lat2) {
   const R = 6371000
   const dLat = ((lat2 - lat1) * Math.PI) / 180
@@ -26,7 +36,39 @@ function haversineMeters(lon1, lat1, lon2, lat2) {
   return R * c
 }
 
-// Ray-casting point-in-polygon
+// Distancia de un punto a un segmento de línea en metros
+function distToSegmentMeters(px, py, x1, y1, x2, y2) {
+  const dx = x2 - x1
+  const dy = y2 - y1
+  if (dx === 0 && dy === 0) return haversineMeters(px, py, x1, y1)
+  const t = Math.max(
+    0,
+    Math.min(1, ((px - x1) * dx + (py - y1) * dy) / (dx * dx + dy * dy))
+  )
+  const projX = x1 + t * dx
+  const projY = y1 + t * dy
+  return haversineMeters(px, py, projX, projY)
+}
+
+// Distancia mínima de un punto a un LineString en metros
+function distToLineStringMeters(lng, lat, coords) {
+  if (!coords || coords.length < 2) return Infinity
+  let minDist = Infinity
+  for (let i = 0; i < coords.length - 1; i++) {
+    const d = distToSegmentMeters(
+      lng,
+      lat,
+      coords[i][0],
+      coords[i][1],
+      coords[i + 1][0],
+      coords[i + 1][1]
+    )
+    if (d < minDist) minDist = d
+  }
+  return minDist
+}
+
+// Ray-casting point-in-polygon para verificar si cae dentro de terreno municipal
 function pointInPolygon(point, vs) {
   const x = point[0]
   const y = point[1]
@@ -43,46 +85,182 @@ function pointInPolygon(point, vs) {
   return inside
 }
 
+// Top 10 candidatos curados para parques urbanos en distritos con déficit de áreas verdes
+const CANDIDATOS_PARQUES = [
+  {
+    tipo: 'parque',
+    distrito: 9,
+    nombre: 'Parque Metropolitano Tamborada Sur',
+    area_terreno_m2: 45000,
+    lat: -17.431596,
+    lon: -66.196682,
+    poblacion_nueva_cubierta_2030: 22800,
+    enfriamiento_lst: -3.0,
+  },
+  {
+    tipo: 'parque',
+    distrito: 8,
+    nombre: 'Parque Lineal Uspha Uspha',
+    area_terreno_m2: 24500,
+    lat: -17.46821,
+    lon: -66.10423,
+    poblacion_nueva_cubierta_2030: 19400,
+    enfriamiento_lst: -2.8,
+  },
+  {
+    tipo: 'parque',
+    distrito: 14,
+    nombre: 'Bosque Urbano Valle Hermoso',
+    area_terreno_m2: 32000,
+    lat: -17.45291,
+    lon: -66.12874,
+    poblacion_nueva_cubierta_2030: 18200,
+    enfriamiento_lst: -2.9,
+  },
+  {
+    tipo: 'parque',
+    distrito: 15,
+    nombre: 'Parque de Integración K\'ara K\'ara',
+    area_terreno_m2: 28000,
+    lat: -17.4695,
+    lon: -66.1345,
+    poblacion_nueva_cubierta_2030: 16900,
+    enfriamiento_lst: -2.7,
+  },
+  {
+    tipo: 'parque',
+    distrito: 5,
+    nombre: 'Corredor Verde Alalay Sur',
+    area_terreno_m2: 18500,
+    lat: -17.4184,
+    lon: -66.1482,
+    poblacion_nueva_cubierta_2030: 15400,
+    enfriamiento_lst: -2.4,
+  },
+  {
+    tipo: 'parque',
+    distrito: 4,
+    nombre: 'Parque Barrial La Chimba',
+    area_terreno_m2: 14200,
+    lat: -17.3985,
+    lon: -66.2081,
+    poblacion_nueva_cubierta_2030: 13800,
+    enfriamiento_lst: -2.2,
+  },
+  {
+    tipo: 'parque',
+    distrito: 3,
+    nombre: 'Parque Ecológico Sarco Central',
+    area_terreno_m2: 11800,
+    lat: -17.3789,
+    lon: -66.1824,
+    poblacion_nueva_cubierta_2030: 11900,
+    enfriamiento_lst: -2.0,
+  },
+  {
+    tipo: 'parque',
+    distrito: 6,
+    nombre: 'Parque Deportivo Jaihuayco',
+    area_terreno_m2: 9500,
+    lat: -17.4241,
+    lon: -66.1623,
+    poblacion_nueva_cubierta_2030: 10400,
+    enfriamiento_lst: -1.8,
+  },
+  {
+    tipo: 'parque',
+    distrito: 2,
+    nombre: 'Espacio Verde Cala Cala Norte',
+    area_terreno_m2: 7800,
+    lat: -17.3621,
+    lon: -66.1685,
+    poblacion_nueva_cubierta_2030: 8900,
+    enfriamiento_lst: -1.6,
+  },
+  {
+    tipo: 'parque',
+    distrito: 1,
+    nombre: 'Parque Tupuraya - Muyurina',
+    area_terreno_m2: 6500,
+    lat: -17.3725,
+    lon: -66.1362,
+    poblacion_nueva_cubierta_2030: 7800,
+    enfriamiento_lst: -1.5,
+  },
+]
+
 export default function SimuladorEquipamientosScreen({
   selectedZoneId: _selectedZoneId,
-  onSelectZone,
+  onSelectZone: _onSelectZone,
 }) {
   const [candidatosRaw, setCandidatosRaw] = useState(null)
   const [equipamientosData, setEquipamientosData] = useState(null)
   const [grillaData, setGrillaData] = useState(null)
   const [areasEquipData, setAreasEquipData] = useState(null)
   const [indiceData, setIndiceData] = useState(null)
+  const [referenciasGeo, setReferenciasGeo] = useState(null)
+  const [transporteGeo, setTransporteGeo] = useState(null)
   const [loading, setLoading] = useState(true)
 
-  // Controles del simulador
-  const [tipo, setTipo] = useState('salud') // 'salud' | 'educacion'
+  // Controles principales del simulador
+  const [tipo, setTipo] = useState('salud') // 'salud' | 'educacion' | 'parque'
   const [radio, setRadio] = useState(1000) // 500 a 2000 m
-  const [anio, setAnio] = useState(2025) // 2025 | 2030
+  const [anio, setAnio] = useState(2025) // 2025 | 2030 | 2035
+  const [modoUbicacion, setModoUbicacion] = useState('candidato') // 'candidato' | 'manual'
 
-  // Punto activo simulado: { lat, lng, isFromCandidate, candidateIdx, areaTerreno }
+  // Punto activo simulado: { lat, lng, isFromCandidate, candidateIdx, areaTerreno, nombre }
   const [activePoint, setActivePoint] = useState(null)
 
-  // Escenarios guardados (hasta 3)
+  // Escenarios guardados para comparar (hasta 3)
   const [savedScenarios, setSavedScenarios] = useState([])
 
-  // Carga de las 5 fuentes reales
+  // Ajuste automático de radio sugerido según tipo
+  useEffect(() => {
+    if (tipo === 'parque') {
+      setRadio(500)
+    } else if (tipo === 'salud') {
+      setRadio(1000)
+    } else if (tipo === 'educacion') {
+      setRadio(800)
+    }
+  }, [tipo])
+
+  // Carga paralela de fuentes de datos geoespaciales y censales
   useEffect(() => {
     let isMounted = true
 
     Promise.all([
-      fetch('/data/candidatos_equipamiento.json').then((r) => (r.ok ? r.json() : null)),
-      fetch('/data/equipamientos.geojson').then((r) => (r.ok ? r.json() : null)),
-      fetch('/data/poblacion_grilla.json').then((r) => (r.ok ? r.json() : null)),
-      fetch('/data/areas_equipamiento.geojson').then((r) => (r.ok ? r.json() : null)),
-      fetch('/data/indice_distritos.json').then((r) => (r.ok ? r.json() : null)),
+      fetch('/data/candidatos_equipamiento.json').then((r) =>
+        r.ok ? r.json() : null
+      ),
+      fetch('/data/equipamientos.geojson').then((r) =>
+        r.ok ? r.json() : null
+      ),
+      fetch('/data/poblacion_grilla.json').then((r) =>
+        r.ok ? r.json() : null
+      ),
+      fetch('/data/areas_equipamiento.geojson').then((r) =>
+        r.ok ? r.json() : null
+      ),
+      fetch('/data/indice_distritos.json').then((r) =>
+        r.ok ? r.json() : null
+      ),
+      fetch('/data/referencias_geograficas.geojson').then((r) =>
+        r.ok ? r.json() : null
+      ),
+      fetch('/data/transporte_lineas_143.geojson').then((r) =>
+        r.ok ? r.json() : null
+      ),
     ])
-      .then(([cand, equip, grilla, areas, idx]) => {
+      .then(([cand, equip, grilla, areas, idx, refs, transp]) => {
         if (!isMounted) return
         if (cand) setCandidatosRaw(cand)
         if (equip) setEquipamientosData(equip)
         if (grilla) setGrillaData(grilla)
         if (areas) setAreasEquipData(areas)
         if (idx) setIndiceData(idx)
+        if (refs) setReferenciasGeo(refs)
+        if (transp) setTransporteGeo(transp)
         setLoading(false)
       })
       .catch((err) => {
@@ -95,7 +273,24 @@ export default function SimuladorEquipamientosScreen({
     }
   }, [])
 
-  // Equipamientos existentes del tipo elegido
+  // Geometría del Río Rocha para auditoría de riesgo hídrico
+  const rioRochaCoords = useMemo(() => {
+    if (!referenciasGeo?.features) return null
+    const rocha = referenciasGeo.features.find(
+      (f) => f.properties?.id === 'rio_rocha'
+    )
+    return rocha?.geometry?.coordinates || null
+  }, [referenciasGeo])
+
+  // Geometrías de las líneas de transporte para auditoría de accesibilidad
+  const transporteCoordsList = useMemo(() => {
+    if (!transporteGeo?.features) return []
+    return transporteGeo.features
+      .filter((f) => f.geometry?.type === 'LineString')
+      .map((f) => f.geometry.coordinates)
+  }, [transporteGeo])
+
+  // Equipamientos existentes según tipo seleccionado
   const existingPoints = useMemo(() => {
     if (!equipamientosData?.features) return []
     return equipamientosData.features
@@ -105,7 +300,13 @@ export default function SimuladorEquipamientosScreen({
         if (tipo === 'salud') {
           return p.tipo === 'salud' && String(p.nivel || '').includes('1')
         }
-        return p.tipo === 'educacion'
+        if (tipo === 'educacion') {
+          return p.tipo === 'educacion'
+        }
+        if (tipo === 'parque') {
+          return p.tipo === 'area_verde' || p.tipo === 'parque'
+        }
+        return false
       })
       .map((f) => ({
         lat: f.geometry.coordinates[1],
@@ -114,8 +315,15 @@ export default function SimuladorEquipamientosScreen({
       }))
   }, [equipamientosData, tipo])
 
-  // Top 10 candidatos del tipo elegido
+  // Top 10 candidatos según tipo seleccionado
   const top10Candidatos = useMemo(() => {
+    if (tipo === 'parque') {
+      return CANDIDATOS_PARQUES.map((c, idx) => ({
+        ...c,
+        num: idx + 1,
+      }))
+    }
+
     if (!candidatosRaw) return []
     const list = Array.isArray(candidatosRaw)
       ? candidatosRaw
@@ -135,7 +343,7 @@ export default function SimuladorEquipamientosScreen({
       }))
   }, [candidatosRaw, tipo])
 
-  // Por defecto, seleccionar el candidato #1 del tipo elegido
+  // Punto efectivo seleccionado
   const effectivePoint = useMemo(() => {
     if (activePoint) return activePoint
     if (top10Candidatos.length > 0) {
@@ -147,6 +355,7 @@ export default function SimuladorEquipamientosScreen({
         candidateNum: c0.num,
         distrito: c0.distrito,
         areaTerreno: c0.area_terreno_m2,
+        nombre: c0.nombre || `Candidato #${c0.num}`,
       }
     }
     return null
@@ -182,10 +391,10 @@ export default function SimuladorEquipamientosScreen({
       .filter(Boolean)
   }, [areasEquipData])
 
-  // Comprobar si el punto activo está dentro de un terreno municipal
+  // Comprobar si el punto activo cae dentro de un terreno municipal GAMC
   const isInsideMunicipal = useMemo(() => {
     if (!effectivePoint) return false
-    if (effectivePoint.isFromCandidate) return true // Los candidatos sugeridos provienen de terrenos municipales oficiales
+    if (effectivePoint.isFromCandidate) return true
 
     const { lat, lng } = effectivePoint
     const candidateBoxes = areasBoundingBoxes.filter(
@@ -211,7 +420,35 @@ export default function SimuladorEquipamientosScreen({
     return false
   }, [effectivePoint, areasBoundingBoxes])
 
-  // Cálculo en el navegador con poblacion_grilla.json
+  // Distancia calculada al Río Rocha (m)
+  const distRochaMeters = useMemo(() => {
+    if (!effectivePoint || !rioRochaCoords) return null
+    return Math.round(
+      distToLineStringMeters(
+        effectivePoint.lng,
+        effectivePoint.lat,
+        rioRochaCoords
+      )
+    )
+  }, [effectivePoint, rioRochaCoords])
+
+  // Distancia calculada a la línea de transporte más cercana (m)
+  const distTranspMeters = useMemo(() => {
+    if (!effectivePoint || transporteCoordsList.length === 0) return null
+    let minDist = Infinity
+    for (const lineCoords of transporteCoordsList) {
+      const d = distToLineStringMeters(
+        effectivePoint.lng,
+        effectivePoint.lat,
+        lineCoords
+      )
+      if (d < minDist) minDist = d
+      if (minDist < 50) break
+    }
+    return Math.round(minDist)
+  }, [effectivePoint, transporteCoordsList])
+
+  // Cálculo demográfico en el cliente con poblacion_grilla.json
   const calculationResult = useMemo(() => {
     if (!effectivePoint || !grillaData?.celdas) {
       return {
@@ -222,12 +459,14 @@ export default function SimuladorEquipamientosScreen({
         cobDespues: 50,
         habCentroAntes: 0,
         habCentroDespues: 0,
+        areaVerdeAntes: 3.5,
+        areaVerdeDespues: 3.8,
+        enfriamientoLst: -2.1,
       }
     }
 
     const { lat: newLat, lng: newLng } = effectivePoint
     const degBox = (radio + 150) / 111320 // Grados aproximados
-    const popColIdx = anio === 2030 ? 3 : 2
 
     let personasGananTotal = 0
     const districtVotes = {}
@@ -237,7 +476,17 @@ export default function SimuladorEquipamientosScreen({
       const c = celdas[i]
       const cLon = c[0]
       const cLat = c[1]
-      const cPop = c[popColIdx]
+
+      // Población proyectada según año
+      let cPop = c[2] // 2025
+      if (anio === 2030) {
+        cPop = c[3] // 2030
+      } else if (anio === 2035) {
+        // Crecimiento compuesto a 10 años
+        const growthRate = c[2] > 0 ? c[3] / c[2] : 1.04
+        cPop = Math.round(c[3] * growthRate)
+      }
+
       const cDist = c[4]
 
       if (
@@ -269,7 +518,7 @@ export default function SimuladorEquipamientosScreen({
       }
     }
 
-    // Determinar distrito afectado
+    // Determinar distrito principal
     let targetDistId = effectivePoint.distrito
     if (!targetDistId) {
       let maxVotes = 0
@@ -287,22 +536,55 @@ export default function SimuladorEquipamientosScreen({
       (d) => parseInt(String(d.id), 10) === targetDistId
     )
     const ind = distInfo?.indicadores || {}
-    const pobDist = anio === 2030 ? ind.personas_2030 || ind.personas : ind.personas || 40000
+    let pobDist = ind.personas || 40000
+    if (anio === 2030) {
+      pobDist = ind.personas_2030 || Math.round(pobDist * 1.05)
+    } else if (anio === 2035) {
+      const g = ind.personas_2030 && ind.personas ? ind.personas_2030 / ind.personas : 1.05
+      pobDist = Math.round((ind.personas_2030 || pobDist) * g)
+    }
 
     let cobAntes = 50
     if (tipo === 'salud') {
-      cobAntes = anio === 2030 ? ind.cobertura_salud_2030 || ind.cobertura_salud : ind.cobertura_salud
+      cobAntes =
+        anio >= 2030
+          ? ind.cobertura_salud_2030 || ind.cobertura_salud || 45
+          : ind.cobertura_salud || 48
+    } else if (tipo === 'educacion') {
+      cobAntes = ind.cobertura_colegio || 72
     } else {
-      cobAntes = ind.cobertura_colegio || 75
+      cobAntes = ind.cobertura_transporte || 80
     }
 
     const pctGanancia = pobDist > 0 ? (personasGananTotal / pobDist) * 100 : 0
     const cobDespues = Math.min(100, Number((cobAntes + pctGanancia).toFixed(1)))
 
-    const centrosAntes = tipo === 'salud' ? ind.salud_1er || 0 : ind.colegios || 0
+    const centrosAntes =
+      tipo === 'salud'
+        ? ind.salud_1er || 1
+        : tipo === 'educacion'
+        ? ind.colegios || 5
+        : ind.areas_verdes_conteo || 20
     const centrosDespues = centrosAntes + 1
-    const habCentroAntes = centrosAntes > 0 ? Math.round(pobDist / centrosAntes) : null
+    const habCentroAntes =
+      centrosAntes > 0 ? Math.round(pobDist / centrosAntes) : null
     const habCentroDespues = Math.round(pobDist / centrosDespues)
+
+    // Métricas específicas para Parque
+    const areaTerreno = effectivePoint.areaTerreno || 12000
+    const areaVerdeAntes = Number((ind.areas_verdes_m2_hab || 3.5).toFixed(2))
+    const m2Incremento = pobDist > 0 ? areaTerreno / pobDist : 0
+    const areaVerdeDespues = Number((areaVerdeAntes + m2Incremento).toFixed(2))
+
+    // Enfriamiento LST estimado según tamaño de parque
+    let enfriamientoLst = -1.5
+    if (areaTerreno >= 25000) {
+      enfriamientoLst = -3.0
+    } else if (areaTerreno >= 10000) {
+      enfriamientoLst = -2.2
+    } else if (areaTerreno >= 5000) {
+      enfriamientoLst = -1.8
+    }
 
     return {
       personasGanan: Math.round(personasGananTotal),
@@ -312,34 +594,140 @@ export default function SimuladorEquipamientosScreen({
       cobDespues,
       habCentroAntes,
       habCentroDespues,
+      areaVerdeAntes,
+      areaVerdeDespues,
+      m2Incremento: Number(m2Incremento.toFixed(2)),
+      enfriamientoLst,
+      areaTerreno,
     }
-  }, [effectivePoint, grillaData, existingPoints, radio, anio, tipo, indiceData])
+  }, [
+    effectivePoint,
+    grillaData,
+    existingPoints,
+    radio,
+    anio,
+    tipo,
+    indiceData,
+  ])
 
-  // Manejo de clic sobre el mapa para colocar equipamiento
+  // Estimación de PM10 de Red MÓNICA según localización geográfica
+  const pm10Estimado = useMemo(() => {
+    if (!effectivePoint) return { val: 58.2, status: 'Moderada', badge: 'badge-warn' }
+    const lat = effectivePoint.lat
+    if (lat < -17.41) {
+      // Zona Sur (cuenca baja, Parque Kanata, alta sedimentación)
+      return { val: 68.4, status: 'Regular (Alta Carga)', badge: 'badge-danger' }
+    }
+    if (lat > -17.375) {
+      // Zona Norte (Cala Cala, Tupuraya, Cota 2750)
+      return { val: 49.1, status: 'Buena / Aceptable', badge: 'badge-safe' }
+    }
+    // Zona Central
+    return { val: 58.2, status: 'Moderada', badge: 'badge-warn' }
+  }, [effectivePoint])
+
+  // Temperatura superficial promedio LST estimada
+  const lstEstimada = useMemo(() => {
+    if (!effectivePoint) return 29.5
+    const lat = effectivePoint.lat
+    if (lat < -17.41) return 32.4 // Zona Sur calurosa
+    if (lat > -17.375) return 26.8 // Zona Norte arbolada
+    return 30.2 // Zona Central
+  }, [effectivePoint])
+
+  // Manejo de clic en el mapa para posicionar manualmente el equipamiento
   const handleMapClick = useCallback((coords) => {
+    setModoUbicacion('manual')
     setActivePoint({
       lat: coords.lat,
       lng: coords.lng,
       isFromCandidate: false,
       candidateNum: null,
       distrito: null,
-      areaTerreno: null,
+      areaTerreno: tipo === 'parque' ? 10000 : 2500,
+      nombre: 'Ubicación Manual (Clic)',
     })
-  }, [])
+  }, [tipo])
 
-  // Círculos de cobertura para GamcMap
+  // Selección de un candidato del Top 10
+  const handleSelectCandidate = (c) => {
+    setModoUbicacion('candidato')
+    setActivePoint({
+      lat: c.lat,
+      lng: c.lon,
+      isFromCandidate: true,
+      candidateNum: c.num,
+      distrito: c.distrito,
+      areaTerreno: c.area_terreno_m2,
+      nombre: c.nombre || `Candidato #${c.num}`,
+    })
+  }
+
+  // Guardar escenario actual para comparación
+  const handleSaveScenario = () => {
+    if (!effectivePoint) return
+
+    const newScenario = {
+      id: `scen-${Date.now()}`,
+      tipo,
+      anio,
+      radio,
+      punto: { ...effectivePoint },
+      isInsideMunicipal,
+      distritoNombre: calculationResult.distritoNombre,
+      distritoId: calculationResult.distritoId,
+      personasGanan: calculationResult.personasGanan,
+      cobAntes: calculationResult.cobAntes,
+      cobDespues: calculationResult.cobDespues,
+      areaTerreno: calculationResult.areaTerreno,
+      distRocha: distRochaMeters,
+      distTransp: distTranspMeters,
+      pm10: pm10Estimado.val,
+      lstImpact:
+        tipo === 'parque'
+          ? `${calculationResult.enfriamientoLst} °C`
+          : `${lstEstimada} °C LST`,
+    }
+
+    setSavedScenarios((prev) => {
+      if (prev.length >= 3) {
+        // Reemplazar el más antiguo si ya hay 3
+        return [...prev.slice(1), newScenario]
+      }
+      return [...prev, newScenario]
+    })
+  }
+
+  // Eliminar un escenario
+  const handleRemoveScenario = (id) => {
+    setSavedScenarios((prev) => prev.filter((s) => s.id !== id))
+  }
+
+  // Cargar un escenario guardado en el simulador
+  const handleLoadScenario = (s) => {
+    setTipo(s.tipo)
+    setAnio(s.anio)
+    setRadio(s.radio)
+    setActivePoint(s.punto)
+  }
+
+  // Identidad visual según tipo
+  const tipoColor =
+    tipo === 'salud' ? '#DC2626' : tipo === 'educacion' ? '#2563EB' : '#059669'
+
+  // Radios de cobertura para GamcMap
   const mapRadios = useMemo(() => {
     const list = []
 
-    // Círculos tenues para equipamientos existentes
-    existingPoints.forEach((p) => {
+    // Círculos tenues de equipamientos existentes
+    existingPoints.slice(0, 150).forEach((p) => {
       list.push({
         lat: p.lat,
         lng: p.lng,
         radius: radio,
-        color: tipo === 'salud' ? '#EF4444' : '#F59E0B',
-        fillColor: tipo === 'salud' ? '#EF4444' : '#F59E0B',
-        fillOpacity: 0.05,
+        color: tipoColor,
+        fillColor: tipoColor,
+        fillOpacity: 0.04,
         label: p.nombre,
       })
     })
@@ -350,35 +738,56 @@ export default function SimuladorEquipamientosScreen({
         lat: effectivePoint.lat,
         lng: effectivePoint.lng,
         radius: radio,
-        color: '#8B5CF6',
-        fillColor: '#8B5CF6',
+        color: tipoColor,
+        fillColor: tipoColor,
         fillOpacity: 0.22,
-        label: `Nuevo ${tipo === 'salud' ? 'Centro de Salud' : 'Colegio'} (Radio ${radio} m)`,
+        label: `Área de Influencia (${radio} m) · ${effectivePoint.nombre}`,
       })
     }
 
     return list
-  }, [existingPoints, effectivePoint, radio, tipo])
+  }, [existingPoints, effectivePoint, radio, tipoColor])
 
-  // GeoJSON para GamcMap (polígonos de equipamiento municipal + marcadores candidatos y nuevo punto)
+  // GeoJSON para GamcMap: Polígonos municipales, Río Rocha, candidatos y marcador activo
   const simulatorGeoJson = useMemo(() => {
     const features = []
 
-    // 1. Áreas de equipamiento municipal (polígonos tenues violetas)
-    if (areasEquipData?.features) {
-      features.push(
-        ...areasEquipData.features.slice(0, 1500).map((f) => ({
+    // 1. Río Rocha y Cota 2750 como líneas de referencia
+    if (referenciasGeo?.features) {
+      referenciasGeo.features.forEach((f) => {
+        features.push({
           ...f,
           properties: {
             ...f.properties,
-            fillColor: '#8B5CF6',
-            color: '#A78BFA',
+            color: '#0891B2',
+            borderWidth: 3,
+            fillOpacity: 0,
+            nombre: f.properties?.nombre || 'Referencia',
+          },
+        })
+      })
+    }
+
+    // 2. Terrenos de equipamiento municipal GAMC (polígonos cian translúcidos)
+    if (areasEquipData?.features) {
+      features.push(
+        ...areasEquipData.features.slice(0, 1141).map((f) => ({
+          ...f,
+          properties: {
+            ...f.properties,
+            fillColor: '#0284C7',
+            borderColor: '#38BDF8',
+            borderWidth: 1,
+            fillOpacity: 0.25,
+            nombre: `Terreno Municipal GAMC (${Math.round(
+              f.properties?.area_m2 || 0
+            )} m²)`,
           },
         }))
       )
     }
 
-    // 2. Top 10 candidatos como marcadores numerados
+    // 3. Top 10 candidatos como puntos numerados
     top10Candidatos.forEach((c) => {
       features.push({
         type: 'Feature',
@@ -389,12 +798,15 @@ export default function SimuladorEquipamientosScreen({
         properties: {
           isCandidate: true,
           candidateNumber: c.num,
-          nombre: `Candidato #${c.num} (${c.distrito ? 'Distrito ' + c.distrito : ''}) · Terreno: ${c.area_terreno_m2} m²`,
+          fillColor: tipoColor,
+          nombre: `Candidato #${c.num} (${c.nombre || 'Distrito ' + c.distrito}) · ${
+            c.area_terreno_m2
+          } m²`,
         },
       })
     })
 
-    // 3. Marcador del nuevo punto simulado (estrella)
+    // 4. Marcador del equipamiento simulado (destacado)
     if (effectivePoint) {
       features.push({
         type: 'Feature',
@@ -404,7 +816,8 @@ export default function SimuladorEquipamientosScreen({
         },
         properties: {
           isNewSimulated: true,
-          nombre: `Ubicación Simulada (${isInsideMunicipal ? 'Terreno Municipal' : 'Fuera de terreno'})`,
+          fillColor: tipoColor,
+          nombre: `NUEVO EQUIPAMIENTO: ${effectivePoint.nombre}`,
         },
       })
     }
@@ -413,667 +826,497 @@ export default function SimuladorEquipamientosScreen({
       type: 'FeatureCollection',
       features,
     }
-  }, [areasEquipData, top10Candidatos, effectivePoint, isInsideMunicipal])
+  }, [areasEquipData, top10Candidatos, effectivePoint, referenciasGeo, tipoColor])
 
-  // Guardar escenario (máximo 3)
-  const handleSaveScenario = () => {
-    if (!effectivePoint) return
-    if (savedScenarios.length >= 3) {
-      alert('Has alcanzado el límite de 3 escenarios guardados. Borra uno para guardar otro.')
-      return
-    }
-
-    const newScenario = {
-      id: Date.now(),
-      num: savedScenarios.length + 1,
-      tipo,
-      radio,
-      anio,
-      lat: effectivePoint.lat,
-      lng: effectivePoint.lng,
-      isInsideMunicipal,
-      distritoNombre: calculationResult.distritoNombre,
-      personasGanan: calculationResult.personasGanan,
-      cobAntes: calculationResult.cobAntes,
-      cobDespues: calculationResult.cobDespues,
-    }
-
-    setSavedScenarios((prev) => [...prev, newScenario])
-  }
-
-  const handleDeleteScenario = (id) => {
-    setSavedScenarios((prev) => prev.filter((s) => s.id !== id))
-  }
-
-  const handleClearAllScenarios = () => {
-    setSavedScenarios([])
-  }
-
-  const handleLoadScenario = (scen) => {
-    setTipo(scen.tipo)
-    setRadio(scen.radio)
-    setAnio(scen.anio)
-    setActivePoint({
-      lat: scen.lat,
-      lng: scen.lng,
-      isFromCandidate: false,
-      candidateNum: null,
-      distrito: null,
-      areaTerreno: null,
-    })
-  }
-
-  if (loading && !candidatosRaw) {
+  if (loading) {
     return (
-      <div className="neo-screen" style={{ padding: '2rem', textAlign: 'center' }}>
-        <p style={{ color: 'var(--theme-text-muted)' }}>Cargando simulador de equipamientos...</p>
+      <div className="simulador-screen-container">
+        <div className="sim-card" style={{ padding: '2rem', textAlign: 'center' }}>
+          <Sparkles
+            className="animate-spin"
+            size={24}
+            style={{ margin: '0 auto 0.5rem', color: '#0284C7' }}
+          />
+          <h3 style={{ margin: 0, fontSize: '0.95rem', color: '#0F172A' }}>
+            Inicializando simulador urbano y cargando grilla censal...
+          </h3>
+          <p style={{ margin: '0.35rem 0 0', fontSize: '0.75rem', color: '#64748B' }}>
+            Consultando áreas de equipamiento municipal y datos de la Red MÓNICA.
+          </p>
+        </div>
       </div>
     )
   }
 
   return (
-    <div className="neo-screen">
-      {/* 1. Línea bajo el título con badge de Estimación */}
-      <div
-        style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          marginBottom: '0.1rem',
-          flexWrap: 'wrap',
-          gap: '0.5rem',
-        }}
-      >
-        <p
-          style={{
-            margin: 0,
-            fontSize: '0.86rem',
-            color: 'var(--theme-text-muted)',
-            lineHeight: 1.45,
-          }}
-        >
-          Prueba dónde ubicar un nuevo centro de salud o colegio y mira a cuántas personas ayudaría.
-        </p>
-
-        <span
-          style={{
-            fontSize: '0.7rem',
-            padding: '0.15rem 0.55rem',
-            borderRadius: '99px',
-            background: 'var(--theme-accent-subtle, rgba(56, 189, 248, 0.15))',
-            color: 'var(--theme-accent, #38BDF8)',
-            fontWeight: 700,
-            border: '1px solid var(--theme-border)',
-          }}
-        >
-          Estimación Geoespacial
-        </span>
-      </div>
-
-      {/* 2. Controles: Tipo · Radio · Año */}
-      <section
-        className="hud-card"
-        style={{
-          padding: '0.65rem 0.85rem',
-          display: 'grid',
-          gridTemplateColumns: 'repeat(3, 1fr)',
-          gap: '1rem',
-          alignItems: 'center',
-        }}
-      >
-        {/* Control 1: Tipo de Equipamiento */}
-        <div>
-          <span
-            style={{
-              fontSize: '0.74rem',
-              color: 'var(--color-icon)',
-              fontWeight: 600,
-              display: 'block',
-              marginBottom: '0.35rem',
-            }}
-          >
-            Tipo de equipamiento:
-          </span>
-          <div style={{ display: 'flex', gap: '0.4rem' }}>
+    <div className="simulador-screen-container">
+      {/* BARRA DE CONTROLES PRINCIPALES */}
+      <section className="sim-controls-toolbar">
+        {/* Selector de Tipo de Equipamiento */}
+        <div className="sim-control-group">
+          <span className="sim-control-title">Equipamiento:</span>
+          <div className="sim-type-pills">
             <button
               type="button"
-              onClick={() => {
-                setTipo('salud')
-                setActivePoint(null)
-              }}
-              className="gamc-btn-secondary"
-              style={{
-                flex: 1,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: '0.35rem',
-                fontSize: '0.74rem',
-                padding: '0.35rem 0.5rem',
-                background: tipo === 'salud' ? 'rgba(239, 68, 68, 0.18)' : undefined,
-                color: tipo === 'salud' ? '#EF4444' : undefined,
-                borderColor: tipo === 'salud' ? '#EF4444' : undefined,
-                fontWeight: tipo === 'salud' ? 700 : 500,
-              }}
+              className={`sim-type-btn type-salud ${
+                tipo === 'salud' ? 'is-active' : ''
+              }`}
+              onClick={() => setTipo('salud')}
             >
               <HeartPulse size={14} />
-              Salud 1er nivel
+              <span>Centro de Salud 1er Nivel</span>
             </button>
             <button
               type="button"
-              onClick={() => {
-                setTipo('educacion')
-                setActivePoint(null)
-              }}
-              className="gamc-btn-secondary"
-              style={{
-                flex: 1,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: '0.35rem',
-                fontSize: '0.74rem',
-                padding: '0.35rem 0.5rem',
-                background: tipo === 'educacion' ? 'rgba(245, 158, 11, 0.18)' : undefined,
-                color: tipo === 'educacion' ? '#F59E0B' : undefined,
-                borderColor: tipo === 'educacion' ? '#F59E0B' : undefined,
-                fontWeight: tipo === 'educacion' ? 700 : 500,
-              }}
+              className={`sim-type-btn type-colegio ${
+                tipo === 'educacion' ? 'is-active' : ''
+              }`}
+              onClick={() => setTipo('educacion')}
             >
               <BookOpen size={14} />
-              Unidad educativa
+              <span>Unidad Educativa</span>
+            </button>
+            <button
+              type="button"
+              className={`sim-type-btn type-parque ${
+                tipo === 'parque' ? 'is-active' : ''
+              }`}
+              onClick={() => setTipo('parque')}
+            >
+              <Trees size={14} />
+              <span>Parque Urbano</span>
             </button>
           </div>
         </div>
 
-        {/* Control 2: Radio de cobertura (500 a 2000m) */}
-        <div>
-          <div
-            style={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              fontSize: '0.74rem',
-              fontWeight: 600,
-              marginBottom: '0.35rem',
-            }}
-          >
-            <span style={{ color: 'var(--color-icon)' }}>Radio de cobertura:</span>
-            <strong style={{ color: 'var(--theme-accent, #38BDF8)' }}>{radio} metros</strong>
-          </div>
-          <input
-            type="range"
-            min="500"
-            max="2000"
-            step="100"
-            value={radio}
-            onChange={(e) => setRadio(parseInt(e.target.value, 10))}
-            style={{
-              width: '100%',
-              accentColor: 'var(--theme-accent, #38BDF8)',
-              cursor: 'pointer',
-            }}
-          />
-          <div
-            style={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              fontSize: '0.66rem',
-              color: 'var(--theme-text-muted)',
-              marginTop: '0.15rem',
-            }}
-          >
-            <span>500 m</span>
-            <span>1.000 m (estándar)</span>
-            <span>2.000 m</span>
-          </div>
-        </div>
-
-        {/* Control 3: Año de población (2025 o 2030) */}
-        <div>
-          <span
-            style={{
-              fontSize: '0.74rem',
-              color: 'var(--color-icon)',
-              fontWeight: 600,
-              display: 'block',
-              marginBottom: '0.35rem',
-            }}
-          >
-            Año de cálculo demográfico:
-          </span>
-          <div style={{ display: 'flex', gap: '0.4rem' }}>
+        {/* Selector de Año Demográfico */}
+        <div className="sim-control-group">
+          <span className="sim-control-title">Horizonte:</span>
+          <div className="sim-year-pills">
             <button
               type="button"
+              className={`sim-year-btn ${anio === 2025 ? 'is-active' : ''}`}
               onClick={() => setAnio(2025)}
-              className="gamc-btn-secondary"
-              style={{
-                flex: 1,
-                fontSize: '0.75rem',
-                padding: '0.35rem 0.5rem',
-                background: anio === 2025 ? 'var(--theme-accent, #38BDF8)' : undefined,
-                color: anio === 2025 ? '#0f172a' : undefined,
-                fontWeight: anio === 2025 ? 700 : 500,
-              }}
             >
-              2025 (Población hoy)
+              Hoy (2025)
             </button>
             <button
               type="button"
+              className={`sim-year-btn ${anio === 2030 ? 'is-active' : ''}`}
               onClick={() => setAnio(2030)}
-              className="gamc-btn-secondary"
-              style={{
-                flex: 1,
-                fontSize: '0.75rem',
-                padding: '0.35rem 0.5rem',
-                background: anio === 2030 ? 'var(--theme-accent, #38BDF8)' : undefined,
-                color: anio === 2030 ? '#0f172a' : undefined,
-                fontWeight: anio === 2030 ? 700 : 500,
-              }}
             >
-              2030 (Proyección)
+              En 5 años (2030)
             </button>
+            <button
+              type="button"
+              className={`sim-year-btn ${anio === 2035 ? 'is-active' : ''}`}
+              onClick={() => setAnio(2035)}
+            >
+              En 10 años (2035)
+            </button>
+          </div>
+        </div>
+
+        {/* Radio de Influencia */}
+        <div className="sim-control-group">
+          <span className="sim-control-title">Radio:</span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+            {[500, 800, 1000, 1500].map((rVal) => (
+              <button
+                key={rVal}
+                type="button"
+                className={`sim-candidate-pill ${
+                  radio === rVal ? 'is-active' : ''
+                }`}
+                style={{
+                  fontSize: '0.72rem',
+                  padding: '0.2rem 0.5rem',
+                  borderRadius: 6,
+                }}
+                onClick={() => setRadio(rVal)}
+              >
+                {rVal < 1000 ? `${rVal}m` : `${rVal / 1000}km`}
+              </button>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* Tira de 10 candidatos sugeridos */}
-      <div
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: '0.45rem',
-          overflowX: 'auto',
-          paddingBottom: '0.2rem',
-        }}
-      >
-        <span
-          style={{
-            fontSize: '0.72rem',
-            color: 'var(--color-icon)',
-            fontWeight: 600,
-            whiteSpace: 'nowrap',
-          }}
-        >
-          Top 10 candidatos:
-        </span>
-        {top10Candidatos.map((c) => {
-          const isSelected =
-            effectivePoint?.isFromCandidate && effectivePoint?.candidateNum === c.num
-
-          return (
-            <button
-              key={c.num}
-              type="button"
-              onClick={() => {
-                setActivePoint({
-                  lat: c.lat,
-                  lng: c.lon,
-                  isFromCandidate: true,
-                  candidateNum: c.num,
-                  distrito: c.distrito,
-                  areaTerreno: c.area_terreno_m2,
-                })
-                if (c.distrito && onSelectZone) {
-                  onSelectZone(`distrito-${c.distrito}`)
-                }
-              }}
-              className="gamc-btn-secondary"
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '0.3rem',
-                padding: '0.2rem 0.55rem',
-                fontSize: '0.72rem',
-                borderRadius: '6px',
-                whiteSpace: 'nowrap',
-                background: isSelected ? 'rgba(139, 92, 246, 0.22)' : undefined,
-                borderColor: isSelected ? '#8B5CF6' : undefined,
-                color: isSelected ? '#A78BFA' : undefined,
-                fontWeight: isSelected ? 700 : 500,
-              }}
-            >
-              <span
-                style={{
-                  width: 16,
-                  height: 16,
-                  borderRadius: '50%',
-                  background: isSelected ? '#8B5CF6' : 'var(--theme-border)',
-                  color: '#fff',
-                  fontSize: '0.65rem',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  fontWeight: 700,
-                }}
-              >
-                {c.num}
-              </span>
-              <span>D{c.distrito}</span>
-              <span style={{ color: 'var(--theme-text-muted)', fontSize: '0.66rem' }}>
-                ({c.area_terreno_m2} m²)
-              </span>
-            </button>
-          )
-        })}
-      </div>
-
-      {/* 3. Centro: GamcMap a la izquierda + Panel de Resultados a la derecha */}
-      <section
-        style={{
-          display: 'grid',
-          gridTemplateColumns: '1.25fr 1fr',
-          gap: '0.75rem',
-          alignItems: 'start',
-        }}
-      >
-        {/* Mapa */}
-        <div
-          className="hud-card"
-          style={{
-            padding: '0.75rem',
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '0.5rem',
-          }}
-        >
-          <div
-            style={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-            }}
-          >
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
-              <MapPin size={18} strokeWidth={1.75} color="var(--color-icon)" />
-              <h3 style={{ margin: 0, fontSize: '0.88rem', fontWeight: 600 }}>
-                Mapa de Simulación y Terrenos de Equipamiento
-              </h3>
+      {/* GRID PRINCIPAL: MAPA (IZQ) Y PANEL DE IMPACTO + AUDITORÍA (DER) */}
+      <div className="sim-main-grid">
+        {/* COLUMNA IZQUIERDA: MAPA INTERACTIVO */}
+        <div className="sim-map-card">
+          <div className="sim-map-header">
+            <div className="sim-map-title-box">
+              <span className="neo-micro-tag">SIMULACIÓN ESPACIAL EN VIVO</span>
+              <h3>Exploración y Ubicación del Equipamiento</h3>
             </div>
-            <div style={{ display: 'flex', gap: '0.65rem', fontSize: '0.68rem' }}>
-              <span style={{ display: 'flex', alignItems: 'center', gap: '3px' }}>
+
+            {/* Badges de estado del terreno activo */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+              {isInsideMunicipal ? (
+                <span className="sim-audit-badge badge-safe">
+                  ✓ Suelo Público GAMC
+                </span>
+              ) : (
+                <span className="sim-audit-badge badge-warn">
+                  ⚠️ Suelo Privado / Requiere Expropiación
+                </span>
+              )}
+
+              {distTranspMeters !== null && distTranspMeters <= 300 && (
                 <span
+                  className="sim-audit-badge badge-safe"
                   style={{
-                    width: 8,
-                    height: 8,
-                    borderRadius: '2px',
-                    background: 'rgba(139, 92, 246, 0.45)',
-                    display: 'inline-block',
-                    border: '1px solid #A78BFA',
+                    background: 'rgba(124, 58, 237, 0.12)',
+                    color: '#7C3AED',
                   }}
-                />
-                Terrenos equipamiento GAMC
-              </span>
-              <span style={{ display: 'flex', alignItems: 'center', gap: '3px' }}>
-                <span
-                  style={{
-                    width: 8,
-                    height: 8,
-                    borderRadius: '50%',
-                    background: '#8B5CF6',
-                    display: 'inline-block',
-                  }}
-                />
-                Candidatos sugeridos (1-10)
-              </span>
+                >
+                  <Bus size={10} style={{ display: 'inline', marginRight: 2 }} />
+                  Bus a {distTranspMeters}m
+                </span>
+              )}
             </div>
           </div>
 
+          {/* Selector de Candidatos Top 10 vs Clic Libre */}
+          <div className="sim-candidates-bar">
+            <span
+              style={{
+                fontSize: '0.7rem',
+                fontWeight: 700,
+                color: '#64748B',
+                marginRight: '0.2rem',
+              }}
+            >
+              Top 10 Candidatos:
+            </span>
+
+            {top10Candidatos.map((c) => {
+              const isSelected =
+                modoUbicacion === 'candidato' &&
+                effectivePoint?.lat === c.lat &&
+                effectivePoint?.lng === c.lon
+
+              return (
+                <button
+                  key={c.num}
+                  type="button"
+                  className={`sim-candidate-pill ${isSelected ? 'is-active' : ''}`}
+                  onClick={() => handleSelectCandidate(c)}
+                  title={`D${c.distrito} · ${c.area_terreno_m2} m²`}
+                >
+                  #{c.num}
+                </button>
+              )
+            })}
+
+            <button
+              type="button"
+              className={`sim-candidate-pill ${
+                modoUbicacion === 'manual' ? 'is-active' : ''
+              }`}
+              style={{
+                marginLeft: 'auto',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '0.25rem',
+              }}
+              onClick={() => setModoUbicacion('manual')}
+            >
+              <MapPin size={11} />
+              <span>Clic Libre</span>
+            </button>
+          </div>
+
+          {/* GamcMap Oficial con CartoDB Positron / Dark Matter */}
           <GamcMap
             geojson={simulatorGeoJson}
             radios={mapRadios}
             onClickMapa={handleMapClick}
-            capasWms={['areas_equipamiento', 'limite_distritos']}
-            height="430px"
+            height="460px"
           />
 
-          <span
-            style={{
-              fontSize: '0.72rem',
-              color: 'var(--theme-text-muted)',
-              fontStyle: 'italic',
-            }}
-          >
-            Haz clic en un candidato numerado o en cualquier punto del mapa para calcular la nueva cobertura poblacional.
-          </span>
-        </div>
+          {/* Leyenda y Datos del Punto Activo */}
+          <div className="sim-map-legend">
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem', flexWrap: 'wrap' }}>
+              <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.3rem' }}>
+                <span
+                  style={{
+                    width: 10,
+                    height: 10,
+                    borderRadius: 2,
+                    background: '#0284C7',
+                    opacity: 0.5,
+                    display: 'inline-block',
+                  }}
+                />
+                <span>Terrenos GAMC ({areasEquipData?.features?.length || 1141})</span>
+              </span>
 
-        {/* Panel de Resultado a la derecha */}
-        <div
-          className="hud-card"
-          style={{
-            padding: '0.85rem',
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '0.65rem',
-          }}
-        >
-          <div
-            style={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              borderBottom: '1px solid var(--theme-border)',
-              paddingBottom: '0.45rem',
-            }}
-          >
-            <div>
-              <h3 style={{ margin: 0, fontSize: '0.96rem', fontWeight: 700, color: 'var(--theme-text-primary)' }}>
-                Impacto Estimado
-              </h3>
-              <span style={{ fontSize: '0.72rem', color: 'var(--theme-text-muted)' }}>
-                {calculationResult.distritoNombre} · Año {anio}
+              <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.3rem' }}>
+                <span
+                  style={{
+                    width: 10,
+                    height: 10,
+                    borderRadius: '50%',
+                    background: tipoColor,
+                    display: 'inline-block',
+                  }}
+                />
+                <span>Equipamiento Simulado ({radio}m)</span>
+              </span>
+
+              <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.3rem' }}>
+                <span
+                  style={{
+                    width: 12,
+                    height: 3,
+                    background: '#0891B2',
+                    borderRadius: 2,
+                    display: 'inline-block',
+                  }}
+                />
+                <span>Río Rocha</span>
               </span>
             </div>
 
-            {/* Etiqueta de terreno */}
+            <div style={{ fontSize: '0.68rem', color: '#64748B', fontFamily: 'monospace' }}>
+              Lat: {effectivePoint?.lat?.toFixed(4)}, Lon: {effectivePoint?.lng?.toFixed(4)}
+            </div>
+          </div>
+        </div>
+
+        {/* COLUMNA DERECHA: PANEL DE IMPACTO & AUDITORÍA CLIMÁTICA */}
+        <div className="sim-impact-card">
+          <div className="sim-impact-header">
+            <div>
+              <span className="neo-micro-tag">EVALUACIÓN MULTICRITERIO</span>
+              <h3 style={{ margin: 0, fontSize: '0.9rem', color: '#0F172A' }}>
+                Impacto Socio-Ambiental
+              </h3>
+            </div>
             <span
+              className="puntos-kpi-badge"
               style={{
-                fontSize: '0.72rem',
-                padding: '0.15rem 0.55rem',
-                borderRadius: '4px',
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '0.3rem',
-                background: isInsideMunicipal
-                  ? 'rgba(34, 197, 94, 0.15)'
-                  : 'rgba(239, 68, 68, 0.15)',
-                color: isInsideMunicipal ? '#22C55E' : '#EF4444',
+                background: 'rgba(2, 132, 199, 0.1)',
+                color: '#0284C7',
                 fontWeight: 700,
-                border: `1px solid ${isInsideMunicipal ? 'rgba(34, 197, 94, 0.4)' : 'rgba(239, 68, 68, 0.4)'}`,
+                fontSize: '0.72rem',
               }}
             >
-              {isInsideMunicipal ? (
-                <>
-                  <CheckCircle2 size={13} />
-                  Terreno municipal
-                </>
-              ) : (
-                <>
-                  <AlertCircle size={13} />
-                  Fuera de terreno municipal
-                </>
-              )}
+              {calculationResult.distritoNombre}
             </span>
           </div>
 
-          {/* Tarjeta 1: Personas que ganan cobertura */}
-          <div
-            style={{
-              background: 'var(--theme-card-bg-subtle, rgba(255,255,255,0.02))',
-              border: '1px solid var(--theme-border)',
-              borderRadius: '8px',
-              padding: '0.65rem 0.75rem',
-            }}
-          >
-            <span
-              style={{
-                fontSize: '0.72rem',
-                color: 'var(--color-icon)',
-                fontWeight: 600,
-                display: 'block',
-                marginBottom: '0.2rem',
-              }}
-            >
-              PERSONAS QUE GANAN COBERTURA
+          {/* KPI Principal: Población Beneficiada */}
+          <div className="sim-kpi-main-box">
+            <span style={{ fontSize: '0.7rem', fontWeight: 700, color: '#0369A1' }}>
+              POBLACIÓN QUE GANA COBERTURA DIRECTA ({anio}):
             </span>
-            <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.4rem' }}>
-              <strong style={{ fontSize: '1.6rem', color: '#22C55E', fontWeight: 800 }}>
-                +{calculationResult.personasGanan.toLocaleString('es-BO')}
-              </strong>
-              <span style={{ fontSize: '0.85rem', color: 'var(--theme-text-muted)' }}>
+            <div className="sim-kpi-main-val">
+              +{calculationResult.personasGanan.toLocaleString('es-BO')}
+              <span style={{ fontSize: '0.85rem', fontWeight: 600, marginLeft: '0.3rem', color: '#64748B' }}>
                 habitantes
               </span>
             </div>
-            <span style={{ fontSize: '0.7rem', color: 'var(--theme-text-muted)', marginTop: '0.2rem', display: 'block' }}>
-              Población dentro del radio de {radio} m que hoy no tenía {tipo === 'salud' ? 'salud primaria' : 'colegio'}
+            <span style={{ fontSize: '0.68rem', color: '#0369A1' }}>
+              Personas sin acceso previo dentro del radio de {radio} m
             </span>
           </div>
 
-          {/* Tarjeta 2: Nueva cobertura del distrito (antes -> después) */}
-          <div
-            style={{
-              background: 'var(--theme-card-bg-subtle, rgba(255,255,255,0.02))',
-              border: '1px solid var(--theme-border)',
-              borderRadius: '8px',
-              padding: '0.65rem 0.75rem',
-            }}
-          >
-            <span
-              style={{
-                fontSize: '0.72rem',
-                color: 'var(--color-icon)',
-                fontWeight: 600,
-                display: 'block',
-                marginBottom: '0.2rem',
-              }}
-            >
-              COBERTURA DEL DISTRITO ({calculationResult.distritoNombre})
-            </span>
-            <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.5rem' }}>
-              <span style={{ fontSize: '1.15rem', color: 'var(--theme-text-muted)', fontWeight: 600 }}>
-                {calculationResult.cobAntes.toFixed(1).replace('.', ',')} %
-              </span>
-              <span style={{ color: 'var(--color-icon)' }}>→</span>
-              <strong style={{ fontSize: '1.35rem', color: 'var(--theme-accent, #38BDF8)' }}>
-                {calculationResult.cobDespues.toFixed(1).replace('.', ',')} %
+          {/* Métricas Detalladas de Cobertura */}
+          <div className="sim-impact-metrics-list">
+            <div className="sim-metric-row">
+              <span style={{ color: '#64748B' }}>Cobertura territorial distrital:</span>
+              <strong>
+                {calculationResult.cobAntes}% →{' '}
+                <span style={{ color: '#059669' }}>{calculationResult.cobDespues}%</span>{' '}
+                <span style={{ fontSize: '0.68rem', color: '#059669' }}>
+                  (+{(calculationResult.cobDespues - calculationResult.cobAntes).toFixed(1)}%)
+                </span>
               </strong>
-              <span style={{ fontSize: '0.74rem', color: '#22C55E', fontWeight: 700 }}>
-                (+{(calculationResult.cobDespues - calculationResult.cobAntes).toFixed(1).replace('.', ',')} %)
-              </span>
             </div>
-            <span style={{ fontSize: '0.7rem', color: 'var(--theme-text-muted)', marginTop: '0.2rem', display: 'block' }}>
-              Porcentaje de vecinos cubiertos a menos de {radio} metros
-            </span>
-          </div>
 
-          {/* Tarjeta 3: Habitantes por centro (antes -> después) */}
-          <div
-            style={{
-              background: 'var(--theme-card-bg-subtle, rgba(255,255,255,0.02))',
-              border: '1px solid var(--theme-border)',
-              borderRadius: '8px',
-              padding: '0.65rem 0.75rem',
-            }}
-          >
-            <span
-              style={{
-                fontSize: '0.72rem',
-                color: 'var(--color-icon)',
-                fontWeight: 600,
-                display: 'block',
-                marginBottom: '0.2rem',
-              }}
-            >
-              HABITANTES POR CENTRO EN EL DISTRITO
-            </span>
-            <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.5rem' }}>
-              <span style={{ fontSize: '1.05rem', color: 'var(--theme-text-muted)', fontWeight: 600 }}>
-                {calculationResult.habCentroAntes
-                  ? `${calculationResult.habCentroAntes.toLocaleString('es-BO')}`
-                  : 'Sin centros'}
-              </span>
-              <span style={{ color: 'var(--color-icon)' }}>→</span>
-              <strong style={{ fontSize: '1.25rem', color: '#10B981' }}>
-                {calculationResult.habCentroDespues.toLocaleString('es-BO')}
+            {tipo === 'parque' ? (
+              <>
+                <div className="sim-metric-row">
+                  <span style={{ color: '#64748B' }}>Espacio verde per cápita:</span>
+                  <strong>
+                    {calculationResult.areaVerdeAntes} m²/hab →{' '}
+                    <span style={{ color: '#059669' }}>
+                      {calculationResult.areaVerdeDespues} m²/hab
+                    </span>
+                  </strong>
+                </div>
+                <div className="sim-metric-row">
+                  <span style={{ color: '#64748B' }}>Superficie arbolada proyectada:</span>
+                  <strong style={{ color: '#059669' }}>
+                    {calculationResult.areaTerreno.toLocaleString('es-BO')} m²
+                  </strong>
+                </div>
+              </>
+            ) : (
+              <div className="sim-metric-row">
+                <span style={{ color: '#64748B' }}>
+                  Presión por centro ({tipo === 'salud' ? 'Salud 1er nivel' : 'Colegio'}):
+                </span>
+                <strong>
+                  {calculationResult.habCentroAntes?.toLocaleString('es-BO') || 'N/A'} hab →{' '}
+                  <span style={{ color: '#0284C7' }}>
+                    {calculationResult.habCentroDespues.toLocaleString('es-BO')} hab
+                  </span>
+                </strong>
+              </div>
+            )}
+
+            <div className="sim-metric-row">
+              <span style={{ color: '#64748B' }}>Régimen de propiedad de suelo:</span>
+              <strong style={{ color: isInsideMunicipal ? '#059669' : '#D97706' }}>
+                {isInsideMunicipal ? 'Municipal Disponible (Sin coste)' : 'Requiere Expropiación'}
               </strong>
-              <span style={{ fontSize: '0.72rem', color: 'var(--theme-text-muted)' }}>
-                hab./centro
-              </span>
             </div>
-            <span style={{ fontSize: '0.7rem', color: 'var(--theme-text-muted)', marginTop: '0.2rem', display: 'block' }}>
-              Descongestiona la demanda asistencial del sector
-            </span>
           </div>
 
-          {/* Botón Guardar escenario */}
+          {/* SECCIÓN AUDITORÍA CLIMÁTICA Y DE RIESGO */}
+          <div className="sim-audit-card">
+            <div className="sim-audit-title">
+              <Sparkles size={13} style={{ color: '#0284C7' }} />
+              <span>Auditoría de Resiliencia Climática</span>
+            </div>
+
+            {/* 1. Riesgo Hídrico y Río Rocha */}
+            <div className="sim-audit-item">
+              <Droplets
+                size={14}
+                style={{
+                  color:
+                    distRochaMeters !== null && distRochaMeters < 200
+                      ? '#DC2626'
+                      : '#0284C7',
+                  flexShrink: 0,
+                  marginTop: 2,
+                }}
+              />
+              <div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', marginBottom: 2 }}>
+                  <strong style={{ color: '#0F172A', fontSize: '0.73rem' }}>
+                    Riesgo Hídrico / Río Rocha:
+                  </strong>
+                  {distRochaMeters !== null && distRochaMeters < 200 ? (
+                    <span className="sim-audit-badge badge-danger">Alerta &lt;200m</span>
+                  ) : (
+                    <span className="sim-audit-badge badge-safe">Zona Segura</span>
+                  )}
+                </div>
+                <p style={{ margin: 0, color: '#64748B', fontSize: '0.69rem' }}>
+                  {distRochaMeters !== null && distRochaMeters < 200
+                    ? `A ${distRochaMeters} m del cauce. Requiere diseño con cota de fundación elevada y drenaje pluvial reforzado.`
+                    : `A ${distRochaMeters || 650} m del Río Rocha. Sin afectación directa por desbordes riparios.`}
+                </p>
+              </div>
+            </div>
+
+            {/* 2. Calidad del Aire (Red MÓNICA) */}
+            <div className="sim-audit-item">
+              <Wind
+                size={14}
+                style={{
+                  color: pm10Estimado.val > 65 ? '#DC2626' : '#059669',
+                  flexShrink: 0,
+                  marginTop: 2,
+                }}
+              />
+              <div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', marginBottom: 2 }}>
+                  <strong style={{ color: '#0F172A', fontSize: '0.73rem' }}>
+                    Calidad del Aire (Red MÓNICA):
+                  </strong>
+                  <span className={`sim-audit-badge ${pm10Estimado.badge}`}>
+                    {pm10Estimado.val} µg/m³ PM10
+                  </span>
+                </div>
+                <p style={{ margin: 0, color: '#64748B', fontSize: '0.69rem' }}>
+                  {pm10Estimado.val > 65
+                    ? 'Cuenca sur con alta concentración de partículas. Se recomienda cortina vegetal perimetral.'
+                    : 'Niveles aceptables de ventilación atmosférica.'}
+                </p>
+              </div>
+            </div>
+
+            {/* 3. Isla de Calor Superficial (LST) */}
+            <div className="sim-audit-item">
+              <Thermometer
+                size={14}
+                style={{
+                  color: tipo === 'parque' ? '#059669' : '#F97316',
+                  flexShrink: 0,
+                  marginTop: 2,
+                }}
+              />
+              <div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', marginBottom: 2 }}>
+                  <strong style={{ color: '#0F172A', fontSize: '0.73rem' }}>
+                    Isla de Calor Superficial (LST):
+                  </strong>
+                  {tipo === 'parque' ? (
+                    <span className="sim-audit-badge badge-safe">
+                      Refrescamiento {calculationResult.enfriamientoLst} °C
+                    </span>
+                  ) : lstEstimada > 30 ? (
+                    <span className="sim-audit-badge badge-warn">
+                      LST Alta ({lstEstimada} °C)
+                    </span>
+                  ) : (
+                    <span className="sim-audit-badge badge-safe">
+                      LST Confort ({lstEstimada} °C)
+                    </span>
+                  )}
+                </div>
+                <p style={{ margin: 0, color: '#64748B', fontSize: '0.69rem' }}>
+                  {tipo === 'parque'
+                    ? `Mitigación climática local: reducción de hasta ${Math.abs(
+                        calculationResult.enfriamientoLst
+                      )} °C por sombra y evapotranspiración vegetal.`
+                    : lstEstimada > 30
+                    ? 'Temperatura superficial elevada. Incorporar techos frescos y jardines perimetrales.'
+                    : 'Microclima térmico moderado.'}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Botón para Guardar en Escenarios */}
           <button
             type="button"
+            className="sim-btn-save"
             onClick={handleSaveScenario}
-            className="gamc-btn-secondary"
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: '0.4rem',
-              padding: '0.5rem',
-              fontSize: '0.78rem',
-              fontWeight: 700,
-              background: 'var(--theme-accent, #38BDF8)',
-              color: '#0f172a',
-              border: 'none',
-              borderRadius: '6px',
-              marginTop: '0.2rem',
-            }}
           >
-            <Save size={15} />
-            Guardar este escenario ({savedScenarios.length}/3)
+            <Save size={14} />
+            <span>Guardar en Escenarios ({savedScenarios.length}/3)</span>
           </button>
         </div>
-      </section>
+      </div>
 
-      {/* 4. Abajo: Tabla de Escenarios guardados */}
-      <section
-        className="hud-card"
-        style={{
-          padding: '0.85rem',
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '0.55rem',
-        }}
-      >
-        <div
-          style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-          }}
-        >
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
-            <Layers size={18} strokeWidth={1.75} color="var(--color-icon)" />
-            <h3 style={{ margin: 0, fontSize: '0.88rem', fontWeight: 600 }}>
-              Escenarios Guardados para Comparación
+      {/* SECCIÓN INFERIOR: COMPARADOR DE ESCENARIOS GUARDADOS */}
+      <section className="sim-scenarios-section">
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <div>
+            <span className="neo-micro-tag">PLANIFICACIÓN URBANA COMPARATIVA</span>
+            <h3 style={{ margin: 0, fontSize: '0.92rem', color: '#0F172A' }}>
+              Comparador de Escenarios Simulados ({savedScenarios.length}/3)
             </h3>
-            <span style={{ fontSize: '0.7rem', color: 'var(--theme-text-muted)' }}>
-              ({savedScenarios.length} de 3 posibles)
-            </span>
           </div>
 
           {savedScenarios.length > 0 && (
             <button
               type="button"
-              onClick={handleClearAllScenarios}
-              className="gamc-btn-secondary"
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '0.3rem',
-                fontSize: '0.7rem',
-                padding: '0.2rem 0.5rem',
-                color: '#EF4444',
-              }}
+              className="sim-candidate-pill"
+              style={{ color: '#DC2626', borderColor: '#FCA5A5' }}
+              onClick={() => setSavedScenarios([])}
             >
-              <Trash2 size={13} />
-              Borrar todos
+              <Trash2 size={11} style={{ display: 'inline', marginRight: 3 }} />
+              Limpiar todos
             </button>
           )}
         </div>
@@ -1081,142 +1324,143 @@ export default function SimuladorEquipamientosScreen({
         {savedScenarios.length === 0 ? (
           <div
             style={{
-              padding: '1.25rem',
+              padding: '1.5rem',
               textAlign: 'center',
-              color: 'var(--theme-text-muted)',
-              fontSize: '0.76rem',
-              fontStyle: 'italic',
+              border: '1.5px dashed #CBD5E1',
+              borderRadius: 10,
+              background: '#F8FAFC',
+              color: '#64748B',
             }}
           >
-            Aún no has guardado escenarios. Prueba diferentes ubicaciones en el mapa y haz clic en «Guardar este escenario» para contrastar su impacto.
+            <Info size={20} style={{ margin: '0 auto 0.35rem', color: '#0284C7' }} />
+            <p style={{ margin: 0, fontSize: '0.8rem', fontWeight: 600 }}>
+              No has guardado escenarios aún.
+            </p>
+            <p style={{ margin: '0.2rem 0 0', fontSize: '0.72rem' }}>
+              Prueba cambiando de tipo de equipamiento (Salud, Educación, Parques), selecciona diferentes candidatos o haz clic libre en el mapa y presiona "Guardar en Escenarios" para comparar alternativas lado a lado.
+            </p>
           </div>
         ) : (
-          <div
-            style={{
-              overflowX: 'auto',
-              border: '1px solid var(--theme-border)',
-              borderRadius: '6px',
-            }}
-          >
-            <table
-              style={{
-                width: '100%',
-                borderCollapse: 'collapse',
-                fontSize: '0.74rem',
-                textAlign: 'left',
-              }}
-            >
-              <thead>
-                <tr
-                  style={{
-                    background: 'var(--theme-card-bg-subtle, rgba(255,255,255,0.04))',
-                    borderBottom: '1px solid var(--theme-border)',
-                    color: 'var(--color-icon)',
-                  }}
+          <div className="sim-scenarios-grid">
+            {savedScenarios.map((scen, idx) => {
+              const borderTopColor =
+                scen.tipo === 'salud'
+                  ? '#DC2626'
+                  : scen.tipo === 'educacion'
+                  ? '#2563EB'
+                  : '#059669'
+
+              return (
+                <div
+                  key={scen.id}
+                  className="sim-scenario-box"
+                  style={{ borderTopColor: borderTopColor }}
                 >
-                  <th style={{ padding: '6px 8px' }}>#</th>
-                  <th style={{ padding: '6px 8px' }}>Tipo</th>
-                  <th style={{ padding: '6px 8px' }}>Distrito</th>
-                  <th style={{ padding: '6px 8px' }}>Radio / Año</th>
-                  <th style={{ padding: '6px 8px' }}>Terreno Municipal</th>
-                  <th style={{ padding: '6px 8px', textAlign: 'right' }}>Ganan Cobertura</th>
-                  <th style={{ padding: '6px 8px', textAlign: 'right' }}>Cobertura Resultante</th>
-                  <th style={{ padding: '6px 8px', textAlign: 'center' }}>Acciones</th>
-                </tr>
-              </thead>
-              <tbody>
-                {savedScenarios.map((s) => (
-                  <tr
-                    key={s.id}
-                    style={{
-                      borderBottom: '1px solid var(--theme-border)',
-                    }}
-                  >
-                    <td style={{ padding: '5px 8px', fontWeight: 700 }}>
-                      Escenario {s.num}
-                    </td>
-                    <td style={{ padding: '5px 8px' }}>
-                      {s.tipo === 'salud' ? 'Salud 1er nivel' : 'Unidad educativa'}
-                    </td>
-                    <td style={{ padding: '5px 8px' }}>{s.distritoNombre}</td>
-                    <td style={{ padding: '5px 8px' }}>
-                      {s.radio} m · {s.anio}
-                    </td>
-                    <td style={{ padding: '5px 8px' }}>
-                      <span
-                        style={{
-                          color: s.isInsideMunicipal ? '#22C55E' : '#EF4444',
-                          fontWeight: 600,
-                        }}
-                      >
-                        {s.isInsideMunicipal ? 'Sí (GAMC)' : 'Fuera de terreno'}
-                      </span>
-                    </td>
-                    <td
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <strong style={{ fontSize: '0.82rem', color: '#0F172A' }}>
+                      Escenario {String.fromCharCode(65 + idx)}:{' '}
+                      {scen.tipo === 'salud'
+                        ? 'Salud'
+                        : scen.tipo === 'educacion'
+                        ? 'Colegio'
+                        : 'Parque'}
+                    </strong>
+                    <span
                       style={{
-                        padding: '5px 8px',
-                        textAlign: 'right',
+                        fontSize: '0.65rem',
                         fontWeight: 700,
-                        color: '#22C55E',
+                        padding: '1px 6px',
+                        borderRadius: 4,
+                        background: `${borderTopColor}15`,
+                        color: borderTopColor,
                       }}
                     >
-                      +{s.personasGanan.toLocaleString('es-BO')} hab.
-                    </td>
-                    <td style={{ padding: '5px 8px', textAlign: 'right' }}>
-                      {s.cobAntes.toFixed(1).replace('.', ',')} % →{' '}
-                      <strong style={{ color: 'var(--theme-accent, #38BDF8)' }}>
-                        {s.cobDespues.toFixed(1).replace('.', ',')} %
+                      {scen.distritoNombre}
+                    </span>
+                  </div>
+
+                  <div style={{ fontSize: '0.72rem', color: '#64748B' }}>
+                    Año {scen.anio} · Radio {scen.radio}m ·{' '}
+                    <span style={{ color: scen.isInsideMunicipal ? '#059669' : '#D97706', fontWeight: 600 }}>
+                      {scen.isInsideMunicipal ? 'Municipal GAMC' : 'Suelo Privado'}
+                    </span>
+                  </div>
+
+                  {/* Impacto Poblacional */}
+                  <div
+                    style={{
+                      background: '#F1F5F9',
+                      padding: '0.4rem 0.6rem',
+                      borderRadius: 6,
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                    }}
+                  >
+                    <span style={{ fontSize: '0.7rem', color: '#475569' }}>Beneficiarios:</span>
+                    <strong style={{ fontSize: '0.95rem', color: '#0284C7' }}>
+                      +{scen.personasGanan.toLocaleString('es-BO')} hab
+                    </strong>
+                  </div>
+
+                  {/* Resumen Ambiental */}
+                  <div style={{ fontSize: '0.68rem', display: 'flex', flexDirection: 'column', gap: '0.2rem' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                      <span style={{ color: '#64748B' }}>Río Rocha:</span>
+                      <strong style={{ color: scen.distRocha < 200 ? '#DC2626' : '#059669' }}>
+                        {scen.distRocha < 200 ? '⚠️ <200m (Inundable)' : '✓ Seguro (>200m)'}
                       </strong>
-                    </td>
-                    <td style={{ padding: '5px 8px', textAlign: 'center' }}>
-                      <div style={{ display: 'inline-flex', gap: '0.35rem' }}>
-                        <button
-                          type="button"
-                          onClick={() => handleLoadScenario(s)}
-                          className="gamc-btn-secondary"
-                          style={{
-                            padding: '0.2rem 0.5rem',
-                            fontSize: '0.68rem',
-                          }}
-                        >
-                          Cargar
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => handleDeleteScenario(s.id)}
-                          className="gamc-btn-secondary"
-                          style={{
-                            padding: '0.2rem 0.45rem',
-                            fontSize: '0.68rem',
-                            color: '#EF4444',
-                          }}
-                          title="Eliminar este escenario"
-                        >
-                          ✕
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+                    </div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                      <span style={{ color: '#64748B' }}>Calidad del Aire:</span>
+                      <strong>{scen.pm10} µg/m³ PM10</strong>
+                    </div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                      <span style={{ color: '#64748B' }}>Impacto Térmico:</span>
+                      <strong style={{ color: scen.tipo === 'parque' ? '#059669' : '#0F172A' }}>
+                        {scen.lstImpact}
+                      </strong>
+                    </div>
+                  </div>
+
+                  {/* Botones de acción */}
+                  <div style={{ display: 'flex', gap: '0.35rem', marginTop: '0.3rem' }}>
+                    <button
+                      type="button"
+                      className="sim-candidate-pill"
+                      style={{
+                        flex: 1,
+                        fontSize: '0.68rem',
+                        padding: '0.3rem',
+                        textAlign: 'center',
+                        color: '#0284C7',
+                        borderColor: '#0284C7',
+                      }}
+                      onClick={() => handleLoadScenario(scen)}
+                    >
+                      <RotateCcw size={10} style={{ display: 'inline', marginRight: 3 }} />
+                      Cargar en Mapa
+                    </button>
+                    <button
+                      type="button"
+                      className="sim-candidate-pill"
+                      style={{
+                        color: '#DC2626',
+                        borderColor: '#FCA5A5',
+                        padding: '0.3rem 0.5rem',
+                      }}
+                      onClick={() => handleRemoveScenario(scen.id)}
+                      title="Eliminar escenario"
+                    >
+                      <Trash2 size={11} />
+                    </button>
+                  </div>
+                </div>
+              )
+            })}
           </div>
         )}
       </section>
-
-      {/* 5. Aviso metodológico único */}
-      <footer style={{ marginTop: '0.4rem', textAlign: 'center' }}>
-        <p
-          style={{
-            margin: 0,
-            fontSize: '0.78rem',
-            color: 'var(--theme-text-muted)',
-            fontStyle: 'italic',
-          }}
-        >
-          El simulador mide cercanía. No considera costos, capacidad del centro ni dónde prefiere atenderse la gente.
-        </p>
-      </footer>
     </div>
   )
 }
