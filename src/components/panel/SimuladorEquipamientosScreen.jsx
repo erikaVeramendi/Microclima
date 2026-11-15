@@ -17,8 +17,9 @@ import {
   RotateCcw,
   Sparkles,
   Info,
+  Box,
 } from 'lucide-react'
-import GamcMap from './GamcMap'
+import MapLibreSimulador3D from './MapLibreSimulador3D'
 import './SimuladorEquipamientosScreen.css'
 
 // Cálculo de distancia ortodrómica en metros (fórmula de Haversine)
@@ -715,118 +716,6 @@ export default function SimuladorEquipamientosScreen({
   const tipoColor =
     tipo === 'salud' ? '#DC2626' : tipo === 'educacion' ? '#2563EB' : '#059669'
 
-  // Radios de cobertura para GamcMap
-  const mapRadios = useMemo(() => {
-    const list = []
-
-    // Círculos tenues de equipamientos existentes
-    existingPoints.slice(0, 150).forEach((p) => {
-      list.push({
-        lat: p.lat,
-        lng: p.lng,
-        radius: radio,
-        color: tipoColor,
-        fillColor: tipoColor,
-        fillOpacity: 0.04,
-        label: p.nombre,
-      })
-    })
-
-    // Círculo destacado del nuevo punto simulado
-    if (effectivePoint) {
-      list.push({
-        lat: effectivePoint.lat,
-        lng: effectivePoint.lng,
-        radius: radio,
-        color: tipoColor,
-        fillColor: tipoColor,
-        fillOpacity: 0.22,
-        label: `Área de Influencia (${radio} m) · ${effectivePoint.nombre}`,
-      })
-    }
-
-    return list
-  }, [existingPoints, effectivePoint, radio, tipoColor])
-
-  // GeoJSON para GamcMap: Polígonos municipales, Río Rocha, candidatos y marcador activo
-  const simulatorGeoJson = useMemo(() => {
-    const features = []
-
-    // 1. Río Rocha y Cota 2750 como líneas de referencia
-    if (referenciasGeo?.features) {
-      referenciasGeo.features.forEach((f) => {
-        features.push({
-          ...f,
-          properties: {
-            ...f.properties,
-            color: '#0891B2',
-            borderWidth: 3,
-            fillOpacity: 0,
-            nombre: f.properties?.nombre || 'Referencia',
-          },
-        })
-      })
-    }
-
-    // 2. Terrenos de equipamiento municipal GAMC (polígonos cian translúcidos)
-    if (areasEquipData?.features) {
-      features.push(
-        ...areasEquipData.features.slice(0, 1141).map((f) => ({
-          ...f,
-          properties: {
-            ...f.properties,
-            fillColor: '#0284C7',
-            borderColor: '#38BDF8',
-            borderWidth: 1,
-            fillOpacity: 0.25,
-            nombre: `Terreno Municipal GAMC (${Math.round(
-              f.properties?.area_m2 || 0
-            )} m²)`,
-          },
-        }))
-      )
-    }
-
-    // 3. Top 10 candidatos como puntos numerados
-    top10Candidatos.forEach((c) => {
-      features.push({
-        type: 'Feature',
-        geometry: {
-          type: 'Point',
-          coordinates: [c.lon, c.lat],
-        },
-        properties: {
-          isCandidate: true,
-          candidateNumber: c.num,
-          fillColor: tipoColor,
-          nombre: `Candidato #${c.num} (${c.nombre || 'Distrito ' + c.distrito}) · ${
-            c.area_terreno_m2
-          } m²`,
-        },
-      })
-    })
-
-    // 4. Marcador del equipamiento simulado (destacado)
-    if (effectivePoint) {
-      features.push({
-        type: 'Feature',
-        geometry: {
-          type: 'Point',
-          coordinates: [effectivePoint.lng, effectivePoint.lat],
-        },
-        properties: {
-          isNewSimulated: true,
-          fillColor: tipoColor,
-          nombre: `NUEVO EQUIPAMIENTO: ${effectivePoint.nombre}`,
-        },
-      })
-    }
-
-    return {
-      type: 'FeatureCollection',
-      features,
-    }
-  }, [areasEquipData, top10Candidatos, effectivePoint, referenciasGeo, tipoColor])
 
   if (loading) {
     return (
@@ -944,12 +833,12 @@ export default function SimuladorEquipamientosScreen({
 
       {/* GRID PRINCIPAL: MAPA (IZQ) Y PANEL DE IMPACTO + AUDITORÍA (DER) */}
       <div className="sim-main-grid">
-        {/* COLUMNA IZQUIERDA: MAPA INTERACTIVO */}
+        {/* COLUMNA IZQUIERDA: MAPA INTERACTIVO 3D */}
         <div className="sim-map-card">
           <div className="sim-map-header">
             <div className="sim-map-title-box">
-              <span className="neo-micro-tag">SIMULACIÓN ESPACIAL EN VIVO</span>
-              <h3>Exploración y Ubicación del Equipamiento</h3>
+              <span className="neo-micro-tag">MAPA 3D ISOMÉTRICO (MAPLIBRE GL JS)</span>
+              <h3>Maqueta Urbana e Impacto Espacial</h3>
             </div>
 
             {/* Badges de estado del terreno activo */}
@@ -1029,12 +918,22 @@ export default function SimuladorEquipamientosScreen({
             </button>
           </div>
 
-          {/* GamcMap Oficial con CartoDB Positron / Dark Matter */}
-          <GamcMap
-            geojson={simulatorGeoJson}
-            radios={mapRadios}
-            onClickMapa={handleMapClick}
-            height="460px"
+          {/* Maqueta 3D Interactiva con MapLibre GL JS */}
+          <MapLibreSimulador3D
+            tipo={tipo}
+            radio={radio}
+            candidatos={top10Candidatos}
+            activePoint={effectivePoint}
+            onSelectCandidate={handleSelectCandidate}
+            onMapClick={handleMapClick}
+            areasEquipData={areasEquipData}
+            referenciasGeo={referenciasGeo}
+            transporteGeo={transporteGeo}
+            existingPoints={existingPoints}
+            calculationResult={calculationResult}
+            isInsideMunicipal={isInsideMunicipal}
+            distTranspMeters={distTranspMeters}
+            distRochaMeters={distRochaMeters}
           />
 
           {/* Leyenda y Datos del Punto Activo */}
@@ -1046,8 +945,8 @@ export default function SimuladorEquipamientosScreen({
                     width: 10,
                     height: 10,
                     borderRadius: 2,
-                    background: '#0284C7',
-                    opacity: 0.5,
+                    background: '#A7F3D0',
+                    border: '1px dashed #059669',
                     display: 'inline-block',
                   }}
                 />
@@ -1064,7 +963,7 @@ export default function SimuladorEquipamientosScreen({
                     display: 'inline-block',
                   }}
                 />
-                <span>Equipamiento Simulado ({radio}m)</span>
+                <span>Ilustración 3D + Halo ({radio}m)</span>
               </span>
 
               <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.3rem' }}>
@@ -1072,12 +971,12 @@ export default function SimuladorEquipamientosScreen({
                   style={{
                     width: 12,
                     height: 3,
-                    background: '#0891B2',
+                    background: '#0EA5E9',
                     borderRadius: 2,
                     display: 'inline-block',
                   }}
                 />
-                <span>Río Rocha</span>
+                <span>Río Rocha (Buffer 200m)</span>
               </span>
             </div>
 

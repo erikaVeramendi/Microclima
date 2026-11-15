@@ -98,21 +98,39 @@
   background: #DC2626 !important;
   border-color: #B91C1C !important;
   color: #FFFFFF !important;
+  font-weight: 800 !important;
   box-shadow: 0 3px 10px rgba(220, 38, 38, 0.35);
+}
+
+.sim-type-btn.type-salud.is-active svg {
+  color: #FFFFFF !important;
+  stroke: #FFFFFF !important;
 }
 
 .sim-type-btn.type-colegio.is-active {
   background: #2563EB !important;
   border-color: #1D4ED8 !important;
   color: #FFFFFF !important;
+  font-weight: 800 !important;
   box-shadow: 0 3px 10px rgba(37, 99, 235, 0.35);
+}
+
+.sim-type-btn.type-colegio.is-active svg {
+  color: #FFFFFF !important;
+  stroke: #FFFFFF !important;
 }
 
 .sim-type-btn.type-parque.is-active {
   background: #059669 !important;
   border-color: #047857 !important;
   color: #FFFFFF !important;
+  font-weight: 800 !important;
   box-shadow: 0 3px 10px rgba(5, 150, 105, 0.35);
+}
+
+.sim-type-btn.type-parque.is-active svg {
+  color: #FFFFFF !important;
+  stroke: #FFFFFF !important;
 }
 
 /* PILLS DE AÑO DE CÁLCULO */
@@ -414,28 +432,34 @@
   color: #DC2626;
 }
 
-/* BOTÓN DE GUARDAR Y COMPARAR */
+/* BOTÓN DE GUARDAR Y COMPARAR (ALTO CONTRASTE BLANCO PURO) */
 .sim-btn-save {
   width: 100%;
   padding: 0.65rem;
   border-radius: 8px;
   border: 1.5px solid #0284C7;
-  background: #0284C7;
-  color: #FFFFFF;
+  background: #0284C7 !important;
+  color: #FFFFFF !important;
   font-size: 0.78rem;
-  font-weight: 700;
+  font-weight: 800 !important;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 0.4rem;
   transition: all 0.15s ease;
+  box-shadow: 0 2px 6px rgba(2, 132, 199, 0.25);
+}
+
+.sim-btn-save svg {
+  color: #FFFFFF !important;
+  stroke: #FFFFFF !important;
 }
 
 .sim-btn-save:hover {
-  background: #0369A1;
-  border-color: #0369A1;
-  box-shadow: 0 4px 12px rgba(2, 132, 199, 0.3);
+  background: #0369A1 !important;
+  border-color: #0369A1 !important;
+  box-shadow: 0 4px 12px rgba(2, 132, 199, 0.35);
 }
 
 /* SECCIÓN INFERIOR: COMPARADOR DE ESCENARIOS (HASTA 3) */
