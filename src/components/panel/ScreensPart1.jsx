@@ -5,20 +5,19 @@ import {
 } from '../../data/internalPanelData'
 import { SharedGeoCanvas } from './SharedGeoCanvas'
 import GamcMap from './GamcMap'
+import { DetectiveTendenciasScreen } from './DetectiveTendenciasScreen'
 import PopulationSourceSelector from './PopulationSourceSelector'
 import { getIneFactor } from './populationUtils'
 import {
   NeonDonutChart,
   NeonSplineChart,
   NeonEqBarChart,
-  ContouredIsoMap,
   NeonRadarChart,
   BivariateScatterPlot,
   RedMonicaDiurnalChart,
 } from './FuturisticCharts'
 
 const YEAR_LABELS = ['19', '20', '21', '22', '23', '24', '25', '26']
-const HOUR_LABELS = ['03H', '06H', '09H', '12H', '15H', '18H', '21H', '24H']
 
 function haversineMeters(lon1, lat1, lon2, lat2) {
   const R = 6371000
@@ -2144,168 +2143,15 @@ export function VegetationIntelligenceScreen({
 }
 
 /* =========================================================================
-   PANTALLA 04. INTELIGENCIA TÉRMICA
-   "El calor también deja patrones" · REGLA FIJA: LST ≠ TEMPERATURA DEL AIRE
-   Integra: A. Radar de Cambio (Mann-Kendall / Sen) | B. Anomalía Contextual | C. Puntos de Inflexión (Ruptures)
+   PANTALLA 02. DETECTIVE DE TENDENCIAS (Antes Inteligencia Térmica)
+   "Descubre si una variable está cambiando en tu distrito y si el cambio es real"
+   Mann-Kendall estacional, pendiente de Sen e IC 95% con datos reales de la NASA y GAMC
    ========================================================================= */
-export function ThermalIntelligenceScreen({
-  selectedZoneId,
-  onSelectZone,
-  onNavigateModule,
-}) {
-  const [thermalTab, setThermalTab] = useState('radar-cambio') // 'radar-cambio' | 'anomalias' | 'inflexion'
-  const activeZone =
-    COCHABAMBA_ZONES.find((z) => z.id === selectedZoneId) || COCHABAMBA_ZONES[2]
-
-  const senSlope = +(
-    (activeZone.annualLst[7] - activeZone.annualLst[0]) / 7
-  ).toFixed(2)
-
-  return (
-    <div className="neo-screen">
-      <div className="neo-toolbar-row">
-        <div>
-          <span className="neo-micro-tag" style={{ color: '#FFCB73' }}>
-            «EL CALOR TAMBIÉN DEJA PATRONES» · REGLA FUNDAMENTAL: LST SUPERFICIAL ≠ TEMPERATURA DEL AIRE
-          </span>
-        </div>
-        <div className="neo-pill-group">
-          {[
-            { id: 'radar-cambio', lbl: '📡 A/B. Radar de Cambio (Sen & Mann-Kendall)' },
-            { id: 'anomalias', lbl: '⚠ C. Anomalía Contextual' },
-            { id: 'inflexion', lbl: '⚡ D. Puntos de Inflexión (Ruptures)' },
-          ].map((t) => (
-            <button
-              key={t.id}
-              type="button"
-              className={`geo-hud-pill ${thermalTab === t.id ? 'is-active' : ''}`}
-              onClick={() => setThermalTab(t.id)}
-            >
-              {t.lbl}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      <section className="neo-cockpit-3col">
-        <div className="neo-center-map-stage" style={{ gridColumn: 'span 2' }}>
-          <SharedGeoCanvas
-            selectedZoneId={selectedZoneId}
-            onSelectZone={onSelectZone}
-            activeLayer="lst"
-            onNavigateModule={onNavigateModule}
-            height={455}
-          />
-        </div>
-
-        <div className="neo-col-stack">
-          {thermalTab === 'radar-cambio' && (
-            <article className="neo-glass-card">
-              <div className="neo-card-header">
-                <div>
-                  <span className="neo-micro-tag">✦ RADAR DE CAMBIO, NO SOLO DE CALOR</span>
-                  <h3>Pendiente de Sen: +{senSlope} °C/año (Sup.)</h3>
-                </div>
-                <span className="neo-pill-badge neo-pill--amber">MANN-KENDALL</span>
-              </div>
-
-              {/* Las 5 clases térmicas de MICROCLIMA P7 */}
-              <div className="neo-zone-bars-list">
-                {[
-                  { z: 'distrito-10', cls: 'D10 · Caliente + tendencia creciente', slp: '+0.26°/a', col: '#D95757' },
-                  { z: 'distrito-9', cls: 'D9 · Cambio rápido emergente', slp: '+0.34°/a', col: '#F28B50' },
-                  { z: 'distrito-6', cls: 'D6 · Cálida con tendencia moderada', slp: '+0.16°/a', col: '#FFCB73' },
-                  { z: 'distrito-2', cls: 'D2 · Amortiguada / sin tendencia fuerte', slp: '+0.11°/a', col: '#65C8F2' },
-                  { z: 'distrito-1', cls: 'D1 · Confort térmico relativo', slp: '+0.12°/a', col: '#8BCB9A' },
-                ].map((item) => (
-                  <div
-                    key={item.z}
-                    className={`neo-zone-bar-item ${selectedZoneId === item.z ? 'is-selected' : ''}`}
-                    onClick={() => onSelectZone(item.z)}
-                  >
-                    <div className="neo-zb-head">
-                      <span>{item.cls}</span>
-                      <strong style={{ color: item.col }}>{item.slp}</strong>
-                    </div>
-                  </div>
-                ))}
-              </div>
-
-              <ContouredIsoMap selectedZoneId={selectedZoneId} onSelectZone={onSelectZone} />
-            </article>
-          )}
-
-          {thermalTab === 'anomalias' && (
-            <article className="neo-glass-card">
-              <div className="neo-card-header">
-                <div>
-                  <span className="neo-micro-tag">✦ ANOMALÍA CONTEXTUAL ESTACIONAL</span>
-                  <h3>Observado vs. línea base propia · {activeZone.shortName}</h3>
-                </div>
-                <span className="neo-pill-badge neo-pill--coral">
-                  {activeZone.thermalAnomaly > 2 ? 'PERSISTENTE' : 'REPETIDA'}
-                </span>
-              </div>
-
-              <NeonSplineChart
-                series={[
-                  { name: 'LST Observada', data: activeZone.diurnalLst, color: '#D95757', unit: '°C' },
-                  {
-                    name: 'Esperado Histórico',
-                    data: activeZone.diurnalLst.map((v) => +(v - Math.max(0.8, activeZone.thermalAnomaly)).toFixed(1)),
-                    color: '#65C8F2',
-                    unit: '°C',
-                  },
-                ]}
-                labels={HOUR_LABELS}
-                height={155}
-              />
-
-              <NeonEqBarChart
-                data={activeZone.eqPulses}
-                accent="#F28B50"
-                secondaryAccent="#D95757"
-                unit="%"
-                height={105}
-              />
-            </article>
-          )}
-
-          {thermalTab === 'inflexion' && (
-            <article className="neo-glass-card">
-              <div className="neo-card-header">
-                <div>
-                  <span className="neo-micro-tag">✦ HISTORIA DE TRANSFORMACIÓN (RUPTURES)</span>
-                  <h3>Punto de inflexión detectado · Ventana 2022</h3>
-                </div>
-                <span className="neo-pill-badge neo-pill--violet">ANTES / DESPUÉS</span>
-              </div>
-
-              <div className="neo-4state-grid">
-                <div className="neo-state-box" style={{ borderColor: '#65C8F255' }}>
-                  <strong style={{ color: '#65C8F2' }}>{activeZone.annualLst[1]}°C</strong>
-                  <span>Media Pre-2022</span>
-                </div>
-                <div className="neo-state-box" style={{ borderColor: '#D9575755' }}>
-                  <strong style={{ color: '#D95757' }}>{activeZone.annualLst[7]}°C</strong>
-                  <span>Media Post-2022</span>
-                </div>
-              </div>
-
-              <NeonSplineChart
-                series={[
-                  { name: 'Trayectoria LST Superficial', data: activeZone.annualLst, color: '#FFCB73', unit: '°C' },
-                ]}
-                labels={YEAR_LABELS}
-                height={155}
-              />
-            </article>
-          )}
-        </div>
-      </section>
-    </div>
-  )
+export function ThermalIntelligenceScreen(props) {
+  return <DetectiveTendenciasScreen {...props} />
 }
+
+export { DetectiveTendenciasScreen }
 
 /* =========================================================================
    PANTALLA 05. RELACIONES AMBIENTALES

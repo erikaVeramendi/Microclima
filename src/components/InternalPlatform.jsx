@@ -48,6 +48,7 @@ import {
   EvidenceValidationScreen,
   DataManagementScreen,
   ResearchReportsScreen,
+  PlanningScenariosScreen,
 } from './panel/ScreensPart2'
 import IndiceScreen from './panel/IndiceScreen'
 import ComparadorScreen from './panel/ComparadorScreen'
