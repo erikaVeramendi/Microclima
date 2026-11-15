@@ -109,6 +109,7 @@ function getLayerApiKey(layer) {
  */
 export default function GamcMap({
   capasWms, // Array opcional de IDs de capas a mostrar/habilitar
+  capasDisponibles, // Array opcional para filtrar qué capas se muestran en el selector
   geojson, // Capas vectoriales propias (ej. distritos coloreados o puntos)
   radios, // Array de círculos de cobertura [{ lat, lng, radius, color, label }]
   onClickDistrito, // Callback(feature, layer)
@@ -560,10 +561,11 @@ export default function GamcMap({
           const borderColor = feature?.properties?.borderColor || (isSelected ? '#0284C7' : '#1E293B')
           const borderWidth = feature?.properties?.borderWidth ?? (isSelected ? 4 : 2)
           const fillOpacity = feature?.properties?.fillOpacity ?? (isSelected ? 0.85 : 0.75)
+          const lineOpacity = feature?.properties?.opacity ?? 1
           return {
             color: borderColor,
             weight: borderWidth,
-            opacity: 1,
+            opacity: lineOpacity,
             fillColor: fillColor,
             fillOpacity: fillOpacity,
           }
@@ -704,7 +706,10 @@ export default function GamcMap({
 
         {panelOpen && (
           <div className="gamc-layers-content">
-            {GAMC_WMS_LAYERS.map((layer) => {
+            {(capasDisponibles && capasDisponibles.length > 0
+              ? GAMC_WMS_LAYERS.filter((l) => capasDisponibles.includes(l.id))
+              : GAMC_WMS_LAYERS
+            ).map((layer) => {
               const isChecked = Boolean(visibleLayers[layer.id])
               const isLegendOpen = legendOpenId === layer.id
               const key = getLayerApiKey(layer)

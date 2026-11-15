@@ -1,0 +1,532 @@
+/* =========================================================================
+   LluviasInundacionesScreen.css
+   Estilos específicos para la pestaña "3 Lluvias e inundaciones"
+   Diseño adaptativo para tema claro y oscuro (NASA Space Apps 2026)
+   ========================================================================= */
+
+.lluvias-screen {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  padding: 0.25rem 0 2rem;
+  color: var(--theme-text, #F8FAFC);
+  --lluvias-icon-color: #8A94A6;
+  --lluvias-card-bg: rgba(15, 23, 42, 0.65);
+  --lluvias-card-border: rgba(148, 163, 184, 0.15);
+  --lluvias-header-bg: rgba(30, 41, 59, 0.5);
+  --lluvias-muted: #94A3B8;
+  --lluvias-accent: #006EFD;
+  --lluvias-accent-subtle: rgba(0, 110, 253, 0.15);
+  --lluvias-highlight: #38BDF8;
+}
+
+[data-theme='light'] .lluvias-screen {
+  --lluvias-icon-color: #6B6559;
+  --lluvias-card-bg: rgba(255, 255, 255, 0.92);
+  --lluvias-card-border: rgba(100, 116, 139, 0.2);
+  --lluvias-header-bg: rgba(241, 245, 249, 0.85);
+  --lluvias-muted: #64748B;
+  --lluvias-accent: #0284C7;
+  --lluvias-accent-subtle: rgba(2, 132, 199, 0.12);
+  --lluvias-highlight: #0284C7;
+}
+
+/* Toolbars y encabezados */
+.lluvias-header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.lluvias-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.lluvias-title-group h2 {
+  font-size: 1.35rem;
+  font-weight: 700;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--theme-text, #F8FAFC);
+}
+
+.lluvias-subtitle {
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--lluvias-highlight);
+  margin: 0.15rem 0 0 0;
+}
+
+.lluvias-district-select-wrap {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  background: var(--lluvias-header-bg);
+  padding: 0.35rem 0.75rem;
+  border-radius: 8px;
+  border: 1px solid var(--lluvias-card-border);
+}
+
+.lluvias-district-select-wrap label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--lluvias-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.lluvias-district-select {
+  background: transparent;
+  color: var(--theme-text, #F8FAFC);
+  border: 1px solid var(--lluvias-card-border);
+  border-radius: 6px;
+  padding: 0.3rem 0.6rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  outline: none;
+  cursor: pointer;
+}
+
+.lluvias-district-select option {
+  background: #0F172A;
+  color: #F8FAFC;
+}
+
+[data-theme='light'] .lluvias-district-select option {
+  background: #FFFFFF;
+  color: #0F172A;
+}
+
+/* Tarjetas KPI (4 en fila) */
+.lluvias-kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+}
+
+@media (max-width: 1024px) {
+  .lluvias-kpi-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+  .lluvias-kpi-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.lluvias-kpi-card {
+  background: var(--lluvias-card-bg);
+  border: 1px solid var(--lluvias-card-border);
+  border-radius: 12px;
+  padding: 1rem 1.15rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 0.5rem;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  transition: border-color 0.2s ease, transform 0.2s ease;
+}
+
+.lluvias-kpi-card:hover {
+  border-color: rgba(56, 189, 248, 0.4);
+}
+
+.lluvias-kpi-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 0.5rem;
+}
+
+.lluvias-kpi-label-row {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--lluvias-muted);
+}
+
+.lluvias-kpi-val {
+  font-size: 1.55rem;
+  font-weight: 700;
+  color: var(--theme-text, #F8FAFC);
+  line-height: 1.15;
+  margin: 0.25rem 0 0.15rem;
+}
+
+.lluvias-kpi-val-unit {
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--lluvias-muted);
+  margin-left: 0.25rem;
+}
+
+.lluvias-kpi-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.2rem 0.55rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  width: fit-content;
+}
+
+.lluvias-kpi-subtext {
+  font-size: 0.78rem;
+  color: var(--lluvias-muted);
+  line-height: 1.35;
+  margin-top: 0.2rem;
+}
+
+/* Tooltip nativo reutilizable */
+.lluvias-tooltip-trigger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: var(--lluvias-icon-color);
+  background: transparent;
+  border: none;
+  padding: 0;
+  border-radius: 50%;
+  position: relative;
+  vertical-align: middle;
+}
+
+.lluvias-tooltip-trigger:hover {
+  color: var(--lluvias-highlight);
+}
+
+.lluvias-tooltip-popup {
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+  width: 240px;
+  padding: 0.6rem 0.75rem;
+  background: #0F172A;
+  color: #F8FAFC;
+  border: 1px solid rgba(56, 189, 248, 0.35);
+  border-radius: 8px;
+  font-size: 0.76rem;
+  font-weight: 400;
+  text-transform: none;
+  letter-spacing: normal;
+  line-height: 1.4;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+  z-index: 1000;
+  pointer-events: none;
+}
+
+[data-theme='light'] .lluvias-tooltip-popup {
+  background: #FFFFFF;
+  color: #1E293B;
+  border-color: rgba(2, 132, 199, 0.35);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+}
+
+/* Centro: Mapa + Ficha de distrito */
+.lluvias-center-split {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  gap: 1rem;
+  min-height: 520px;
+}
+
+@media (max-width: 1024px) {
+  .lluvias-center-split {
+    grid-template-columns: 1fr;
+  }
+}
+
+.lluvias-map-panel {
+  background: var(--lluvias-card-bg);
+  border: 1px solid var(--lluvias-card-border);
+  border-radius: 12px;
+  padding: 0.85rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  overflow: hidden;
+}
+
+.lluvias-map-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.lluvias-map-legend-pills {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.lluvias-legend-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.15rem 0.5rem;
+  border-radius: 6px;
+  background: var(--lluvias-header-bg);
+  border: 1px solid var(--lluvias-card-border);
+  color: var(--theme-text, #F8FAFC);
+}
+
+.lluvias-legend-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 3px;
+  display: inline-block;
+  flex-shrink: 0;
+}
+
+.lluvias-district-profile {
+  background: var(--lluvias-card-bg);
+  border: 1px solid var(--lluvias-card-border);
+  border-radius: 12px;
+  padding: 1.15rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.lluvias-profile-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--lluvias-card-border);
+}
+
+.lluvias-profile-title {
+  font-size: 1.15rem;
+  font-weight: 700;
+  margin: 0;
+  color: var(--theme-text, #F8FAFC);
+}
+
+.lluvias-componentes-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.lluvias-componente-row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.lluvias-comp-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.78rem;
+}
+
+.lluvias-comp-name {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-weight: 600;
+  color: var(--theme-text, #F8FAFC);
+}
+
+.lluvias-comp-value {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--lluvias-highlight);
+}
+
+.lluvias-progress-track {
+  height: 7px;
+  background: var(--lluvias-header-bg);
+  border-radius: 4px;
+  overflow: hidden;
+  position: relative;
+}
+
+.lluvias-progress-fill {
+  height: 100%;
+  border-radius: 4px;
+  transition: width 0.3s ease;
+}
+
+/* Ficha destacados (Río Rocha y Ladera Tunari) */
+.lluvias-highlights-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.6rem;
+  margin-top: 0.25rem;
+}
+
+.lluvias-highlight-box {
+  background: var(--lluvias-accent-subtle);
+  border: 1px solid var(--lluvias-card-border);
+  border-radius: 10px;
+  padding: 0.75rem 0.9rem;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.65rem;
+}
+
+.lluvias-highlight-icon {
+  flex-shrink: 0;
+  color: var(--lluvias-icon-color);
+  margin-top: 2px;
+}
+
+.lluvias-highlight-content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.lluvias-highlight-main {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--theme-text, #F8FAFC);
+  line-height: 1.35;
+}
+
+.lluvias-highlight-sub {
+  font-size: 0.75rem;
+  color: var(--lluvias-muted);
+}
+
+/* Abajo: Gráficos (Lluvia dual-axis y Suelo construido) */
+.lluvias-bottom-grid {
+  display: grid;
+  grid-template-columns: 1.25fr 1fr;
+  gap: 1rem;
+}
+
+@media (max-width: 1024px) {
+  .lluvias-bottom-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.lluvias-chart-card {
+  background: var(--lluvias-card-bg);
+  border: 1px solid var(--lluvias-card-border);
+  border-radius: 12px;
+  padding: 1.15rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.lluvias-chart-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.lluvias-chart-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  margin: 0;
+  color: var(--theme-text, #F8FAFC);
+}
+
+.lluvias-chart-subtitle {
+  font-size: 0.76rem;
+  color: var(--lluvias-muted);
+  margin: 0.15rem 0 0;
+}
+
+.lluvias-chart-legend {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  font-size: 0.74rem;
+  font-weight: 600;
+  color: var(--lluvias-muted);
+}
+
+.lluvias-legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.lluvias-legend-line-sample {
+  width: 14px;
+  height: 3px;
+  border-radius: 2px;
+  display: inline-block;
+}
+
+.lluvias-svg-container {
+  width: 100%;
+  position: relative;
+}
+
+/* Frase Ladera Tunari y Aviso final */
+.lluvias-tunari-banner {
+  background: linear-gradient(90deg, rgba(2, 132, 199, 0.12) 0%, rgba(15, 23, 42, 0.4) 100%);
+  border-left: 4px solid var(--lluvias-accent);
+  border-radius: 8px;
+  padding: 0.85rem 1.15rem;
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+[data-theme='light'] .lluvias-tunari-banner {
+  background: linear-gradient(90deg, rgba(2, 132, 199, 0.1) 0%, rgba(241, 245, 249, 0.6) 100%);
+}
+
+.lluvias-tunari-text {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--theme-text, #F8FAFC);
+  line-height: 1.45;
+}
+
+.lluvias-tunari-text strong {
+  color: var(--lluvias-highlight);
+}
+
+.lluvias-nota-footer {
+  background: var(--lluvias-header-bg);
+  border: 1px dashed var(--lluvias-card-border);
+  border-radius: 8px;
+  padding: 0.75rem 1rem;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6rem;
+  font-size: 0.78rem;
+  color: var(--lluvias-muted);
+  line-height: 1.45;
+}
+
+.lluvias-fallback {
+  padding: 3rem;
+  text-align: center;
+  background: var(--lluvias-card-bg);
+  border-radius: 12px;
+  border: 1px solid var(--lluvias-card-border);
+  color: var(--lluvias-muted);
+}

@@ -37,6 +37,7 @@ import {
 } from '../data/internalPanelData'
 import DiagnosticoDistritalScreen from './panel/DiagnosticoDistritalScreen'
 import { DetectiveTendenciasScreen } from './panel/DetectiveTendenciasScreen'
+import LluviasInundacionesScreen from './panel/LluviasInundacionesScreen'
 import { SensadoVirtualScreen } from './panel/SensadoVirtualScreen'
 import SimuladorClimaticoScreen from './panel/SimuladorClimaticoScreen'
 import IndiceScreen from './panel/IndiceScreen'
@@ -49,7 +50,6 @@ import InformeScreen from './panel/InformeScreen'
 import {
   IntelligenceCenterScreen,
   VegetationIntelligenceScreen,
-  EnvironmentalRelationsScreen,
 } from './panel/ScreensPart1'
 import {
   DataManagementScreen,
@@ -431,7 +431,7 @@ export function InternalPlatform({ userSession, onLogout }) {
       case 'lluvias-inundaciones':
       case 'red-monica':
       case 'relaciones-ambientales':
-        return <EnvironmentalRelationsScreen {...commonProps} />
+        return <LluviasInundacionesScreen {...commonProps} />
       case 'sensado-virtual-ia':
       case 'evidencia-validacion':
         return <SensadoVirtualScreen {...commonProps} />
