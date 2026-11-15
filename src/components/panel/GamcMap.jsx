@@ -215,6 +215,11 @@ export default function GamcMap({
       map.invalidateSize()
     }, 150)
 
+    // Segundo invalidateSize para contenedores con transición CSS o layout tardío
+    setTimeout(() => {
+      map.invalidateSize()
+    }, 600)
+
     return () => {
       map.remove()
       mapInstanceRef.current = null
@@ -240,7 +245,7 @@ export default function GamcMap({
 
     const isLight = theme === 'light'
     const tileUrl = isLight
-      ? 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png'
+      ? 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png'
       : 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png'
 
     if (baseTileRef.current) {
