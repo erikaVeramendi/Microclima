@@ -17,7 +17,7 @@ export function TerritorialExplorerSection() {
       ndviBar: 78,
       lstBar: 38,
       elev: '2,750 – 3,400 m',
-      accent: '#43A875',
+      accent: '#5CEA00',
     },
     'corredor-ripario': {
       gamcSubalcaldia: 'Eje Río Rocha · Subalcaldías Molle / Adela Zamudio',
@@ -192,7 +192,7 @@ export function TerritorialExplorerSection() {
                       <stop offset="100%" stopColor="#070910" stopOpacity="0" />
                     </radialGradient>
                     <radialGradient id="vegCore" cx="35%" cy="32%" r="45%">
-                      <stop offset="0%" stopColor="#43A875" stopOpacity="0.42" />
+                      <stop offset="0%" stopColor="#5CEA00" stopOpacity="0.42" />
                       <stop offset="65%" stopColor="#237B5B" stopOpacity="0.16" />
                       <stop offset="100%" stopColor="#070910" stopOpacity="0" />
                     </radialGradient>
@@ -213,14 +213,14 @@ export function TerritorialExplorerSection() {
                   <path
                     d="M 15 65 Q 190 18, 360 58 T 625 48"
                     fill="none"
-                    stroke={activeLayer === 'relieve' ? '#65C8F2' : 'rgba(139, 203, 154, 0.35)'}
+                    stroke={activeLayer === 'relieve' ? '#00BEFC' : 'rgba(139, 203, 154, 0.35)'}
                     strokeWidth="1.6"
                     strokeDasharray="6 4"
                   />
                   <path
                     d="M 10 98 Q 210 48, 380 86 T 630 82"
                     fill="none"
-                    stroke={activeLayer === 'relieve' ? '#65C8F2' : 'rgba(101, 200, 242, 0.25)'}
+                    stroke={activeLayer === 'relieve' ? '#00BEFC' : 'rgba(101, 200, 242, 0.25)'}
                     strokeWidth="1.2"
                   />
 
@@ -250,7 +250,7 @@ export function TerritorialExplorerSection() {
                         ? 'rgba(255, 203, 115, 0.32)'
                         : 'rgba(101, 200, 242, 0.28)'
                     }
-                    stroke={selectedZoneId === 'corredor-ripario' ? '#65C8F2' : 'rgba(101, 200, 242, 0.4)'}
+                    stroke={selectedZoneId === 'corredor-ripario' ? '#00BEFC' : 'rgba(101, 200, 242, 0.4)'}
                     strokeWidth={selectedZoneId === 'corredor-ripario' ? '2.8' : '1.2'}
                     style={{ cursor: 'pointer' }}
                     onClick={() => setSelectedZoneId('corredor-ripario')}
@@ -360,7 +360,7 @@ export function TerritorialExplorerSection() {
                   <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.68rem', color: currentMetric.accent, fontWeight: 700 }}>
                     {activeZone.coords}
                   </span>
-                  <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.64rem', color: '#65C8F2' }}>
+                  <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.64rem', color: '#00BEFC' }}>
                     ALT: {currentMetric.elev}
                   </span>
                 </div>
@@ -377,7 +377,7 @@ export function TerritorialExplorerSection() {
                       <span style={{ color: '#8BCB9A' }}>Nivel Ilustrativo</span>
                     </div>
                     <div style={{ height: '7px', backgroundColor: 'rgba(255,255,255,0.08)', borderRadius: '99px', overflow: 'hidden' }}>
-                      <div style={{ width: `${currentMetric.ndviBar}%`, height: '100%', backgroundColor: '#43A875', borderRadius: '99px' }} />
+                      <div style={{ width: `${currentMetric.ndviBar}%`, height: '100%', backgroundColor: '#5CEA00', borderRadius: '99px' }} />
                     </div>
                   </div>
 

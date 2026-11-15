@@ -349,19 +349,24 @@ export default function InformeScreen({
             }}
           >
             <div>
-              <span
-                style={{
-                  fontSize: '0.72rem',
-                  fontWeight: 700,
-                  letterSpacing: '0.08em',
-                  textTransform: 'uppercase',
-                  color: 'var(--theme-accent, #38BDF8)',
-                  display: 'block',
-                  marginBottom: '0.2rem',
-                }}
-              >
-                LlajtaLab · NASA Space Apps Challenge 2026 · Cochabamba
-              </span>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', marginBottom: '0.35rem', flexWrap: 'wrap' }}>
+                <img
+                  src="/brand/logo-horizontal.png"
+                  alt="LlajtaLab"
+                  style={{ height: '30px', width: 'auto', objectFit: 'contain' }}
+                />
+                <span
+                  style={{
+                    fontSize: '0.72rem',
+                    fontWeight: 700,
+                    letterSpacing: '0.08em',
+                    textTransform: 'uppercase',
+                    color: 'var(--theme-accent, #00BEFC)',
+                  }}
+                >
+                  · NASA Space Apps Challenge 2026 · Cochabamba
+                </span>
+              </div>
               <h1
                 style={{
                   margin: 0,

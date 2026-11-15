@@ -955,8 +955,8 @@ export function IntelligenceCenterScreen({
       {/* 2. Los 6 Indicadores Principales Oficiales (Especificación P01.2) */}
       <section className="neo-kpi-6strip">
         {[
-          { lbl: 'FUENTES DISPONIBLES', val: '11 / 13', sub: 'Catálogos NASA/ESA + GAMC pend.', col: '#65C8F2', mod: 'gestion-datos' },
-          { lbl: 'PERIODOS ANALIZADOS', val: '2019–26', sub: 'Época seca comparable', col: '#43A875', mod: 'explorador-territorial' },
+          { lbl: 'FUENTES DISPONIBLES', val: '11 / 13', sub: 'Catálogos NASA/ESA + GAMC pend.', col: '#00BEFC', mod: 'gestion-datos' },
+          { lbl: 'PERIODOS ANALIZADOS', val: '2019–26', sub: 'Época seca comparable', col: '#5CEA00', mod: 'explorador-territorial' },
           { lbl: 'INVESTIGACIONES ACTIVAS', val: '03', sub: 'Rocha · Itocta · Islas LST', col: '#8875D8', mod: 'investigaciones-informes' },
           { lbl: 'ANÁLISIS COMPLETADOS', val: 'Base QA', sub: 'Cola PostGIS en espera', col: '#8BCB9A', mod: 'gestion-datos' },
           { lbl: 'HALLAZGOS CANDIDATOS', val: '04', sub: 'En revisión científica', col: '#FFCB73', mod: 'investigacion-descubrimiento' },
@@ -1038,11 +1038,11 @@ export function IntelligenceCenterScreen({
               <NeonRadarChart
                 metrics={[88, 72, 65, 84, 78]}
                 axes={['FUENTES', 'ESTUDIOS', 'PROCESOS', 'HALLAZGOS', 'AUDITORÍA']}
-                accent="#65C8F2"
+                accent="#00BEFC"
               />
               <div className="neo-compact-feed">
                 <div className="neo-feed-pill">
-                  <i style={{ background: '#43A875' }} />
+                  <i style={{ background: '#5CEA00' }} />
                   <span><b>Catálogo S2/L9</b> listo sin interpolar vacíos</span>
                 </div>
                 <div className="neo-feed-pill">
@@ -1167,7 +1167,7 @@ export function VegetationIntelligenceScreen({
                 <NeonDonutChart
                   segments={[
                     { label: '>0.60 Vigor Alto', value: activeZone.spectralSplit[0], color: '#237B5B' },
-                    { label: '0.40–0.60 Medio', value: activeZone.spectralSplit[1], color: '#43A875' },
+                    { label: '0.40–0.60 Medio', value: activeZone.spectralSplit[1], color: '#5CEA00' },
                     { label: '0.20–0.40 Bajo', value: activeZone.spectralSplit[2], color: '#8BCB9A' },
                     { label: '<0.20 Suelo/Urbano', value: activeZone.spectralSplit[3], color: '#64748B' },
                   ]}
@@ -1185,8 +1185,8 @@ export function VegetationIntelligenceScreen({
                 </div>
                 <NeonSplineChart
                   series={[
-                    { name: activeZone.shortName, data: activeZone.annualNdvi, color: '#43A875', unit: '' },
-                    { name: 'Referencia Tunari', data: COCHABAMBA_ZONES[0].annualNdvi, color: '#65C8F2', unit: '' },
+                    { name: activeZone.shortName, data: activeZone.annualNdvi, color: '#5CEA00', unit: '' },
+                    { name: 'Referencia Tunari', data: COCHABAMBA_ZONES[0].annualNdvi, color: '#00BEFC', unit: '' },
                   ]}
                   labels={YEAR_LABELS}
                   height={138}
@@ -1207,8 +1207,8 @@ export function VegetationIntelligenceScreen({
               <div className="neo-4state-grid">
                 {[
                   { st: 'Posible disminución', pct: activeZone.ndviDelta < 0 ? 34 : 11, col: '#D95757' },
-                  { st: 'Posible recuperación', pct: activeZone.ndviDelta > 0 ? 29 : 12, col: '#43A875' },
-                  { st: 'Comportamiento estable', pct: 46, col: '#65C8F2' },
+                  { st: 'Posible recuperación', pct: activeZone.ndviDelta > 0 ? 29 : 12, col: '#5CEA00' },
+                  { st: 'Comportamiento estable', pct: 46, col: '#00BEFC' },
                   { st: 'No concluyente (QA)', pct: 100 - activeZone.validCoverage, col: '#E6B85C' },
                 ].map((c) => (
                   <div key={c.st} className="neo-state-box" style={{ borderColor: `${c.col}55` }}>
@@ -1241,8 +1241,8 @@ export function VegetationIntelligenceScreen({
               {/* Galería visual T1 / T2 / Diferencia */}
               <div className="neo-3patch-gallery">
                 {[
-                  { t: 'T1 · MAYO 2020', v: activeZone.annualNdvi[1], col: '#43A875' },
-                  { t: 'T2 · MAYO 2025', v: activeZone.ndviIllustrative, col: '#65C8F2' },
+                  { t: 'T1 · MAYO 2020', v: activeZone.annualNdvi[1], col: '#5CEA00' },
+                  { t: 'T2 · MAYO 2025', v: activeZone.ndviIllustrative, col: '#00BEFC' },
                   { t: 'Δ DIFERENCIA', v: `${activeZone.ndviDelta > 0 ? '+' : ''}${activeZone.ndviDelta}`, col: '#FFCB73' },
                 ].map((p) => (
                   <div key={p.t} className="neo-patch-card">
@@ -1256,7 +1256,7 @@ export function VegetationIntelligenceScreen({
 
               <NeonEqBarChart
                 data={activeZone.eqPulses}
-                accent="#43A875"
+                accent="#5CEA00"
                 secondaryAccent="#8BCB9A"
                 unit="% QA"
                 height={110}
@@ -1287,7 +1287,7 @@ export function VegetationIntelligenceScreen({
                   className="neo-div-bar-fill"
                   style={{
                     width: `${Math.min(100, Math.abs(z.ndviDelta) * 950 + 22)}%`,
-                    background: pos ? '#43A875' : '#D95757',
+                    background: pos ? '#5CEA00' : '#D95757',
                   }}
                 />
               </div>
@@ -1372,7 +1372,7 @@ export function ThermalIntelligenceScreen({
                   { z: 'distrito-10', cls: 'D10 · Caliente + tendencia creciente', slp: '+0.26°/a', col: '#D95757' },
                   { z: 'distrito-9', cls: 'D9 · Cambio rápido emergente', slp: '+0.34°/a', col: '#F28B50' },
                   { z: 'distrito-6', cls: 'D6 · Cálida con tendencia moderada', slp: '+0.16°/a', col: '#FFCB73' },
-                  { z: 'distrito-2', cls: 'D2 · Amortiguada / sin tendencia fuerte', slp: '+0.11°/a', col: '#65C8F2' },
+                  { z: 'distrito-2', cls: 'D2 · Amortiguada / sin tendencia fuerte', slp: '+0.11°/a', col: '#00BEFC' },
                   { z: 'distrito-1', cls: 'D1 · Confort térmico relativo', slp: '+0.12°/a', col: '#8BCB9A' },
                 ].map((item) => (
                   <div
@@ -1410,7 +1410,7 @@ export function ThermalIntelligenceScreen({
                   {
                     name: 'Esperado Histórico',
                     data: activeZone.diurnalLst.map((v) => +(v - Math.max(0.8, activeZone.thermalAnomaly)).toFixed(1)),
-                    color: '#65C8F2',
+                    color: '#00BEFC',
                     unit: '°C',
                   },
                 ]}
@@ -1439,8 +1439,8 @@ export function ThermalIntelligenceScreen({
               </div>
 
               <div className="neo-4state-grid">
-                <div className="neo-state-box" style={{ borderColor: '#65C8F255' }}>
-                  <strong style={{ color: '#65C8F2' }}>{activeZone.annualLst[1]}°C</strong>
+                <div className="neo-state-box" style={{ borderColor: '#00BEFC55' }}>
+                  <strong style={{ color: '#00BEFC' }}>{activeZone.annualLst[1]}°C</strong>
                   <span>Media Pre-2022</span>
                 </div>
                 <div className="neo-state-box" style={{ borderColor: '#D9575755' }}>
@@ -1565,9 +1565,9 @@ export function EnvironmentalRelationsScreen({
       <div className="neo-diverging-grid">
         {[
           { cls: '↓ NDVI + ↑ LST', sub: 'Itocta / Sur (D9)', z: 'distrito-9', col: '#D95757' },
-          { cls: '↑ NDVI + ↓ LST', sub: 'Cala Cala (D2)', z: 'distrito-2', col: '#43A875' },
+          { cls: '↑ NDVI + ↓ LST', sub: 'Cala Cala (D2)', z: 'distrito-2', col: '#5CEA00' },
           { cls: '= NDVI + ↑ LST', sub: 'Laguna Alalay (D6)', z: 'distrito-6', col: '#FFCB73' },
-          { cls: '↓ NDVI + = LST', sub: 'Ladera Tunari (D13)', z: 'distrito-13', col: '#65C8F2' },
+          { cls: '↓ NDVI + = LST', sub: 'Ladera Tunari (D13)', z: 'distrito-13', col: '#00BEFC' },
           { cls: 'Datos Insuficientes', sub: 'Queru Queru (D1)', z: 'distrito-1', col: '#8875D8' },
         ].map((item) => (
           <div

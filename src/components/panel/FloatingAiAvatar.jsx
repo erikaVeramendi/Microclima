@@ -205,21 +205,25 @@ Instrucción: Responde en español con tono amable, directo, científico y sin r
       : 'Guardián del Valle'
 
   return (
-    <div className="floating-avatar-container" aria-label="Pacha, asistente de LlajtaLab">
+    <div className="floating-avatar-container" aria-label="Labi, mascota y asistente de LlajtaLab">
       {!isOpen ? (
-        // Estado Minimizado: Pacha Flotando con su Chullito (limpio, sin etiquetas innecesarias)
+        // Estado Minimizado: Labi Mascota Oficial Flotando
         <button
           type="button"
           className="floating-avatar-trigger"
           onClick={() => setIsOpen(true)}
-          title="Hablar con Pacha · LlajtaLab"
+          title="Hablar con Labi · Mascota de LlajtaLab"
         >
           <div className="wayrita-sprite-wrap">
-            <PachaAvatarSvg mood={mood} size={48} />
+            <img
+              src="/brand/labi-mascota.png"
+              alt="Labi"
+              className="labi-sprite-img"
+            />
           </div>
           <div className="floating-avatar-label-box">
             <div className="floating-avatar-name-row">
-              <span className="floating-avatar-name">Pacha</span>
+              <span className="floating-avatar-name">Labi</span>
             </div>
             <span className="floating-avatar-mood-pill">
               <span className={`floating-status-dot dot-${mood}`} />
@@ -228,16 +232,20 @@ Instrucción: Responde en español con tono amable, directo, científico y sin r
           </div>
         </button>
       ) : (
-        // Estado Expandido: Tarjeta Holográfica de Pacha
+        // Estado Expandido: Tarjeta Holográfica de Labi
         <div className="floating-avatar-panel" role="dialog" aria-modal="false">
           {/* Cabecera */}
           <div className="avatar-panel-header">
             <div className="avatar-header-left">
               <div className="avatar-header-sprite">
-                <PachaAvatarSvg mood={mood} size={44} />
+                <img
+                  src="/brand/labi-mascota.png"
+                  alt="Labi"
+                  className="labi-header-img"
+                />
               </div>
               <div className="avatar-header-title-box">
-                <div className="avatar-header-title">Pacha · LlajtaLab</div>
+                <div className="avatar-header-title">Labi · Guardián LlajtaLab</div>
                 <div className="avatar-header-subtitle">
                   <span>Laboratorio climático urbano de Cochabamba</span>
                   <span className={`avatar-backend-badge ${ollamaConnected ? 'is-ollama' : ''}`}>
