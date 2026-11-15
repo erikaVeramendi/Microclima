@@ -1,0 +1,416 @@
+/* =========================================================================
+   SensadoVirtualScreen.css
+   Estilos para la Pestaña 4: Sensado virtual con IA y Red MÓNICA
+   Soporte completo para modo oscuro y modo claro mediante CSS variables
+   ========================================================================= */
+
+.sensado-screen {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  padding: 0.25rem 0 2rem;
+  color: var(--theme-text);
+}
+
+/* Encabezado y subpestañas */
+.sensado-header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.sensado-top-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.sensado-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  margin: 0;
+  color: var(--theme-text);
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.sensado-subtitle {
+  font-size: 0.92rem;
+  color: var(--theme-text-secondary);
+  margin: 0;
+  line-height: 1.45;
+}
+
+.sensado-tab-pills {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: var(--theme-surface);
+  padding: 0.25rem;
+  border-radius: 10px;
+  border: 1px solid var(--theme-border-subtle);
+}
+
+.sensado-pill-btn {
+  padding: 0.45rem 0.9rem;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--theme-text-secondary);
+  background: transparent;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.sensado-pill-btn:hover {
+  color: var(--theme-text);
+  background: var(--theme-card-hover);
+}
+
+.sensado-pill-btn.is-active {
+  color: var(--theme-text);
+  background: var(--theme-card-bg);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  border: 1px solid var(--theme-border);
+}
+
+/* Cuadrícula de 4 tarjetas de validación */
+.sensado-kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+}
+
+@media (max-width: 1024px) {
+  .sensado-kpi-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .sensado-kpi-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.sensado-kpi-card {
+  background: var(--theme-card-bg);
+  border: 1px solid var(--theme-border);
+  border-radius: 12px;
+  padding: 1rem 1.15rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 0.6rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+}
+
+.sensado-kpi-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.sensado-kpi-label {
+  font-size: 0.74rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--theme-text-muted);
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.sensado-kpi-val {
+  font-size: 1.45rem;
+  font-weight: 700;
+  color: var(--theme-text);
+  line-height: 1.15;
+  font-variant-numeric: tabular-nums;
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+}
+
+.sensado-kpi-unit {
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--theme-text-secondary);
+}
+
+.sensado-kpi-sub {
+  font-size: 0.75rem;
+  color: var(--theme-text-secondary);
+  line-height: 1.35;
+}
+
+.sensado-kpi-baseline {
+  font-size: 0.74rem;
+  color: var(--theme-text-muted);
+  background: var(--theme-surface);
+  padding: 0.2rem 0.5rem;
+  border-radius: 6px;
+  border: 1px solid var(--theme-border-subtle);
+  display: inline-block;
+  margin-top: 0.25rem;
+}
+
+/* Tooltip / Definición rápida "?" */
+.sensado-help-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--theme-border-subtle);
+  color: var(--theme-text-secondary);
+  font-size: 10px;
+  font-weight: 700;
+  cursor: help;
+  position: relative;
+}
+
+.sensado-help-icon:hover::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: 125%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--theme-surface);
+  color: var(--theme-text);
+  border: 1px solid var(--theme-border);
+  padding: 0.35rem 0.65rem;
+  border-radius: 6px;
+  font-size: 0.72rem;
+  font-weight: 500;
+  white-space: nowrap;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  z-index: 100;
+  pointer-events: none;
+}
+
+/* Bloque Cómo leer estas pruebas */
+.sensado-how-to-read {
+  background: var(--theme-card-bg);
+  border: 1px solid var(--theme-border);
+  border-radius: 12px;
+  padding: 1rem 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.sensado-htr-title {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--theme-text);
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  margin: 0;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.sensado-htr-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.85rem;
+}
+
+@media (max-width: 1024px) {
+  .sensado-htr-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .sensado-htr-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.sensado-htr-item {
+  background: var(--theme-surface);
+  border: 1px solid var(--theme-border-subtle);
+  border-radius: 8px;
+  padding: 0.7rem 0.85rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.sensado-htr-name {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--theme-text);
+}
+
+.sensado-htr-desc {
+  font-size: 0.73rem;
+  color: var(--theme-text-secondary);
+  line-height: 1.4;
+  margin: 0;
+}
+
+/* Centro: Mapa + Ficha */
+.sensado-center-grid {
+  display: grid;
+  grid-template-columns: 1.25fr 0.95fr;
+  gap: 1rem;
+  align-items: stretch;
+}
+
+@media (max-width: 1100px) {
+  .sensado-center-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.sensado-panel-box {
+  background: var(--theme-card-bg);
+  border: 1px solid var(--theme-border);
+  border-radius: 12px;
+  padding: 1.15rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.04);
+}
+
+.sensado-panel-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.sensado-panel-title {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--theme-text);
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  margin: 0;
+}
+
+/* Ficha del distrito */
+.sensado-ficha-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.sensado-ficha-stat-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.55rem 0.75rem;
+  background: var(--theme-surface);
+  border-radius: 8px;
+  border: 1px solid var(--theme-border-subtle);
+}
+
+.sensado-ficha-stat-lbl {
+  font-size: 0.78rem;
+  color: var(--theme-text-secondary);
+  font-weight: 500;
+}
+
+.sensado-ficha-stat-val {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--theme-text);
+  font-variant-numeric: tabular-nums;
+}
+
+.badge-confidence-alta {
+  padding: 0.2rem 0.55rem;
+  border-radius: 6px;
+  background: rgba(16, 185, 129, 0.15);
+  color: #10B981;
+  font-weight: 700;
+  font-size: 0.75rem;
+  border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.badge-confidence-media {
+  padding: 0.2rem 0.55rem;
+  border-radius: 6px;
+  background: rgba(245, 158, 11, 0.15);
+  color: #F59E0B;
+  font-weight: 700;
+  font-size: 0.75rem;
+  border: 1px solid rgba(245, 158, 11, 0.3);
+}
+
+.badge-confidence-baja {
+  padding: 0.2rem 0.55rem;
+  border-radius: 6px;
+  background: rgba(148, 163, 184, 0.15);
+  color: var(--theme-text-muted);
+  font-weight: 700;
+  font-size: 0.75rem;
+  border: 1px solid var(--theme-border-subtle);
+}
+
+/* Abajo: Dos gráficos */
+.sensado-bottom-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+@media (max-width: 950px) {
+  .sensado-bottom-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* SVG Chart Container */
+.sensado-chart-svg-wrap {
+  width: 100%;
+  height: 230px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sensado-chart-svg {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+/* Aviso metodológico único */
+.sensado-notice-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  background: rgba(148, 163, 184, 0.08);
+  border: 1px solid var(--theme-border-subtle);
+  font-size: 0.8rem;
+  color: var(--theme-text-secondary);
+  line-height: 1.4;
+}
+
+.sensado-notice-bar svg {
+  flex-shrink: 0;
+}

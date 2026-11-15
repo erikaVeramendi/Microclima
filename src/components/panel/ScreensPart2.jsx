@@ -19,184 +19,13 @@ export { PuntosCriticosScreen }
 export const ResearchDiscoveryScreen = PuntosCriticosScreen
 
 /* =========================================================================
-   PANTALLA 07. EVIDENCIA Y VALIDACIÓN
-   WOW: Pasaporte Científico (6 etapas) + «No sabemos todavía» + Índice Confianza 5D
-   + «Dónde medir para aprender más» + Historial de Versiones (MAE/RMSE/R²/F1 + Matriz Confusión)
+   PANTALLA 04. SENSADO VIRTUAL CON IA (Antes Evidencia y Validación)
+   "La Alcaldía tiene 2 estaciones de aire. La IA estima cómo está el aire en los 15 distritos."
+   Integra modelo Gradient Boosting validado y verdad de terreno Red MÓNICA (GAMC)
    ========================================================================= */
-export function EvidenceValidationScreen({
-  selectedZoneId,
-  onSelectZone,
-  onNavigateModule,
-}) {
-  const [evTab, setEvTab] = useState('pasaporte') // 'pasaporte' | 'validacion'
-  const activeZone =
-    COCHABAMBA_ZONES.find((z) => z.id === selectedZoneId) || COCHABAMBA_ZONES[1]
-
-  return (
-    <div className="neo-screen">
-      {/* WOW: PASAPORTE CIENTÍFICO EN 6 NODOS CONECTADOS */}
-      <article className="neo-glass-card">
-        <div className="neo-card-header">
-          <div>
-            <span className="neo-micro-tag">✦ WOW · PASAPORTE CIENTÍFICO REPRODUCIBLE (ID: LLAJTALAB-EV-{activeZone.id.toUpperCase()})</span>
-            <h3>Recorrido de trazabilidad: Fuente → Procesamiento → Método → Resultado → Validación → Limitaciones</h3>
-          </div>
-          <div className="neo-pill-group">
-            <button
-              type="button"
-              className={`geo-hud-pill ${evTab === 'pasaporte' ? 'is-active' : ''}`}
-              onClick={() => setEvTab('pasaporte')}
-            >
-              🛡 Confianza 5D & Vacíos
-            </button>
-            <button
-              type="button"
-              className={`geo-hud-pill ${evTab === 'validacion' ? 'is-active' : ''}`}
-              onClick={() => setEvTab('validacion')}
-            >
-              📊 Modelos (MAE/RMSE/F1)
-            </button>
-          </div>
-        </div>
-
-        <div className="neo-pipeline-6grid">
-          {[
-            { step: '01 FUENTE', name: 'S2 MSI + L9 TIRS', sub: '10m / 30m Público', col: '#00BEFC', pct: 95 },
-            { step: '02 PROCESO', name: 'Máscara QA / SCL', sub: 'Filtro nubes/sombras', col: '#5CEA00', pct: activeZone.validCoverage },
-            { step: '03 MÉTODO', name: 'Sen + Spearman', sub: 'No paramétrico', col: '#8875D8', pct: 90 },
-            { step: '04 RESULTADO', name: `${activeZone.lstIllustrative}°C · ${activeZone.ndviIllustrative}`, sub: activeZone.evidenceLevel, col: '#FFCB73', pct: 84 },
-            { step: '05 VALIDACIÓN', name: 'In-Situ Pendiente', sub: 'LST ≠ Temp. Aire', col: '#F28B50', pct: 46 },
-            { step: '06 LÍMITE', name: activeZone.validCoverage < 80 ? '«No sabemos todavía»' : 'Época Lluviosa', sub: 'Sin extrapolar verano', col: '#D95757', pct: 68 },
-          ].map((st) => (
-            <div key={st.step} className="neo-pipe-node" style={{ borderColor: `${st.col}55` }}>
-              <div className="neo-pipe-top">
-                <span style={{ color: st.col }}>{st.step}</span>
-                <strong>{st.pct}%</strong>
-              </div>
-              <h4>{st.name}</h4>
-              <small>{st.sub}</small>
-              <div className="neo-bar-single-track">
-                <div style={{ width: `${st.pct}%`, backgroundColor: st.col }} />
-              </div>
-            </div>
-          ))}
-        </div>
-      </article>
-
-      <section className="neo-split-7-5">
-        {/* Mapa de Incertidumbre y «Dónde medir para aprender más» */}
-        <SharedGeoCanvas
-          selectedZoneId={selectedZoneId}
-          onSelectZone={onSelectZone}
-          activeLayer="vacios"
-          onNavigateModule={onNavigateModule}
-          height={430}
-        />
-
-        <div className="neo-col-stack">
-          {evTab === 'pasaporte' ? (
-            <>
-              <article className="neo-glass-card">
-                <div className="neo-card-header">
-                  <div>
-                    <span className="neo-micro-tag">✦ ÍNDICE DE CONFIANZA TERRITORIAL (NO OPACO)</span>
-                    <h3>Perfil 5D · {activeZone.shortName}</h3>
-                  </div>
-                  <span className="neo-pill-badge neo-pill--emerald">{activeZone.evidenceLevel}</span>
-                </div>
-                <NeonRadarChart
-                  metrics={[activeZone.validCoverage, 88, 92, 46, 82]}
-                  axes={['ESPACIAL', 'TEMPORAL', 'RADIOMET.', 'CAMPO', 'CONSIST.']}
-                  accent="#00BEFC"
-                />
-              </article>
-
-              <article className="neo-glass-card">
-                <span className="neo-micro-tag">✦ «DÓNDE MEDIR PARA APRENDER MÁS»</span>
-                <div className="neo-zone-bars-list">
-                  <div className="neo-zone-bar-item" onClick={() => onSelectZone('expansion-sur')}>
-                    <div className="neo-zb-head">
-                      <strong style={{ color: '#F28B50' }}>Prioridad #1: Itocta Sur</strong>
-                      <span>Sensor Aire (≠ LST)</span>
-                    </div>
-                  </div>
-                  <div className="neo-zone-bar-item" onClick={() => onSelectZone('tunari-norte')}>
-                    <div className="neo-zb-head">
-                      <strong style={{ color: '#00BEFC' }}>Prioridad #2: Ladera Tunari</strong>
-                      <span>Pluviómetro / Humedad</span>
-                    </div>
-                  </div>
-                </div>
-              </article>
-            </>
-          ) : (
-            <article className="neo-glass-card">
-              <div className="neo-card-header">
-                <div>
-                  <span className="neo-micro-tag">C/D. VALIDACIÓN E HISTORIAL DE VERSIONES (v0.1 vs v0.2)</span>
-                  <h3>Continuas (MAE/RMSE/R²) & Clasificación (Matriz Confusión)</h3>
-                </div>
-                <span className="neo-pill-badge neo-pill--amber">CONTRATO BACKEND</span>
-              </div>
-
-              <div className="neo-4state-grid">
-                <div className="neo-state-box" style={{ borderColor: '#00BEFC55' }}>
-                  <strong style={{ color: '#00BEFC' }}>MAE / RMSE</strong>
-                  <span>Pendiente Red MÓNICA</span>
-                </div>
-                <div className="neo-state-box" style={{ borderColor: '#5CEA0055' }}>
-                  <strong style={{ color: '#5CEA00' }}>R² / Sesgo</strong>
-                  <span>Separación Train/Val</span>
-                </div>
-                <div className="neo-state-box" style={{ borderColor: '#8875D855' }}>
-                  <strong style={{ color: '#8875D8' }}>Precision / F1</strong>
-                  <span>Clases cambio NDVI</span>
-                </div>
-                <div className="neo-state-box" style={{ borderColor: '#FFCB7355' }}>
-                  <strong style={{ color: '#FFCB73' }}>v0.1 → v0.2</strong>
-                  <span>+ Control NASADEM</span>
-                </div>
-              </div>
-
-              {/* Matriz de Confusión Visual 3x3 (Esquema listo) */}
-              <div className="neo-corr-matrix">
-                <div className="neo-corr-row neo-corr-head">
-                  <span>PRED\REF</span>
-                  <span>PÉRDIDA</span>
-                  <span>ESTABLE</span>
-                  <span>GANANCIA</span>
-                  <span>F1</span>
-                  <span>ESTADO</span>
-                </div>
-                {[
-                  ['PÉRDIDA', 'TP', 'FP', '—', 'Pend.', 'QA'],
-                  ['ESTABLE', 'FN', 'TP', 'FP', 'Pend.', 'QA'],
-                  ['GANANCIA', '—', 'FN', 'TP', 'Pend.', 'QA'],
-                ].map((r) => (
-                  <div key={r[0]} className="neo-corr-row">
-                    <span className="neo-corr-label">{r[0]}</span>
-                    {r.slice(1).map((c, idx) => (
-                      <div
-                        key={idx}
-                        className="neo-corr-cell"
-                        style={{
-                          backgroundColor:
-                            c === 'TP' ? 'rgba(67,168,117,0.35)' : 'rgba(38,59,89,0.45)',
-                        }}
-                      >
-                        {c}
-                      </div>
-                    ))}
-                  </div>
-                ))}
-              </div>
-            </article>
-          )}
-        </div>
-      </section>
-    </div>
-  )
-}
+import { SensadoVirtualScreen } from './SensadoVirtualScreen'
+export { SensadoVirtualScreen }
+export const EvidenceValidationScreen = SensadoVirtualScreen
 
 /* =========================================================================
    PANTALLA 08. GESTIÓN DE DATOS
@@ -643,7 +472,7 @@ export function PlanningScenariosScreen({
                     (1 - z.ndviIllustrative) * 100 * wVegDeficit +
                     z.popDensity * wPop +
                     (100 - z.validCoverage) * 2.2 * wDataGap) /
-                    totalW
+                  totalW
                 )
                 return { ...z, score }
               })

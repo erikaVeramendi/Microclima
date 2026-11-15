@@ -1,756 +1,774 @@
 {
   "meta": {
-    "fuente": "Red MÓNICA - GAMC / DIMA (Cochabamba)",
-    "unidades": "µg/m³ PM10",
-    "descripcion": "Promedios horarios (00:00 a 23:00) y mensuales calculados a partir de los registros brutos oficiales de la Red MÓNICA.",
-    "generado": "2026-11-12T20:47:41.383Z",
-    "disparidadSurNortePct": 36.1
+    "fuente": "Red de Monitoreo de la Calidad del Aire (Red MÓNICA) · GAMC",
+    "guia_oms_24h_pm10": 45,
+    "unidad": "µg/m³",
+    "metodologia": "Filtrado de datos espurios (0 < PM10 < 1000 µg/m³). Promedios mensuales calculados para meses con al menos 15 días con cobertura diaria representativa.",
+    "generado": "2026-11-15T05:22:04.360Z"
   },
   "estaciones": {
     "kanata": {
       "id": "kanata",
       "nombre": "Estación Parque Kanata",
-      "ubicación": "Av. 6 de Agosto / Parque Kanata (Zona Sur, cuenca baja)",
-      "distritoRef": "Distrito 5",
+      "ubicacion": "Av. 6 de Agosto / Parque Kanata (Zona Sur)",
       "coords": {
         "lat": -17.4132,
         "lng": -66.1554
       },
-      "estacion": "Parque Kanata (Sur)",
-      "muestrasValidas": 53988,
-      "mediaPm10": 68.37,
-      "rangoFechas": {
-        "inicio": "2022-07-06",
-        "fin": "2026-10-23"
-      },
-      "perfilHorario": [
+      "distritoRef": "Distrito 5",
+      "registros_validos": 51291,
+      "fecha_inicial": "2022-07-06",
+      "fecha_final": "2026-10-23",
+      "promedio_general": 71.96,
+      "dias_validos_totales": 1103,
+      "dias_sobre_guia_oms": 860,
+      "pct_dias_sobre_guia_oms": 78,
+      "perfil_horario": [
         {
-          "hour": "00:00",
-          "pm10": 62.81,
-          "muestras": 2240
+          "hora": 0,
+          "etiqueta": "00:00",
+          "pm10": 70.49,
+          "registros": 1996
         },
         {
-          "hour": "01:00",
-          "pm10": 59.87,
-          "muestras": 2183
+          "hora": 1,
+          "etiqueta": "01:00",
+          "pm10": 62.62,
+          "registros": 2087
         },
         {
-          "hour": "02:00",
-          "pm10": 65.65,
-          "muestras": 2239
+          "hora": 2,
+          "etiqueta": "02:00",
+          "pm10": 69.24,
+          "registros": 2123
         },
         {
-          "hour": "03:00",
-          "pm10": 67.21,
-          "muestras": 2237
+          "hora": 3,
+          "etiqueta": "03:00",
+          "pm10": 70.72,
+          "registros": 2126
         },
         {
-          "hour": "04:00",
-          "pm10": 76.68,
-          "muestras": 2241
+          "hora": 4,
+          "etiqueta": "04:00",
+          "pm10": 80.75,
+          "registros": 2128
         },
         {
-          "hour": "05:00",
-          "pm10": 81.1,
-          "muestras": 2256
+          "hora": 5,
+          "etiqueta": "05:00",
+          "pm10": 85.17,
+          "registros": 2148
         },
         {
-          "hour": "06:00",
-          "pm10": 87.72,
-          "muestras": 2255
+          "hora": 6,
+          "etiqueta": "06:00",
+          "pm10": 92.39,
+          "registros": 2141
         },
         {
-          "hour": "07:00",
-          "pm10": 101.66,
-          "muestras": 2262
+          "hora": 7,
+          "etiqueta": "07:00",
+          "pm10": 107.15,
+          "registros": 2146
         },
         {
-          "hour": "08:00",
-          "pm10": 112.11,
-          "muestras": 2251
+          "hora": 8,
+          "etiqueta": "08:00",
+          "pm10": 117.82,
+          "registros": 2142
         },
         {
-          "hour": "09:00",
-          "pm10": 98.57,
-          "muestras": 2255
+          "hora": 9,
+          "etiqueta": "09:00",
+          "pm10": 103.62,
+          "registros": 2145
         },
         {
-          "hour": "10:00",
-          "pm10": 79.11,
-          "muestras": 2254
+          "hora": 10,
+          "etiqueta": "10:00",
+          "pm10": 83.05,
+          "registros": 2147
         },
         {
-          "hour": "11:00",
-          "pm10": 59.51,
-          "muestras": 2252
+          "hora": 11,
+          "etiqueta": "11:00",
+          "pm10": 62.48,
+          "registros": 2145
         },
         {
-          "hour": "12:00",
-          "pm10": 45.74,
-          "muestras": 2256
+          "hora": 12,
+          "etiqueta": "12:00",
+          "pm10": 47.84,
+          "registros": 2157
         },
         {
-          "hour": "13:00",
-          "pm10": 37.77,
-          "muestras": 2248
+          "hora": 13,
+          "etiqueta": "13:00",
+          "pm10": 39.59,
+          "registros": 2145
         },
         {
-          "hour": "14:00",
-          "pm10": 33.85,
-          "muestras": 2231
+          "hora": 14,
+          "etiqueta": "14:00",
+          "pm10": 35.81,
+          "registros": 2109
         },
         {
-          "hour": "15:00",
-          "pm10": 36.6,
-          "muestras": 2235
+          "hora": 15,
+          "etiqueta": "15:00",
+          "pm10": 38.41,
+          "registros": 2130
         },
         {
-          "hour": "16:00",
-          "pm10": 41.73,
-          "muestras": 2238
+          "hora": 16,
+          "etiqueta": "16:00",
+          "pm10": 43.56,
+          "registros": 2144
         },
         {
-          "hour": "17:00",
-          "pm10": 49.71,
-          "muestras": 2263
+          "hora": 17,
+          "etiqueta": "17:00",
+          "pm10": 51.98,
+          "registros": 2164
         },
         {
-          "hour": "18:00",
-          "pm10": 62.67,
-          "muestras": 2265
+          "hora": 18,
+          "etiqueta": "18:00",
+          "pm10": 65.63,
+          "registros": 2163
         },
         {
-          "hour": "19:00",
-          "pm10": 77.39,
-          "muestras": 2271
+          "hora": 19,
+          "etiqueta": "19:00",
+          "pm10": 81.07,
+          "registros": 2168
         },
         {
-          "hour": "20:00",
-          "pm10": 79.57,
-          "muestras": 2277
+          "hora": 20,
+          "etiqueta": "20:00",
+          "pm10": 83.42,
+          "registros": 2172
         },
         {
-          "hour": "21:00",
-          "pm10": 76.51,
-          "muestras": 2265
+          "hora": 21,
+          "etiqueta": "21:00",
+          "pm10": 80.09,
+          "registros": 2164
         },
         {
-          "hour": "22:00",
-          "pm10": 73.88,
-          "muestras": 2268
+          "hora": 22,
+          "etiqueta": "22:00",
+          "pm10": 77.47,
+          "registros": 2163
         },
         {
-          "hour": "23:00",
-          "pm10": 72.02,
-          "muestras": 2246
+          "hora": 23,
+          "etiqueta": "23:00",
+          "pm10": 75.66,
+          "registros": 2138
         }
       ],
-      "serieMensual": [
+      "serie_mensual": [
         {
           "mes": "2022-07",
-          "pm10": 115.89,
-          "muestras": 1212
-        },
-        {
-          "mes": "2022-08",
-          "pm10": 84.35,
-          "muestras": 420
-        },
-        {
-          "mes": "2023-06",
-          "pm10": 189.87,
-          "muestras": 493
+          "pm10": 115.57,
+          "diasValidos": 26
         },
         {
           "mes": "2023-07",
-          "pm10": 158.18,
-          "muestras": 1487
+          "pm10": 158.15,
+          "diasValidos": 31
         },
         {
           "mes": "2023-08",
-          "pm10": 108.29,
-          "muestras": 1481
+          "pm10": 108.81,
+          "diasValidos": 31
         },
         {
           "mes": "2023-09",
-          "pm10": 64.82,
-          "muestras": 1418
+          "pm10": 64.73,
+          "diasValidos": 30
         },
         {
           "mes": "2023-10",
-          "pm10": 59.36,
-          "muestras": 1245
+          "pm10": 65.27,
+          "diasValidos": 24
         },
         {
           "mes": "2023-11",
-          "pm10": 59.41,
-          "muestras": 1417
+          "pm10": 59.42,
+          "diasValidos": 30
         },
         {
           "mes": "2023-12",
-          "pm10": 56.62,
-          "muestras": 1448
-        },
-        {
-          "mes": "2024-01",
-          "pm10": 46.72,
-          "muestras": 182
-        },
-        {
-          "mes": "2024-03",
-          "pm10": 53.13,
-          "muestras": 531
+          "pm10": 56.6,
+          "diasValidos": 31
         },
         {
           "mes": "2024-04",
-          "pm10": 68.04,
-          "muestras": 1429
+          "pm10": 68.09,
+          "diasValidos": 30
         },
         {
           "mes": "2024-05",
-          "pm10": 68.08,
-          "muestras": 1486
+          "pm10": 68.09,
+          "diasValidos": 31
         },
         {
           "mes": "2024-06",
-          "pm10": 118.34,
-          "muestras": 948
+          "pm10": 118.08,
+          "diasValidos": 20
         },
         {
           "mes": "2024-07",
-          "pm10": 114.64,
-          "muestras": 1487
+          "pm10": 114.62,
+          "diasValidos": 31
         },
         {
           "mes": "2024-08",
-          "pm10": 97.05,
-          "muestras": 882
+          "pm10": 97.24,
+          "diasValidos": 19
         },
         {
           "mes": "2024-09",
           "pm10": 92.16,
-          "muestras": 1391
+          "diasValidos": 29
         },
         {
           "mes": "2024-10",
-          "pm10": 58.12,
-          "muestras": 1473
+          "pm10": 58,
+          "diasValidos": 31
         },
         {
           "mes": "2024-11",
-          "pm10": 43.71,
-          "muestras": 1425
+          "pm10": 43.92,
+          "diasValidos": 30
         },
         {
           "mes": "2024-12",
-          "pm10": 50.19,
-          "muestras": 1467
+          "pm10": 50.16,
+          "diasValidos": 31
         },
         {
           "mes": "2025-01",
-          "pm10": 42.32,
-          "muestras": 1431
+          "pm10": 42.39,
+          "diasValidos": 31
         },
         {
           "mes": "2025-02",
-          "pm10": 43.76,
-          "muestras": 1318
+          "pm10": 43.77,
+          "diasValidos": 28
         },
         {
           "mes": "2025-03",
-          "pm10": 47.53,
-          "muestras": 1454
+          "pm10": 47.45,
+          "diasValidos": 31
         },
         {
           "mes": "2025-04",
-          "pm10": 28.1,
-          "muestras": 1440
+          "pm10": 51.48,
+          "diasValidos": 17
         },
         {
           "mes": "2025-05",
-          "pm10": 95.08,
-          "muestras": 1486
+          "pm10": 102.91,
+          "diasValidos": 29
         },
         {
           "mes": "2025-06",
-          "pm10": 97.8,
-          "muestras": 1440
+          "pm10": 99.93,
+          "diasValidos": 30
         },
         {
           "mes": "2025-07",
-          "pm10": 112.02,
-          "muestras": 1486
+          "pm10": 117.64,
+          "diasValidos": 31
         },
         {
           "mes": "2025-08",
-          "pm10": 67.18,
-          "muestras": 1477
+          "pm10": 69.14,
+          "diasValidos": 31
         },
         {
           "mes": "2025-09",
-          "pm10": 54.2,
-          "muestras": 1432
+          "pm10": 55.38,
+          "diasValidos": 30
         },
         {
           "mes": "2025-10",
-          "pm10": 48.83,
-          "muestras": 1459
+          "pm10": 51.6,
+          "diasValidos": 30
         },
         {
           "mes": "2025-11",
-          "pm10": 47.46,
-          "muestras": 1414
+          "pm10": 47.56,
+          "diasValidos": 30
         },
         {
           "mes": "2025-12",
-          "pm10": 54.38,
-          "muestras": 1403
+          "pm10": 54.42,
+          "diasValidos": 31
         },
         {
           "mes": "2026-01",
-          "pm10": 48.26,
-          "muestras": 1374
+          "pm10": 48.56,
+          "diasValidos": 31
         },
         {
           "mes": "2026-02",
-          "pm10": 44.78,
-          "muestras": 1316
+          "pm10": 44.97,
+          "diasValidos": 28
         },
         {
           "mes": "2026-03",
-          "pm10": 22.91,
-          "muestras": 1445
+          "pm10": 45.73,
+          "diasValidos": 16
         },
         {
           "mes": "2026-04",
-          "pm10": 54.33,
-          "muestras": 1426
+          "pm10": 55.83,
+          "diasValidos": 30
         },
         {
           "mes": "2026-05",
-          "pm10": 64.37,
-          "muestras": 1477
+          "pm10": 65.62,
+          "diasValidos": 31
         },
         {
           "mes": "2026-06",
-          "pm10": 72.84,
-          "muestras": 1436
+          "pm10": 76.4,
+          "diasValidos": 30
         },
         {
           "mes": "2026-07",
-          "pm10": 50.34,
-          "muestras": 1197
+          "pm10": 84,
+          "diasValidos": 18
         },
         {
           "mes": "2026-08",
-          "pm10": 56.68,
-          "muestras": 1411
+          "pm10": 56.52,
+          "diasValidos": 30
         },
         {
           "mes": "2026-09",
-          "pm10": 41.31,
-          "muestras": 1274
+          "pm10": 43.26,
+          "diasValidos": 27
         },
         {
           "mes": "2026-10",
-          "pm10": 41.78,
-          "muestras": 1070
+          "pm10": 46.39,
+          "diasValidos": 22
         }
       ]
     },
     "semapa": {
       "id": "semapa",
       "nombre": "Estación SEMAPA",
-      "ubicación": "Av. Circunvalación / SEMAPA (Zona Norte, ladera Tunari)",
-      "distritoRef": "Distrito 2",
+      "ubicacion": "Av. Circunvalación / Planta de Tratamiento SEMAPA (Zona Norte)",
       "coords": {
-        "lat": -17.3689,
-        "lng": -66.1528
+        "lat": -17.3712,
+        "lng": -66.1472
       },
-      "estacion": "SEMAPA (Norte)",
-      "muestrasValidas": 69642,
-      "mediaPm10": 50.24,
-      "rangoFechas": {
-        "inicio": "2022-08-24",
-        "fin": "2026-10-23"
-      },
-      "perfilHorario": [
+      "distritoRef": "Distrito 2",
+      "registros_validos": 66258,
+      "fecha_inicial": "2022-08-24",
+      "fecha_final": "2026-10-23",
+      "promedio_general": 52.81,
+      "dias_validos_totales": 1470,
+      "dias_sobre_guia_oms": 845,
+      "pct_dias_sobre_guia_oms": 57.5,
+      "perfil_horario": [
         {
-          "hour": "00:00",
-          "pm10": 36.4,
-          "muestras": 2863
+          "hora": 0,
+          "etiqueta": "00:00",
+          "pm10": 43,
+          "registros": 2424
         },
         {
-          "hour": "01:00",
-          "pm10": 39.83,
-          "muestras": 2863
+          "hora": 1,
+          "etiqueta": "01:00",
+          "pm10": 42.27,
+          "registros": 2698
         },
         {
-          "hour": "02:00",
-          "pm10": 32.75,
-          "muestras": 2823
+          "hora": 2,
+          "etiqueta": "02:00",
+          "pm10": 35.78,
+          "registros": 2584
         },
         {
-          "hour": "03:00",
-          "pm10": 30.4,
-          "muestras": 2798
+          "hora": 3,
+          "etiqueta": "03:00",
+          "pm10": 33.57,
+          "registros": 2534
         },
         {
-          "hour": "04:00",
-          "pm10": 30.81,
-          "muestras": 2811
+          "hora": 4,
+          "etiqueta": "04:00",
+          "pm10": 34.36,
+          "registros": 2520
         },
         {
-          "hour": "05:00",
-          "pm10": 31.76,
-          "muestras": 2829
+          "hora": 5,
+          "etiqueta": "05:00",
+          "pm10": 34.86,
+          "registros": 2577
         },
         {
-          "hour": "06:00",
-          "pm10": 38.74,
-          "muestras": 2878
+          "hora": 6,
+          "etiqueta": "06:00",
+          "pm10": 41.54,
+          "registros": 2684
         },
         {
-          "hour": "07:00",
-          "pm10": 50.41,
-          "muestras": 2911
+          "hora": 7,
+          "etiqueta": "07:00",
+          "pm10": 53.38,
+          "registros": 2749
         },
         {
-          "hour": "08:00",
-          "pm10": 61.94,
-          "muestras": 2927
+          "hora": 8,
+          "etiqueta": "08:00",
+          "pm10": 64.89,
+          "registros": 2794
         },
         {
-          "hour": "09:00",
-          "pm10": 60.44,
-          "muestras": 2919
+          "hora": 9,
+          "etiqueta": "09:00",
+          "pm10": 63.5,
+          "registros": 2778
         },
         {
-          "hour": "10:00",
-          "pm10": 51.78,
-          "muestras": 2920
+          "hora": 10,
+          "etiqueta": "10:00",
+          "pm10": 54.23,
+          "registros": 2788
         },
         {
-          "hour": "11:00",
-          "pm10": 48.9,
-          "muestras": 2917
+          "hora": 11,
+          "etiqueta": "11:00",
+          "pm10": 50.55,
+          "registros": 2822
         },
         {
-          "hour": "12:00",
-          "pm10": 49.41,
-          "muestras": 2932
+          "hora": 12,
+          "etiqueta": "12:00",
+          "pm10": 50.64,
+          "registros": 2861
         },
         {
-          "hour": "13:00",
-          "pm10": 50.28,
-          "muestras": 2927
+          "hora": 13,
+          "etiqueta": "13:00",
+          "pm10": 51.73,
+          "registros": 2845
         },
         {
-          "hour": "14:00",
-          "pm10": 52.58,
-          "muestras": 2924
+          "hora": 14,
+          "etiqueta": "14:00",
+          "pm10": 53.91,
+          "registros": 2852
         },
         {
-          "hour": "15:00",
-          "pm10": 57.93,
-          "muestras": 2930
+          "hora": 15,
+          "etiqueta": "15:00",
+          "pm10": 59.32,
+          "registros": 2861
         },
         {
-          "hour": "16:00",
-          "pm10": 62.09,
-          "muestras": 2937
+          "hora": 16,
+          "etiqueta": "16:00",
+          "pm10": 63.37,
+          "registros": 2878
         },
         {
-          "hour": "17:00",
-          "pm10": 65.81,
-          "muestras": 2935
+          "hora": 17,
+          "etiqueta": "17:00",
+          "pm10": 67.28,
+          "registros": 2871
         },
         {
-          "hour": "18:00",
-          "pm10": 67.49,
-          "muestras": 2934
+          "hora": 18,
+          "etiqueta": "18:00",
+          "pm10": 68.94,
+          "registros": 2872
         },
         {
-          "hour": "19:00",
-          "pm10": 64.8,
-          "muestras": 2948
+          "hora": 19,
+          "etiqueta": "19:00",
+          "pm10": 66.31,
+          "registros": 2881
         },
         {
-          "hour": "20:00",
-          "pm10": 62.65,
-          "muestras": 2943
+          "hora": 20,
+          "etiqueta": "20:00",
+          "pm10": 64.11,
+          "registros": 2876
         },
         {
-          "hour": "21:00",
-          "pm10": 57.51,
-          "muestras": 2933
+          "hora": 21,
+          "etiqueta": "21:00",
+          "pm10": 58.85,
+          "registros": 2866
         },
         {
-          "hour": "22:00",
-          "pm10": 52.17,
-          "muestras": 2934
+          "hora": 22,
+          "etiqueta": "22:00",
+          "pm10": 53.75,
+          "registros": 2848
         },
         {
-          "hour": "23:00",
-          "pm10": 44.97,
-          "muestras": 2906
+          "hora": 23,
+          "etiqueta": "23:00",
+          "pm10": 46.75,
+          "registros": 2795
         }
       ],
-      "serieMensual": [
-        {
-          "mes": "2022-08",
-          "pm10": 74.18,
-          "muestras": 377
-        },
+      "serie_mensual": [
         {
           "mes": "2022-09",
-          "pm10": 58.64,
-          "muestras": 1439
+          "pm10": 58.62,
+          "diasValidos": 30
         },
         {
           "mes": "2022-10",
-          "pm10": 54.6,
-          "muestras": 1439
+          "pm10": 55.19,
+          "diasValidos": 31
         },
         {
           "mes": "2022-11",
-          "pm10": 77.92,
-          "muestras": 1186
+          "pm10": 78.54,
+          "diasValidos": 30
         },
         {
           "mes": "2022-12",
-          "pm10": 46.78,
-          "muestras": 1433
+          "pm10": 47.05,
+          "diasValidos": 31
         },
         {
           "mes": "2023-01",
-          "pm10": 41.46,
-          "muestras": 1464
+          "pm10": 41.53,
+          "diasValidos": 31
         },
         {
           "mes": "2023-02",
-          "pm10": 42.24,
-          "muestras": 1308
+          "pm10": 42.18,
+          "diasValidos": 28
         },
         {
           "mes": "2023-03",
-          "pm10": 43.39,
-          "muestras": 1467
+          "pm10": 44.94,
+          "diasValidos": 30
         },
         {
           "mes": "2023-04",
-          "pm10": 53.4,
-          "muestras": 1420
+          "pm10": 53.36,
+          "diasValidos": 30
         },
         {
           "mes": "2023-05",
-          "pm10": 59.73,
-          "muestras": 1478
+          "pm10": 59.64,
+          "diasValidos": 31
         },
         {
           "mes": "2023-06",
-          "pm10": 71.15,
-          "muestras": 1439
+          "pm10": 71.2,
+          "diasValidos": 30
         },
         {
           "mes": "2023-07",
           "pm10": 79.06,
-          "muestras": 1488
+          "diasValidos": 31
         },
         {
           "mes": "2023-08",
-          "pm10": 69.05,
-          "muestras": 1485
+          "pm10": 69.03,
+          "diasValidos": 31
         },
         {
           "mes": "2023-09",
-          "pm10": 57.01,
-          "muestras": 1436
+          "pm10": 57,
+          "diasValidos": 30
         },
         {
           "mes": "2023-10",
-          "pm10": 64.59,
-          "muestras": 1485
+          "pm10": 64.56,
+          "diasValidos": 31
         },
         {
           "mes": "2023-11",
-          "pm10": 56.75,
-          "muestras": 1410
+          "pm10": 56.41,
+          "diasValidos": 30
         },
         {
           "mes": "2023-12",
-          "pm10": 42.81,
-          "muestras": 1465
+          "pm10": 42.9,
+          "diasValidos": 31
         },
         {
           "mes": "2024-01",
-          "pm10": 43.15,
-          "muestras": 1434
+          "pm10": 43.32,
+          "diasValidos": 31
         },
         {
           "mes": "2024-02",
-          "pm10": 42.8,
-          "muestras": 1316
+          "pm10": 42.52,
+          "diasValidos": 29
         },
         {
           "mes": "2024-03",
-          "pm10": 47.27,
-          "muestras": 1443
+          "pm10": 47.28,
+          "diasValidos": 31
         },
         {
           "mes": "2024-04",
-          "pm10": 59.83,
-          "muestras": 1430
+          "pm10": 59.76,
+          "diasValidos": 30
         },
         {
           "mes": "2024-05",
-          "pm10": 50.22,
-          "muestras": 1471
+          "pm10": 66.45,
+          "diasValidos": 25
         },
         {
           "mes": "2024-06",
-          "pm10": 64.02,
-          "muestras": 1427
+          "pm10": 73.35,
+          "diasValidos": 27
         },
         {
           "mes": "2024-07",
           "pm10": 72.68,
-          "muestras": 1488
+          "diasValidos": 31
         },
         {
           "mes": "2024-08",
-          "pm10": 66.03,
-          "muestras": 1437
+          "pm10": 66.05,
+          "diasValidos": 30
         },
         {
           "mes": "2024-09",
-          "pm10": 81.46,
-          "muestras": 1436
+          "pm10": 81.39,
+          "diasValidos": 30
         },
         {
           "mes": "2024-10",
-          "pm10": 53.23,
-          "muestras": 1447
+          "pm10": 53.11,
+          "diasValidos": 31
         },
         {
           "mes": "2024-11",
-          "pm10": 45.44,
-          "muestras": 1300
+          "pm10": 45.64,
+          "diasValidos": 30
         },
         {
           "mes": "2024-12",
-          "pm10": 45.55,
-          "muestras": 1450
+          "pm10": 45.68,
+          "diasValidos": 31
         },
         {
           "mes": "2025-01",
-          "pm10": 34.21,
-          "muestras": 1460
+          "pm10": 34.28,
+          "diasValidos": 31
         },
         {
           "mes": "2025-02",
-          "pm10": 38.31,
-          "muestras": 1330
+          "pm10": 38.26,
+          "diasValidos": 28
         },
         {
           "mes": "2025-03",
-          "pm10": 37.28,
-          "muestras": 1487
+          "pm10": 37.27,
+          "diasValidos": 31
         },
         {
           "mes": "2025-04",
-          "pm10": 43.31,
-          "muestras": 1440
+          "pm10": 46.08,
+          "diasValidos": 30
         },
         {
           "mes": "2025-05",
-          "pm10": 56.45,
-          "muestras": 1488
+          "pm10": 62.18,
+          "diasValidos": 31
         },
         {
           "mes": "2025-06",
-          "pm10": 62.55,
-          "muestras": 1440
+          "pm10": 69.39,
+          "diasValidos": 30
         },
         {
           "mes": "2025-07",
-          "pm10": 66.87,
-          "muestras": 1488
+          "pm10": 72.71,
+          "diasValidos": 31
         },
         {
           "mes": "2025-08",
-          "pm10": 55.35,
-          "muestras": 1486
+          "pm10": 64.16,
+          "diasValidos": 31
         },
         {
           "mes": "2025-09",
-          "pm10": 46.14,
-          "muestras": 1437
+          "pm10": 50.89,
+          "diasValidos": 30
         },
         {
           "mes": "2025-10",
-          "pm10": 34.34,
-          "muestras": 1488
+          "pm10": 37.96,
+          "diasValidos": 31
         },
         {
           "mes": "2025-11",
-          "pm10": 28.83,
-          "muestras": 1440
+          "pm10": 37.53,
+          "diasValidos": 27
         },
         {
           "mes": "2025-12",
-          "pm10": 30.16,
-          "muestras": 1486
+          "pm10": 35.2,
+          "diasValidos": 31
         },
         {
           "mes": "2026-01",
-          "pm10": 26.17,
-          "muestras": 1488
+          "pm10": 31.17,
+          "diasValidos": 31
         },
         {
           "mes": "2026-02",
-          "pm10": 29.65,
-          "muestras": 1344
+          "pm10": 33.79,
+          "diasValidos": 28
         },
         {
           "mes": "2026-03",
-          "pm10": 30.75,
-          "muestras": 1488
+          "pm10": 37.09,
+          "diasValidos": 31
         },
         {
           "mes": "2026-04",
-          "pm10": 35.27,
-          "muestras": 1312
+          "pm10": 36.52,
+          "diasValidos": 30
         },
         {
           "mes": "2026-05",
-          "pm10": 42.47,
-          "muestras": 1396
+          "pm10": 43.81,
+          "diasValidos": 31
         },
         {
           "mes": "2026-06",
-          "pm10": 42.83,
-          "muestras": 1406
+          "pm10": 46.33,
+          "diasValidos": 30
         },
         {
           "mes": "2026-07",
-          "pm10": 43.3,
-          "muestras": 1177
-        },
-        {
-          "mes": "2026-08",
-          "pm10": 25.08,
-          "muestras": 278
+          "pm10": 47.77,
+          "diasValidos": 25
         },
         {
           "mes": "2026-09",
-          "pm10": 38.41,
-          "muestras": 985
+          "pm10": 38.87,
+          "diasValidos": 24
         },
         {
           "mes": "2026-10",
-          "pm10": 37.97,
-          "muestras": 1000
+          "pm10": 39.38,
+          "diasValidos": 23
         }
       ]
     }
