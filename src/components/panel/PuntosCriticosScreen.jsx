@@ -1,6 +1,4 @@
-import { useState, useEffect, useMemo, useRef } from 'react'
-import L from 'leaflet'
-import 'leaflet/dist/leaflet.css'
+import { useState, useEffect, useMemo } from 'react'
 import {
   AlertTriangle,
   HeartPulse,
@@ -12,12 +10,11 @@ import {
   ArrowRight,
   Filter,
   Droplets,
-  Flame,
   TrendingUp,
   MapPin,
-  SlidersHorizontal,
   Eye,
 } from 'lucide-react'
+import GamcMap from './GamcMap'
 import { COCHABAMBA_ZONES } from '../../data/internalPanelData'
 import './PuntosCriticosScreen.css'
 
@@ -44,7 +41,7 @@ function getAlertIntensityColor(count) {
   return '#CBD5E1'
 }
 
-// Alertas hídricas y ecológicas territoriales (Río Rocha, inundaciones y Cota 2750)
+// Alertas hídricas territoriales oficiales de Cochabamba (Río Rocha, inundaciones y Cota 2750)
 const ALERTAS_HIDRICAS_POR_DISTRITO = {
   1: [
     {
@@ -179,7 +176,14 @@ function getAlertBadgeConfig(alerta) {
   }
 
   return {
-    categoryKey: tipo === 'salud' ? 'salud' : tipo === 'educacion' ? 'educacion' : tipo === 'transporte' ? 'transporte' : 'servicios',
+    categoryKey:
+      tipo === 'salud'
+        ? 'salud'
+        : tipo === 'educacion'
+        ? 'educacion'
+        : tipo === 'transporte'
+        ? 'transporte'
+        : 'servicios',
     badgeClass: 'badge-servicios',
     label: subLabel,
     icon: iconComp,
@@ -197,31 +201,6 @@ export default function PuntosCriticosScreen({
   const [activeFilter, setActiveFilter] = useState('todas')
   const [sortBy, setSortBy] = useState('alertas') // 'alertas' | 'indice' | 'crecimiento'
   const [loading, setLoading] = useState(true)
-
-  // Referencias DOM y Leaflet
-  const mapContainerRef = useRef(null)
-  const mapInstanceRef = useRef(null)
-  const baseTileRef = useRef(null)
-  const distritosLayerRef = useRef(null)
-  const rochaLayerRef = useRef(null)
-
-  // Observador de Modo Claro / Modo Oscuro
-  const [theme, setTheme] = useState(() => {
-    return document.documentElement.getAttribute('data-theme') || 'light'
-  })
-
-  useEffect(() => {
-    const observer = new MutationObserver(() => {
-      const currentTheme =
-        document.documentElement.getAttribute('data-theme') || 'light'
-      setTheme(currentTheme)
-    })
-    observer.observe(document.documentElement, {
-      attributes: true,
-      attributeFilter: ['data-theme'],
-    })
-    return () => observer.disconnect()
-  }, [])
 
   // Carga de datos oficiales
   useEffect(() => {
@@ -318,7 +297,7 @@ export default function PuntosCriticosScreen({
     }
   }, [distritosConAlertasEnriquecidas])
 
-  // Filtrado y ordenamiento de distritos
+  // Filtrado y ordenamiento de distritos para la lista
   const distritosProcesados = useMemo(() => {
     return distritosConAlertasEnriquecidas
       .map((d) => {
@@ -362,202 +341,124 @@ export default function PuntosCriticosScreen({
       })
   }, [distritosConAlertasEnriquecidas, activeFilter, sortBy])
 
-  // Mapa de conteo de alertas por distrito para el coroplético
-  const alertCountMap = useMemo(() => {
-    const map = {}
+  // GeoJSON consolidado para GamcMap: Distritos con escala coroplética + Río Rocha
+  const distritosGeoJsonIntensity = useMemo(() => {
+    if (!distritosGeoJson?.features) return null
+
+    const alertMap = {}
+    const distMap = {}
     distritosConAlertasEnriquecidas.forEach((d) => {
-      map[String(d.id)] = d.todasAlertas.length
-    })
-    return map
-  }, [distritosConAlertasEnriquecidas])
-
-  // Inicialización de Leaflet
-  useEffect(() => {
-    if (!mapContainerRef.current) return
-    if (mapInstanceRef.current) return
-
-    const map = L.map(mapContainerRef.current, {
-      center: [-17.393, -66.16],
-      zoom: 12,
-      zoomControl: false,
+      alertMap[String(d.id)] = d.todasAlertas.length
+      distMap[String(d.id)] = d
     })
 
-    L.control.zoom({ position: 'topleft' }).addTo(map)
-    mapInstanceRef.current = map
+    const districtFeatures = distritosGeoJson.features.map((f) => {
+      const cod = String(f.properties?.codigo_distrito || '')
+      const count = alertMap[cod] || 0
+      const isSelected = parseInt(cod, 10) === distNum
+      const color = getAlertIntensityColor(count)
+      const distObj = distMap[cod]
 
-    return () => {
-      map.remove()
-      mapInstanceRef.current = null
-    }
-  }, [])
-
-  // Conmutación automática de CartoDB Positron (Light) / Dark Matter (Dark)
-  useEffect(() => {
-    const map = mapInstanceRef.current
-    if (!map) return
-
-    const isLight = theme === 'light'
-    const tileUrl = isLight
-      ? 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png'
-      : 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png'
-
-    if (baseTileRef.current) {
-      map.removeLayer(baseTileRef.current)
-    }
-
-    const newBase = L.tileLayer(tileUrl, {
-      attribution:
-        '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>',
-      subdomains: 'abcd',
-      maxZoom: 19,
-    })
-
-    newBase.addTo(map)
-    baseTileRef.current = newBase
-  }, [theme])
-
-  // Trazado coroplético de distritos + Río Rocha en azul brillante
-  useEffect(() => {
-    const map = mapInstanceRef.current
-    if (!map) return
-
-    if (distritosLayerRef.current) {
-      map.removeLayer(distritosLayerRef.current)
-      distritosLayerRef.current = null
-    }
-
-    if (distritosGeoJson?.features) {
-      const isLight = theme === 'light'
-
-      const layer = L.geoJSON(distritosGeoJson, {
-        style: (feature) => {
-          const cod = parseInt(String(feature.properties?.codigo_distrito), 10)
-          const isSelected = cod === distNum
-          const count = alertCountMap[String(cod)] || 0
-          const color = getAlertIntensityColor(count)
-
-          return {
-            color: isSelected ? '#0284C7' : isLight ? '#1E293B' : '#64748B',
-            weight: isSelected ? 4 : 1.75,
-            fillColor: color,
-            fillOpacity: isLight ? 0.75 : 0.82,
+      // Conteo por categoría para el tooltip
+      let servCount = 0
+      let ambCount = 0
+      let hidCount = 0
+      if (distObj) {
+        distObj.todasAlertas.forEach((a) => {
+          const cfg = getAlertBadgeConfig(a)
+          if (
+            cfg.categoryKey === 'servicios' ||
+            cfg.categoryKey === 'salud' ||
+            cfg.categoryKey === 'educacion' ||
+            cfg.categoryKey === 'transporte'
+          ) {
+            servCount++
+          } else if (cfg.categoryKey === 'ambiental') {
+            ambCount++
+          } else if (cfg.categoryKey === 'hidrico') {
+            hidCount++
           }
+        })
+      }
+
+      const tooltipHtml = `
+        <div style="font-family: inherit; font-size: 12px; min-width: 195px; line-height: 1.45;">
+          <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #E2E8F0; padding-bottom: 4px; margin-bottom: 6px;">
+            <strong style="font-size: 13px; color: #0F172A;">${f.properties?.nombre || 'Distrito ' + cod}</strong>
+            <span style="font-size: 10px; font-weight: 800; padding: 2px 7px; border-radius: 4px; background: ${color}20; color: ${color}; border: 1px solid ${color};">
+              ${count} ${count === 1 ? 'ALERTA' : 'ALERTAS'}
+            </span>
+          </div>
+          <div style="display: flex; justify-content: space-between; margin-bottom: 3px;">
+            <span style="color: #64748B;">Índice Socio-Ambiental:</span>
+            <strong style="color: #0F172A;">${distObj?.indice || 'N/A'}/100</strong>
+          </div>
+          <div style="display: flex; justify-content: space-between; margin-bottom: 3px; font-size: 11px;">
+            <span style="color: #64748B;">Servicios GAMC:</span>
+            <strong style="color: #DC2626;">${servCount} alertas</strong>
+          </div>
+          <div style="display: flex; justify-content: space-between; margin-bottom: 3px; font-size: 11px;">
+            <span style="color: #64748B;">Ambiental (NDVI/LST):</span>
+            <strong style="color: #F97316;">${ambCount} alertas</strong>
+          </div>
+          <div style="display: flex; justify-content: space-between; font-size: 11px;">
+            <span style="color: #64748B;">Riesgo Hídrico:</span>
+            <strong style="color: #0284C7;">${hidCount} alertas</strong>
+          </div>
+        </div>
+      `
+
+      return {
+        ...f,
+        properties: {
+          ...f.properties,
+          selected: isSelected,
+          color: color,
+          fillColor: color,
+          fillOpacity: isSelected ? 0.88 : 0.75,
+          borderColor: isSelected ? '#0284C7' : '#1E293B',
+          borderWidth: isSelected ? 4 : 2,
+          labelPermanent: `D${cod}: ${count}`,
+          customTooltipHtml: tooltipHtml,
+          nombre: `${f.properties?.nombre || 'Distrito ' + cod} · ${count} alertas`,
         },
-        onEachFeature: (feature, l) => {
-          const cod = feature.properties?.codigo_distrito
-          const count = alertCountMap[String(cod)] || 0
-          const distObj = distritosConAlertasEnriquecidas.find(
-            (d) => parseInt(String(d.id), 10) === parseInt(String(cod), 10)
-          )
+      }
+    })
 
-          const tooltipHtml = `
-            <div style="font-family: system-ui, sans-serif; font-size: 12px; min-width: 175px;">
-              <div style="font-weight: 800; font-size: 13px; color: #0F172A; margin-bottom: 2px;">
-                ${distObj?.nombre || 'Distrito ' + cod}
-              </div>
-              <div style="font-size: 11px; color: #475569; margin-bottom: 4px;">
-                Índice Socio-Ambiental: <strong>${distObj?.indice || 'N/A'}/100</strong>
-              </div>
-              <div style="display: inline-block; padding: 2px 7px; border-radius: 4px; font-weight: 700; font-size: 11px; background: ${
-                count >= 5 ? '#FEE2E2' : count >= 3 ? '#FFEDD5' : count >= 1 ? '#FEF9C3' : '#F1F5F9'
-              }; color: ${
-                count >= 5 ? '#DC2626' : count >= 3 ? '#EA580C' : count >= 1 ? '#A16207' : '#475569'
-              };">
-                ${count} ${count === 1 ? 'alerta crítica' : 'alertas críticas'}
-              </div>
-              <div style="font-size: 10px; color: #64748B; margin-top: 5px;">
-                Clic para enfocar alertas del distrito
-              </div>
-            </div>
-          `
-
-          l.bindTooltip(tooltipHtml, {
-            sticky: true,
-            direction: 'top',
-          })
-
-          l.on('click', () => {
-            if (cod) {
-              onSelectZone?.(`distrito-${cod}`)
-            }
-          })
-        },
-      })
-
-      layer.addTo(map)
-      distritosLayerRef.current = layer
-    }
-  }, [
-    distritosGeoJson,
-    alertCountMap,
-    distNum,
-    theme,
-    distritosConAlertasEnriquecidas,
-    onSelectZone,
-  ])
-
-  // Trazado del Río Rocha en azul brillante (#0284C7 / #06B6D4)
-  useEffect(() => {
-    const map = mapInstanceRef.current
-    if (!map) return
-
-    if (rochaLayerRef.current) {
-      map.removeLayer(rochaLayerRef.current)
-      rochaLayerRef.current = null
-    }
+    // Añadir trazado del Río Rocha en azul brillante
+    const featuresAll = [...districtFeatures]
 
     if (referenciasData?.features) {
       const rochaFeat = referenciasData.features.find(
         (f) => f.properties?.id === 'rio_rocha'
       )
       if (rochaFeat) {
-        const layer = L.geoJSON(rochaFeat, {
-          style: {
+        featuresAll.push({
+          ...rochaFeat,
+          properties: {
+            ...rochaFeat.properties,
             color: '#0284C7',
-            weight: 4,
-            opacity: 0.95,
-          },
-          onEachFeature: (feature, l) => {
-            l.bindTooltip(
-              '<strong>Río Rocha (Corredor Ripario Urbano GAMC)</strong><br/>Eje ecológico y riesgo de anegamiento pluvial',
-              { sticky: true }
-            )
+            borderColor: '#0284C7',
+            borderWidth: 4,
+            fillOpacity: 0,
+            customTooltipHtml: `
+              <div style="font-family: inherit; font-size: 12px; min-width: 180px;">
+                <strong style="color: #0284C7; font-size: 13px;">Río Rocha (Corredor Ripario)</strong>
+                <div style="font-size: 11px; color: #475569; margin-top: 3px;">
+                  Eje hidrológico principal de Cochabamba · Riesgo de anegamiento en época pluvial
+                </div>
+              </div>
+            `,
           },
         })
-        layer.addTo(map)
-        rochaLayerRef.current = layer
       }
     }
-  }, [referenciasData])
 
-  // Centrar mapa al hacer clic en "Ver en el mapa"
-  const handleFocusDistrictOnMap = (districtId) => {
-    onSelectZone?.(`distrito-${districtId}`)
-    const map = mapInstanceRef.current
-    if (!map || !distritosGeoJson?.features) return
-
-    const targetFeat = distritosGeoJson.features.find(
-      (f) => parseInt(String(f.properties?.codigo_distrito), 10) === parseInt(String(districtId), 10)
-    )
-    if (targetFeat) {
-      try {
-        const bounds = L.geoJSON(targetFeat).getBounds()
-        if (bounds.isValid()) {
-          map.fitBounds(bounds, { padding: [30, 30], maxZoom: 14 })
-        }
-      } catch (e) {
-        // fallback
-      }
+    return {
+      type: 'FeatureCollection',
+      features: featuresAll,
     }
-  }
-
-  if (loading && !indiceData) {
-    return (
-      <div className="neo-screen" style={{ padding: '2rem', textAlign: 'center' }}>
-        <p style={{ color: 'var(--theme-text-muted)' }}>Cargando análisis de puntos críticos...</p>
-      </div>
-    )
-  }
+  }, [distritosGeoJson, distritosConAlertasEnriquecidas, referenciasData, distNum])
 
   return (
     <div className="puntos-criticos-container">
@@ -815,7 +716,7 @@ export default function PuntosCriticosScreen({
                     <button
                       type="button"
                       className="puntos-btn-action"
-                      onClick={() => handleFocusDistrictOnMap(d.id)}
+                      onClick={() => onSelectZone?.(`distrito-${d.id}`)}
                     >
                       <MapPin size={13} />
                       Ver en el mapa
@@ -866,10 +767,18 @@ export default function PuntosCriticosScreen({
             </span>
           </div>
 
-          {/* Wrapper Leaflet */}
-          <div className="puntos-map-leaflet-wrapper">
-            <div ref={mapContainerRef} className="puntos-map-instance" />
-          </div>
+          {/* GamcMap Oficial con CartoDB Positron / Dark Matter y Trazado de Distritos */}
+          <GamcMap
+            geojson={distritosGeoJsonIntensity}
+            onClickDistrito={(feat) => {
+              const dNum = feat?.properties?.codigo_distrito
+              if (dNum && onSelectZone) {
+                onSelectZone(`distrito-${dNum}`)
+              }
+            }}
+            focusSelected={true}
+            height="480px"
+          />
 
           {/* Leyenda Coroplética Inferior */}
           <div className="puntos-map-legend">

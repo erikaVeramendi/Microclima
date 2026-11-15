@@ -116,6 +116,7 @@ export default function GamcMap({
   height = '500px',
   className = '',
   style = {},
+  focusSelected = false,
 }) {
   const mapContainerRef = useRef(null)
   const mapInstanceRef = useRef(null)
@@ -575,8 +576,22 @@ export default function GamcMap({
 
       vectorLayer.addTo(map)
       customGeoJsonLayerRef.current = vectorLayer
+
+      if (focusSelected && geojson?.features) {
+        const selectedFeat = geojson.features.find((f) => f.properties?.selected)
+        if (selectedFeat) {
+          try {
+            const b = L.geoJSON(selectedFeat).getBounds()
+            if (b.isValid()) {
+              map.fitBounds(b, { padding: [30, 30], maxZoom: 14 })
+            }
+          } catch (e) {
+            // fallback
+          }
+        }
+      }
     }
-  }, [geojson, onClickDistrito])
+  }, [geojson, onClickDistrito, focusSelected])
 
   // Renderizado de círculos de cobertura / radios (prop `radios`)
   useEffect(() => {
