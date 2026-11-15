@@ -55,7 +55,7 @@ import PlanificacionScreen from './panel/PlanificacionScreen'
 import SimuladorEquipamientosScreen from './panel/SimuladorEquipamientosScreen'
 import FloatingAiAvatar from './panel/FloatingAiAvatar'
 
-// Definición de grupos y pestañas del menú reorganizado
+// Definición de grupos y pestañas del menú reorganizado con Paleta Oficial LlajtaLab
 const MENU_GROUPS = [
   {
     id: 'inicio',
@@ -66,7 +66,7 @@ const MENU_GROUPS = [
         title: 'Modo detective',
         shortLabel: 'Modo detective',
         icon: 'radar',
-        accent: '#65C8F2',
+        accent: '#00BEFC', // Brand Cyan
         aiRole: 'Orientador de Investigaciones',
         aiGreeting:
           'Modo Detective activo. Superviso el radar de sensores, vacíos de observación y hallazgos prioritarios.',
@@ -81,16 +81,16 @@ const MENU_GROUPS = [
     id: 'enfoque-1',
     title: 'ENFOQUE 1 · CLIMA URBANO',
     badge: 'NASA × IA',
-    color: 'var(--theme-accent)',
-    badgeBg: 'var(--theme-accent-subtle)',
-    badgeColor: 'var(--theme-accent)',
+    color: '#00BEFC',
+    badgeBg: 'rgba(0, 190, 252, 0.16)',
+    badgeColor: '#00BEFC',
     items: [
       {
         id: 'diagnostico-distrital',
         title: '1 Diagnóstico distrital',
         shortLabel: '1 Diagnóstico distrital',
         icon: 'activity',
-        accent: '#38BDF8',
+        accent: '#00BEFC', // Brand Cyan
         aiRole: 'Director de Telemetría Orbital',
         aiGreeting:
           'Diagnóstico Distrital activo. Analizo anomalías térmicas LST y vigor fotosintético NDVI.',
@@ -104,7 +104,7 @@ const MENU_GROUPS = [
         title: '2 Detective de tendencias',
         shortLabel: '2 Detective de tendencias',
         icon: 'trending-up',
-        accent: '#FB923C',
+        accent: '#F59E0B', // Warm Solar
         aiRole: 'Especialista en Tendencias Térmicas',
         aiGreeting:
           'Detective de Tendencias activo. Analizo series multitemporales e iso-contornos térmicos.',
@@ -118,7 +118,7 @@ const MENU_GROUPS = [
         title: '3 Lluvias e inundaciones',
         shortLabel: '3 Lluvias e inundaciones',
         icon: 'cloud-rain',
-        accent: '#38BDF8',
+        accent: '#006EFD', // Brand Blue
         aiRole: 'Analista Hidrometeorológico',
         aiGreeting:
           'Módulo de Lluvias e Inundaciones. Analizo relaciones entre precipitaciones, escorrentía e impermeabilización urbana.',
@@ -132,7 +132,7 @@ const MENU_GROUPS = [
         title: '4 Sensado virtual con IA (incluye Red MÓNICA)',
         shortLabel: '4 Sensado virtual con IA',
         icon: 'shield-check',
-        accent: '#A78BFA',
+        accent: '#8875D8',
         aiRole: 'Auditor Científico de IA',
         aiGreeting:
           'Sensado Virtual con IA y Red MÓNICA activo. Evalúo incertidumbre espectral, calibración física en superficie y pasaporte de trazabilidad.',
@@ -146,7 +146,7 @@ const MENU_GROUPS = [
         title: '5 Simulador climático',
         shortLabel: '5 Simulador climático',
         icon: 'sliders',
-        accent: '#10B981',
+        accent: '#5CEA00', // Brand Lime
         aiRole: 'Simulador de Clima Urbano',
         aiGreeting:
           'Simulador Climático activo. Simulo rangos exploratorios de enfriamiento mediante infraestructura verde y albedo.',
@@ -161,16 +161,16 @@ const MENU_GROUPS = [
     id: 'enfoque-2',
     title: 'ENFOQUE 2 · CIUDAD Y SERVICIOS',
     badge: 'GAMC',
-    color: '#34D399',
-    badgeBg: 'rgba(52,211,153,0.15)',
-    badgeColor: '#A7F3D0',
+    color: '#5CEA00',
+    badgeBg: 'rgba(92, 234, 0, 0.16)',
+    badgeColor: '#5CEA00',
     items: [
       {
         id: 'indice-socioambiental',
         title: '6 Índice socio-ambiental',
         shortLabel: '6 Índice socio-ambiental',
         icon: 'bar-chart',
-        accent: '#34D399',
+        accent: '#5CEA00', // Brand Lime
         aiRole: 'Analista Socio-Ambiental',
         aiGreeting:
           'Índice Socio-Ambiental en preparación. Evalúo calidad de vida, calor y acceso a servicios.',
@@ -184,7 +184,7 @@ const MENU_GROUPS = [
         title: '7 Comparador de distritos',
         shortLabel: '7 Comparador de distritos',
         icon: 'git-compare',
-        accent: '#6EE7B7',
+        accent: '#00BEFC', // Brand Cyan
         aiRole: 'Analista de Comparación Territorial',
         aiGreeting:
           'Comparador de Distritos activo. Comparo indicadores socioambientales entre sectores.',
@@ -198,7 +198,7 @@ const MENU_GROUPS = [
         title: '8 Cobertura de servicios',
         shortLabel: '8 Cobertura de servicios',
         icon: 'map-pin',
-        accent: '#34D399',
+        accent: '#006EFD', // Brand Blue
         aiRole: 'Asistente de Cobertura y Movilidad',
         aiGreeting:
           'Cobertura de Servicios activa. Analizo cartografía distrital, líneas de transporte y equipamientos.',
@@ -212,7 +212,7 @@ const MENU_GROUPS = [
         title: '9 Puntos críticos',
         shortLabel: '9 Puntos críticos',
         icon: 'alert-triangle',
-        accent: '#F59E0B',
+        accent: '#F59E0B', // Solar Warning
         aiRole: 'Investigador de Puntos Críticos',
         aiGreeting:
           'Puntos Críticos activo. Detecto clústeres espaciales LISA, anomalías multivariables y contradicciones.',
@@ -223,16 +223,16 @@ const MENU_GROUPS = [
       },
       {
         id: 'planificacion-5-anos',
-        title: '10 Planificación a 5 años',
-        shortLabel: '10 Planificación a 5 años',
+        title: '10 Planificación a 5 y 10 años (2030 – 2035)',
+        shortLabel: '10 Planificación (2030–2035)',
         icon: 'calendar',
-        accent: '#818CF8',
-        aiRole: 'Planificador Quinquenal',
+        accent: '#006EFD', // Brand Blue
+        aiRole: 'Planificador Quinquenal y Decenal',
         aiGreeting:
-          'Planificación a 5 Años activa. Proyecto el crecimiento demográfico acelerado y demandas de infraestructura.',
+          'Planificación a 5 y 10 Años activa. Proyecto el crecimiento demográfico (2030–2035), saturación de equipamientos y cálculo de demanda de servicios.',
         aiPrompts: [
-          '¿Cómo crecerá la población en el sur hacia 2030?',
-          '¿Cuántos equipamientos nuevos se requerirán?',
+          '¿Cómo crecerá la población en el sur hacia 2030 y 2035?',
+          '¿Cuántos centros de salud y colegios nuevos se requerirán?',
         ],
       },
       {
@@ -240,7 +240,7 @@ const MENU_GROUPS = [
         title: '11 Simulador de equipamientos',
         shortLabel: '11 Simulador de equipamientos',
         icon: 'building',
-        accent: '#06B6D4',
+        accent: '#00BEFC', // Brand Cyan
         aiRole: 'Simulador de Equipamientos Urbanos',
         aiGreeting:
           'Simulador de Equipamientos activo. Evalúo coberturas de 1er y 2do nivel y escuelas a 15 minutos.',
@@ -343,9 +343,9 @@ export function InternalPlatform({ userSession, onLogout }) {
   const [activeModuleId, setActiveModuleId] = useState('modo-detective')
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
 
-  // 1. MODO CLARO / OSCURO con persistencia en localStorage
+  // 1. MODO CLARO / OSCURO con persistencia en localStorage (Modo Claro por defecto)
   const [theme, setTheme] = useState(() => {
-    return localStorage.getItem('microclima_theme') || 'dark'
+    return localStorage.getItem('microclima_theme') || 'light'
   })
 
   useEffect(() => {
@@ -482,22 +482,21 @@ export function InternalPlatform({ userSession, onLogout }) {
         aria-label="Navegación principal de módulos"
       >
         <div className="mon-sidebar-brand">
-          <div className="mon-logo-box" aria-hidden="true">
-            <svg width="20" height="20" viewBox="0 0 32 32" fill="none">
-              <circle cx="16" cy="16" r="11" stroke="#65C8F2" strokeWidth="2" />
-              <path
-                d="M7 18C10.5 12.5 14.5 20 18 13.5C20.5 9.5 22.8 15 25.5 12"
-                stroke="#43A875"
-                strokeWidth="2.2"
-                strokeLinecap="round"
+          {!sidebarCollapsed ? (
+            <div className="mon-brand-full-wrap" title="LlajtaLab — Laboratorio climático urbano de Cochabamba">
+              <img
+                src="/brand/logo-horizontal.png"
+                alt="LlajtaLab"
+                className="mon-brand-logo-img"
               />
-              <circle cx="18" cy="13.5" r="2.6" fill="#FFCB73" />
-            </svg>
-          </div>
-          {!sidebarCollapsed && (
-            <div className="mon-brand-text">
-              <strong>LlajtaLab</strong>
-              <span>Laboratorio climático urbano de Cochabamba</span>
+            </div>
+          ) : (
+            <div className="mon-logo-box" aria-hidden="true" title="LlajtaLab">
+              <img
+                src="/brand/icono-pagina.png"
+                alt="LlajtaLab"
+                className="mon-brand-icon-img"
+              />
             </div>
           )}
           <button
@@ -709,9 +708,16 @@ export function InternalPlatform({ userSession, onLogout }) {
       {aiDrawerOpen && (
         <aside className="ai-contextual-drawer" aria-label="Asistente de Inteligencia Artificial Contextual">
           <div className="ai-drawer-header">
-            <div>
-              <span className="ai-role-badge">{activeModule.aiRole}</span>
-              <h3>Asistente Científico Contextual</h3>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+              <img
+                src="/brand/labi-mascota.png"
+                alt="Labi"
+                className="ai-drawer-mascot-img"
+              />
+              <div>
+                <span className="ai-role-badge">{activeModule.aiRole}</span>
+                <h3>Labi · Asistente Científico</h3>
+              </div>
             </div>
             <button
               type="button"
@@ -809,7 +815,14 @@ export function InternalPlatform({ userSession, onLogout }) {
         <div className="sci-modal-backdrop" onClick={() => setGlossaryOpen(false)}>
           <div className="sci-modal-card" onClick={(e) => e.stopPropagation()}>
             <div className="sci-card-head">
-              <h3>Glosario Científico y Fórmulas de Referencia</h3>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
+                <img
+                  src="/brand/icono-pagina.png"
+                  alt="LlajtaLab"
+                  style={{ width: '24px', height: '24px', objectFit: 'contain' }}
+                />
+                <h3 style={{ margin: 0 }}>Glosario Científico y Fórmulas de Referencia</h3>
+              </div>
               <button
                 type="button"
                 className="ai-close-btn"

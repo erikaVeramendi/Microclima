@@ -84,7 +84,7 @@ export function HuellaVerdeAndThermalSections() {
                     <line x1="0" y1="24" x2="420" y2="24" stroke="rgba(169,184,204,0.18)" strokeDasharray="3 3" />
                     <polyline
                       fill="none"
-                      stroke="#43A875"
+                      stroke="#5CEA00"
                       strokeWidth="2.2"
                       points="10,32 70,26 130,18 190,22 250,30 310,20 370,15 410,17"
                     />

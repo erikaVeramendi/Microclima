@@ -1,0 +1,531 @@
+/* =========================================================================
+   ESTILOS DEDICADOS PARA PLANIFICACIÓN A 5 Y 10 AÑOS (MODO CLARO + OSCURO)
+   Pantalla 10: LlajtaLab - Enfoque 2: Ciudad y Servicios
+   Paleta: #F8FAFC (fondo), #FFFFFF (tarjetas), #E2E8F0 (bordes), #0F172A (texto)
+   Colores de escenarios y proyección: #38BDF8, #818CF8, #F97316, #DC2626.
+   ========================================================================= */
+
+.planificacion-screen-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.95rem;
+}
+
+/* Modo Claro explícito predeterminado */
+[data-theme='light'] .planificacion-screen-container {
+  color: #0F172A;
+}
+
+[data-theme='light'] .planificacion-screen-container .plan-kpi-card,
+[data-theme='light'] .planificacion-screen-container .plan-map-card,
+[data-theme='light'] .planificacion-screen-container .plan-ficha-card,
+[data-theme='light'] .planificacion-screen-container .plan-chart-card,
+[data-theme='light'] .planificacion-screen-container .plan-prioridades-card {
+  background-color: #FFFFFF !important;
+  border-color: #E2E8F0 !important;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05), 0 1px 2px -1px rgba(0, 0, 0, 0.05) !important;
+}
+
+/* 3 TARJETAS KPI SUPERIORES */
+.plan-kpis-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.75rem;
+}
+
+@media (max-width: 900px) {
+  .plan-kpis-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.plan-kpi-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  padding: 0.85rem 1rem;
+  border-radius: 10px;
+  background: var(--theme-card-bg, #FFFFFF);
+  border: 1px solid var(--theme-border, #E2E8F0);
+  border-top-width: 4px !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.plan-kpi-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.plan-kpi-card.kpi-poblacion {
+  border-top-color: #0284C7 !important;
+}
+
+.plan-kpi-card.kpi-aceleracion {
+  border-top-color: #DC2626 !important;
+}
+
+.plan-kpi-card.kpi-salud {
+  border-top-color: #10B981 !important;
+}
+
+.plan-kpi-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.35rem;
+}
+
+.plan-kpi-label {
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: #475569;
+}
+
+[data-theme='dark'] .plan-kpi-label {
+  color: #94A3B8;
+}
+
+.plan-kpi-badge {
+  font-size: 0.65rem;
+  font-weight: 700;
+  padding: 0.15rem 0.45rem;
+  border-radius: 9999px;
+  font-family: var(--font-mono, monospace);
+}
+
+.plan-kpi-val-row {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  margin: 0.2rem 0 0.35rem;
+  flex-wrap: wrap;
+}
+
+.plan-kpi-val {
+  font-size: 1.55rem;
+  font-weight: 800;
+  line-height: 1.1;
+  font-family: var(--font-mono, monospace);
+}
+
+.plan-kpi-sub {
+  font-size: 0.74rem;
+  color: #64748B;
+  margin-top: auto;
+  line-height: 1.35;
+}
+
+[data-theme='dark'] .plan-kpi-sub {
+  color: #94A3B8;
+}
+
+/* BARRA DE CONTROLES: HORIZONTE, ESCENARIO Y POBLACIÓN */
+.plan-controls-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.85rem;
+  flex-wrap: wrap;
+  padding: 0.75rem 1rem;
+  border-radius: 10px;
+  background: var(--theme-card-bg, #FFFFFF);
+  border: 1px solid var(--theme-border, #E2E8F0);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+[data-theme='dark'] .plan-controls-bar {
+  background: #1E293B;
+  border-color: rgba(56, 189, 248, 0.18);
+}
+
+.plan-control-section {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.plan-control-label {
+  font-size: 0.74rem;
+  font-weight: 700;
+  color: #475569;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+[data-theme='dark'] .plan-control-label {
+  color: #CBD5E1;
+}
+
+.plan-pills-switch {
+  display: inline-flex;
+  background: #F1F5F9;
+  border-radius: 8px;
+  padding: 2px;
+  border: 1px solid #E2E8F0;
+}
+
+[data-theme='dark'] .plan-pills-switch {
+  background: rgba(15, 23, 42, 0.7);
+  border-color: rgba(56, 189, 248, 0.2);
+}
+
+.plan-pill-switch-btn {
+  padding: 0.25rem 0.65rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+  border-radius: 6px;
+  border: none;
+  background: transparent;
+  color: #64748B;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  user-select: none;
+}
+
+[data-theme='dark'] .plan-pill-switch-btn {
+  color: #94A3B8;
+}
+
+.plan-pill-switch-btn:hover {
+  color: #0F172A;
+}
+
+[data-theme='dark'] .plan-pill-switch-btn:hover {
+  color: #FFFFFF;
+}
+
+.plan-pill-switch-btn.is-active {
+  background: #FFFFFF;
+  color: #0284C7;
+  font-weight: 700;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+[data-theme='dark'] .plan-pill-switch-btn.is-active {
+  background: #0284C7;
+  color: #FFFFFF;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+/* GRID PRINCIPAL: MAPA TÉRMICO (1.2) Y FICHA DE PROYECCIÓN (1) */
+.plan-main-grid {
+  display: grid;
+  grid-template-columns: 1.25fr 1fr;
+  gap: 0.85rem;
+  align-items: stretch;
+}
+
+@media (max-width: 1024px) {
+  .plan-main-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* CARD DEL MAPA */
+.plan-map-card {
+  padding: 0.75rem;
+  border-radius: 12px;
+  background: var(--theme-card-bg, #FFFFFF);
+  border: 1px solid var(--theme-border, #E2E8F0);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+[data-theme='dark'] .plan-map-card {
+  background: #1E293B;
+  border-color: rgba(56, 189, 248, 0.18);
+}
+
+.plan-map-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.plan-map-title-box h3 {
+  margin: 0;
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: #0F172A;
+}
+
+[data-theme='dark'] .plan-map-title-box h3 {
+  color: #F8FAFC;
+}
+
+/* BOTONES DE MÉTRICA SOBRE EL MAPA */
+.plan-map-metric-pills {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  flex-wrap: wrap;
+}
+
+.plan-metric-pill-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.26rem 0.62rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+  border-radius: 9999px;
+  cursor: pointer;
+  transition: all 0.15s ease-in-out;
+  border: 1px solid var(--theme-border, #E2E8F0);
+  background: var(--theme-card-bg, #FFFFFF);
+  color: #475569;
+  user-select: none;
+}
+
+[data-theme='dark'] .plan-metric-pill-btn {
+  background: rgba(15, 23, 42, 0.7);
+  border-color: rgba(56, 189, 248, 0.2);
+  color: #94A3B8;
+}
+
+.plan-metric-pill-btn:hover {
+  border-color: #0284C7;
+  color: #0284C7;
+  background: rgba(2, 132, 199, 0.05);
+}
+
+.plan-metric-pill-btn.is-active {
+  background: #0284C7 !important;
+  border-color: #0284C7 !important;
+  color: #FFFFFF !important;
+  box-shadow: 0 2px 6px rgba(2, 132, 199, 0.3);
+}
+
+[data-theme='dark'] .plan-metric-pill-btn.is-active {
+  background: #38BDF8 !important;
+  border-color: #38BDF8 !important;
+  color: #0F172A !important;
+}
+
+/* LEYENDA TÉRMICA INFERIOR */
+.plan-map-legend {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+  padding: 0.35rem 0.2rem 0;
+  font-size: 0.72rem;
+  color: #475569;
+}
+
+[data-theme='dark'] .plan-map-legend {
+  color: #94A3B8;
+}
+
+.plan-legend-scale {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+}
+
+.plan-legend-step {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-family: var(--font-mono, monospace);
+  font-weight: 600;
+}
+
+.plan-legend-box {
+  width: 12px;
+  height: 12px;
+  border-radius: 3px;
+  display: inline-block;
+  flex-shrink: 0;
+}
+
+/* FICHA DE PROYECCIÓN DEL DISTRITO ("ANTES VS DESPUÉS") */
+.plan-ficha-card {
+  padding: 0.85rem 1rem;
+  border-radius: 12px;
+  background: var(--theme-card-bg, #FFFFFF);
+  border: 1px solid var(--theme-border, #E2E8F0);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+[data-theme='dark'] .plan-ficha-card {
+  background: #1E293B;
+  border-color: rgba(56, 189, 248, 0.18);
+}
+
+.plan-ficha-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--theme-border, #E2E8F0);
+  padding-bottom: 0.45rem;
+}
+
+[data-theme='dark'] .plan-ficha-header {
+  border-color: rgba(56, 189, 248, 0.15);
+}
+
+.plan-ficha-title h3 {
+  margin: 0;
+  font-size: 0.98rem;
+  font-weight: 800;
+  color: #0F172A;
+}
+
+[data-theme='dark'] .plan-ficha-title h3 {
+  color: #F8FAFC;
+}
+
+.plan-ficha-title span {
+  font-size: 0.72rem;
+  color: #64748B;
+}
+
+[data-theme='dark'] .plan-ficha-title span {
+  color: #94A3B8;
+}
+
+/* 4 TARJETAS INDICADORAS DE ANTES VS DESPUÉS */
+.plan-indicators-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+}
+
+.plan-indicator-box {
+  padding: 0.65rem 0.85rem;
+  border-radius: 8px;
+  background: #F8FAFC;
+  border: 1px solid var(--theme-border, #E2E8F0);
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+[data-theme='dark'] .plan-indicator-box {
+  background: rgba(15, 23, 42, 0.6);
+  border-color: rgba(56, 189, 248, 0.15);
+}
+
+.plan-indicator-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #334155;
+}
+
+[data-theme='dark'] .plan-indicator-top {
+  color: #E2E8F0;
+}
+
+.plan-compare-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.15rem 0;
+}
+
+.plan-compare-col {
+  display: flex;
+  flex-direction: column;
+}
+
+.plan-compare-col span.lbl {
+  font-size: 0.68rem;
+  color: #64748B;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+[data-theme='dark'] .plan-compare-col span.lbl {
+  color: #94A3B8;
+}
+
+.plan-compare-col strong.val {
+  font-size: 1.05rem;
+  font-weight: 800;
+  font-family: var(--font-mono, monospace);
+  color: #0F172A;
+}
+
+[data-theme='dark'] .plan-compare-col strong.val {
+  color: #F8FAFC;
+}
+
+.plan-compare-arrow {
+  font-size: 1.15rem;
+  color: #94A3B8;
+  font-weight: 700;
+}
+
+.plan-indicator-req {
+  font-size: 0.72rem;
+  padding: 0.3rem 0.5rem;
+  border-radius: 5px;
+  background: rgba(2, 132, 199, 0.08);
+  color: #0284C7;
+  font-weight: 600;
+  line-height: 1.35;
+}
+
+[data-theme='dark'] .plan-indicator-req {
+  background: rgba(56, 189, 248, 0.12);
+  color: #38BDF8;
+}
+
+.plan-indicator-req.is-alert {
+  background: #FEE2E2;
+  color: #DC2626;
+}
+
+[data-theme='dark'] .plan-indicator-req.is-alert {
+  background: rgba(220, 38, 38, 0.18);
+  color: #F87171;
+}
+
+/* SECCIÓN INFERIOR: BARRAS COMPARATIVAS Y PRIORIDADES */
+.plan-bottom-grid {
+  display: grid;
+  grid-template-columns: 1.25fr 1fr;
+  gap: 0.85rem;
+}
+
+@media (max-width: 900px) {
+  .plan-bottom-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.plan-chart-card,
+.plan-prioridades-card {
+  padding: 0.85rem 1rem;
+  border-radius: 12px;
+  background: var(--theme-card-bg, #FFFFFF);
+  border: 1px solid var(--theme-border, #E2E8F0);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+[data-theme='dark'] .plan-chart-card,
+[data-theme='dark'] .plan-prioridades-card {
+  background: #1E293B;
+  border-color: rgba(56, 189, 248, 0.18);
+}

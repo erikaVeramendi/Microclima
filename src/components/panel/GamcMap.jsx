@@ -116,6 +116,7 @@ export default function GamcMap({
   height = '500px',
   className = '',
   style = {},
+  focusSelected = false,
 }) {
   const mapContainerRef = useRef(null)
   const mapInstanceRef = useRef(null)
@@ -209,10 +210,32 @@ export default function GamcMap({
 
     mapInstanceRef.current = map
 
+    // Forzar cálculo de dimensiones iniciales
+    setTimeout(() => {
+      map.invalidateSize()
+    }, 150)
+
+    // Segundo invalidateSize para contenedores con transición CSS o layout tardío
+    setTimeout(() => {
+      map.invalidateSize()
+    }, 600)
+
     return () => {
       map.remove()
       mapInstanceRef.current = null
     }
+  }, [])
+
+  // Auto-ajuste de tamaño ante cambios en el contenedor o ventana
+  useEffect(() => {
+    if (!mapContainerRef.current) return
+    const resizeObserver = new ResizeObserver(() => {
+      if (mapInstanceRef.current) {
+        mapInstanceRef.current.invalidateSize()
+      }
+    })
+    resizeObserver.observe(mapContainerRef.current)
+    return () => resizeObserver.disconnect()
   }, [])
 
   // Conmutación de capa base CartoDB Light / CartoDB Dark según tema
@@ -222,8 +245,8 @@ export default function GamcMap({
 
     const isLight = theme === 'light'
     const tileUrl = isLight
-      ? 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png'
-      : 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png'
+      ? 'https://tile.openstreetmap.org/{z}/{x}/{y}.png'
+      : 'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}'
 
     if (baseTileRef.current) {
       map.removeLayer(baseTileRef.current)
@@ -231,9 +254,8 @@ export default function GamcMap({
 
     const newBase = L.tileLayer(tileUrl, {
       attribution:
-        '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>',
-      subdomains: 'abcd',
-      maxZoom: 20,
+        '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+      maxZoom: 19,
     })
 
     newBase.addTo(map)
@@ -535,12 +557,15 @@ export default function GamcMap({
             feature?.properties?.fillColor ||
             feature?.properties?.color ||
             '#06B6D4'
+          const borderColor = feature?.properties?.borderColor || (isSelected ? '#0284C7' : '#1E293B')
+          const borderWidth = feature?.properties?.borderWidth ?? (isSelected ? 4 : 2)
+          const fillOpacity = feature?.properties?.fillOpacity ?? (isSelected ? 0.85 : 0.75)
           return {
-            color: isSelected ? '#38BDF8' : '#64748B',
-            weight: isSelected ? 2.5 : 1.2,
-            opacity: 0.8,
+            color: borderColor,
+            weight: borderWidth,
+            opacity: 1,
             fillColor: fillColor,
-            fillOpacity: isSelected ? 0.45 : 0.25,
+            fillOpacity: fillOpacity,
           }
         },
         onEachFeature: (feature, layer) => {
@@ -550,7 +575,13 @@ export default function GamcMap({
               onClickDistrito(feature, layer)
             })
           }
-          if (feature.properties?.labelPermanent) {
+          if (feature.properties?.customTooltipHtml) {
+            layer.bindTooltip(feature.properties.customTooltipHtml, {
+              sticky: true,
+              direction: 'top',
+              className: 'district-rich-tooltip',
+            })
+          } else if (feature.properties?.labelPermanent) {
             layer.bindTooltip(
               String(feature.properties.labelPermanent),
               { permanent: true, direction: 'center', className: 'district-index-badge' }
@@ -566,8 +597,23 @@ export default function GamcMap({
 
       vectorLayer.addTo(map)
       customGeoJsonLayerRef.current = vectorLayer
+      map.invalidateSize()
+
+      if (focusSelected && geojson?.features) {
+        const selectedFeat = geojson.features.find((f) => f.properties?.selected)
+        if (selectedFeat) {
+          try {
+            const b = L.geoJSON(selectedFeat).getBounds()
+            if (b.isValid()) {
+              map.fitBounds(b, { padding: [30, 30], maxZoom: 14 })
+            }
+          } catch (e) {
+            // fallback
+          }
+        }
+      }
     }
-  }, [geojson, onClickDistrito])
+  }, [geojson, onClickDistrito, focusSelected])
 
   // Renderizado de círculos de cobertura / radios (prop `radios`)
   useEffect(() => {
@@ -626,8 +672,8 @@ export default function GamcMap({
       {/* Contenedor del mapa Leaflet */}
       <div ref={mapContainerRef} className="gamc-map-instance" />
 
-      {/* Aviso discreto si la clave WMS de la Alcaldía no está configurada */}
-      {!hasValidKey && (
+      {/* Selector de capas WMS solo visible si hay capas WMS habilitadas explícitamente */}
+      {capasWms && capasWms.length > 0 && !hasValidKey && (
         <div className="gamc-no-key-badge">
           <AlertCircle size={14} strokeWidth={1.75} />
           <span>Capas de la Alcaldía no configuradas (usando respaldo local)</span>
@@ -635,7 +681,8 @@ export default function GamcMap({
       )}
 
       {/* Panel flotante de capas oficiales GAMC */}
-      <div className="gamc-layers-panel">
+      {capasWms && capasWms.length > 0 && (
+        <div className="gamc-layers-panel">
         <button
           type="button"
           className="gamc-layers-toggle-btn"
@@ -734,6 +781,7 @@ export default function GamcMap({
           </div>
         )}
       </div>
+      )}
     </div>
   )
 }

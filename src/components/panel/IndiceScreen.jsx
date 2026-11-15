@@ -8,6 +8,15 @@ import {
   CheckSquare,
   Square,
   Activity,
+  Layers,
+  Thermometer,
+  TreePine,
+  ArrowUpRight,
+  Sparkles,
+  Hospital,
+  GraduationCap,
+  Bus,
+  Filter,
 } from 'lucide-react'
 import GamcMap from './GamcMap'
 import PopulationSourceSelector from './PopulationSourceSelector'
@@ -15,13 +24,14 @@ import { getIneFactor } from './populationUtils'
 import { COCHABAMBA_ZONES } from '../../data/internalPanelData'
 import './IndiceScreen.css'
 
-// Definiciones explicativas sencillas para cada componente
+// Definiciones completas con íconos temáticos para cada uno de los 7 componentes
 const COMPONENT_DEFINITIONS = {
   'Calor del suelo': {
     label: 'Calor superficial diurno',
     unit: '°C',
     dimension: 'ambiental',
     altoEsMejor: false,
+    icon: Thermometer,
     format: (v) => `${Number(v).toFixed(2).replace('.', ',')} °C`,
     help: 'Temperatura superficial diurna promedio (LST). Menor calor da mayor puntaje.',
   },
@@ -30,6 +40,7 @@ const COMPONENT_DEFINITIONS = {
     unit: 'NDVI',
     dimension: 'ambiental',
     altoEsMejor: true,
+    icon: TreePine,
     format: (v) => `${Number(v).toFixed(2).replace('.', ',')} NDVI`,
     help: 'Índice de verdor vegetal (NDVI). Mayor presencia de vegetación da mayor puntaje.',
   },
@@ -38,6 +49,7 @@ const COMPONENT_DEFINITIONS = {
     unit: '/año',
     dimension: 'ambiental',
     altoEsMejor: true,
+    icon: ArrowUpRight,
     format: (v) => (v === 0 ? 'Sin cambio sign.' : `${Number(v).toFixed(4).replace('.', ',')} / año`),
     help: 'Evolución de la vegetación en 25 años (pendiente de Sen). Distritos que ganan verdor obtienen mayor puntaje.',
   },
@@ -46,6 +58,7 @@ const COMPONENT_DEFINITIONS = {
     unit: 'm²/hab',
     dimension: 'ambiental',
     altoEsMejor: true,
+    icon: Sparkles,
     format: (v) => `${Number(v).toFixed(1).replace('.', ',')} m²/hab`,
     help: 'Metros cuadrados de plazas y parques por vecino. La OMS recomienda al menos 9 m² por habitante.',
   },
@@ -54,6 +67,7 @@ const COMPONENT_DEFINITIONS = {
     unit: 'hab./centro',
     dimension: 'servicios',
     altoEsMejor: false,
+    icon: Hospital,
     format: (v) => `${Math.round(Number(v)).toLocaleString('es-BO')} hab./centro`,
     help: 'Población dividida entre los centros de atención primaria. Menor saturación da mayor puntaje.',
   },
@@ -62,6 +76,7 @@ const COMPONENT_DEFINITIONS = {
     unit: 'hab./colegio',
     dimension: 'servicios',
     altoEsMejor: false,
+    icon: GraduationCap,
     format: (v) => `${Math.round(Number(v)).toLocaleString('es-BO')} hab./colegio`,
     help: 'Población dividida entre los colegios del distrito. Menor concentración da mayor puntaje.',
   },
@@ -70,21 +85,29 @@ const COMPONENT_DEFINITIONS = {
     unit: '%',
     dimension: 'servicios',
     altoEsMejor: true,
+    icon: Bus,
     format: (v) => `${Number(v).toFixed(1).replace('.', ',')} %`,
     help: 'Porcentaje de población que vive a menos de 300 metros de una ruta de transporte público.',
   },
 }
 
+// Colores vibrantes de alto contraste y legibilidad
 function getSemaphoreColor(val) {
-  if (val >= 67) return '#22C55E'
-  if (val >= 34) return '#F59E0B'
-  return '#EF4444'
+  if (val >= 67) return '#10B981' // Verde esmeralda vibrante
+  if (val >= 34) return '#F59E0B' // Ámbar intenso
+  return '#EF4444' // Rojo coral
 }
 
 function getSemaphoreText(val) {
-  if (val >= 67) return 'Verde (Favorable)'
-  if (val >= 34) return 'Amarillo (Medio)'
-  return 'Rojo (Crítico)'
+  if (val >= 67) return 'Óptimo (Verde)'
+  if (val >= 34) return 'Alerta (Amarillo)'
+  return 'Crítico (Rojo)'
+}
+
+function getSemaforoCategory(val) {
+  if (val >= 67) return 'verde'
+  if (val >= 34) return 'amarillo'
+  return 'rojo'
 }
 
 export default function IndiceScreen({
@@ -96,6 +119,10 @@ export default function IndiceScreen({
   const [basePoblacion, setBasePoblacion] = useState('ghsl') // 'ghsl' | 'ine'
   const [loading, setLoading] = useState(true)
   const [activeTooltip, setActiveTooltip] = useState(null)
+
+  // Filtros rápidos del mapa (Pills interactivos)
+  const [filtroDimension, setFiltroDimension] = useState('general') // 'general' | 'ambiente' | 'servicios'
+  const [filtroSemaforo, setFiltroSemaforo] = useState('todos') // 'todos' | 'rojo' | 'amarillo' | 'verde'
 
   // Factor de ajuste al Censo INE 2024
   const ineFactor = useMemo(() => getIneFactor(indiceData), [indiceData])
@@ -232,6 +259,9 @@ export default function IndiceScreen({
       }
 
       const nuevoIndiceRound = Math.round(nuevoIndice)
+      const semaforoOriginal = getSemaforoCategory(d.indice)
+      const semaforoNuevo = getSemaforoCategory(nuevoIndiceRound)
+      const cambioSemaforo = semaforoOriginal !== semaforoNuevo
 
       return {
         id: d.id,
@@ -242,12 +272,9 @@ export default function IndiceScreen({
         nuevoIndiceFloat: nuevoIndice,
         dimAmbCalc: Number(dimAmbCalc.toFixed(1)),
         dimServCalc: Number(dimServCalc.toFixed(1)),
-        semaforo:
-          nuevoIndiceRound >= 67
-            ? 'verde'
-            : nuevoIndiceRound >= 34
-            ? 'amarillo'
-            : 'rojo',
+        semaforo: semaforoNuevo,
+        semaforoOriginal,
+        cambioSemaforo,
       }
     })
 
@@ -266,7 +293,12 @@ export default function IndiceScreen({
     })
   }, [indiceData, pesoAmbiente, activeComponents])
 
-  // GeoJSON con polígonos coloreados por semáforo y etiqueta de índice
+  // Cantidad de distritos que cambian de color en el semáforo con los pesos actuales
+  const distritosQueCambian = useMemo(() => {
+    return distritosRecalculados.filter((d) => d.cambioSemaforo).length
+  }, [distritosRecalculados])
+
+  // GeoJSON con polígonos coloreados y filtros aplicados (dimensión + semáforo)
   const distritosGeoJsonStyled = useMemo(() => {
     if (!distritosGeoJson?.features || !indiceData?.distritos) return null
 
@@ -282,23 +314,104 @@ export default function IndiceScreen({
         const cod = String(f.properties?.codigo_distrito || '')
         const item = recMap[cod] || null
         const isSelected = parseInt(cod, 10) === distNum
-        const score = item ? item.nuevoIndice : 50
-        const color = getSemaphoreColor(score)
+
+        // Puntaje a visualizar según dimensión seleccionada
+        let displayScore = item ? item.nuevoIndice : 50
+        if (filtroDimension === 'ambiente' && item) {
+          displayScore = Math.round(item.dimAmbCalc)
+        } else if (filtroDimension === 'servicios' && item) {
+          displayScore = Math.round(item.dimServCalc)
+        }
+
+        const color = getSemaphoreColor(displayScore)
+        const semCategory = getSemaforoCategory(displayScore)
+
+        // Filtro de semáforo (rojo/amarillo/verde/todos)
+        const matchesFilter =
+          filtroSemaforo === 'todos' || filtroSemaforo === semCategory
+
+        // Opacidad viva en Modo Claro (0.75) y resaltado fuerte si coincide con filtro
+        const fillOpacity = matchesFilter
+          ? isSelected
+            ? 0.88
+            : 0.75
+          : 0.15
+
+        // Borde oscuro nítido (#1E293B, 2px) y grueso (#0284C7, 4px) para el seleccionado
+        const borderColor = isSelected ? '#0284C7' : matchesFilter ? '#1E293B' : '#94A3B8'
+        const borderWidth = isSelected ? 4 : matchesFilter ? 2 : 1
+
+        // Tooltip enriquecido flotante con toda la telemetría solicitada
+        const customTooltipHtml = `
+          <div style="font-family: inherit; font-size: 12px; min-width: 190px; line-height: 1.45;">
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #E2E8F0; padding-bottom: 4px; margin-bottom: 6px;">
+              <strong style="font-size: 13px; color: #0F172A;">${f.properties?.nombre || 'Distrito ' + cod}</strong>
+              <span style="font-size: 10px; font-weight: 700; padding: 1px 6px; border-radius: 4px; background: ${color}20; color: ${color}; border: 1px solid ${color};">
+                ${getSemaphoreText(displayScore)}
+              </span>
+            </div>
+            <div style="display: flex; justify-content: space-between; margin-bottom: 3px;">
+              <span style="color: #64748B;">Puntaje Total:</span>
+              <strong style="color: ${color}; font-size: 13px;">${item ? item.nuevoIndice : '--'}/100</strong>
+            </div>
+            <div style="display: flex; justify-content: space-between; margin-bottom: 3px; font-size: 11px;">
+              <span style="color: #64748B;">Ambiente (50%):</span>
+              <strong style="color: #10B981;">${item ? item.dimAmbCalc : '--'} pts</strong>
+            </div>
+            <div style="display: flex; justify-content: space-between; font-size: 11px;">
+              <span style="color: #64748B;">Servicios (50%):</span>
+              <strong style="color: #F59E0B;">${item ? item.dimServCalc : '--'} pts</strong>
+            </div>
+          </div>
+        `
 
         return {
           ...f,
           properties: {
             ...f.properties,
             selected: isSelected,
-            color: isSelected ? 'var(--theme-accent, #38BDF8)' : color,
+            color: borderColor,
+            borderColor,
+            borderWidth,
             fillColor: color,
-            labelPermanent: `D${cod}: ${score}`,
-            nombre: `${f.properties?.nombre || 'Distrito ' + cod} · Índice: ${score} pts`,
+            fillOpacity,
+            labelPermanent: `D${cod}: ${displayScore}`,
+            customTooltipHtml,
+            nombre: `${f.properties?.nombre || 'Distrito ' + cod} · Índice: ${displayScore} pts`,
           },
         }
       }),
     }
-  }, [distritosGeoJson, indiceData, distritosRecalculados, distNum])
+  }, [distritosGeoJson, indiceData, distritosRecalculados, distNum, filtroDimension, filtroSemaforo])
+
+  // Componentes del distrito ordenados de PEOR A MEJOR puntaje (para auditar rápido qué falla)
+  const componentesOrdenados = useMemo(() => {
+    if (!activeDistrito?.componentes) return []
+
+    const list = Object.entries(COMPONENT_DEFINITIONS).map(([key, def]) => {
+      const comp = activeDistrito.componentes[key] || { valor: 0, puntaje: 0 }
+      let compValor = comp.valor
+      if (
+        key === 'Habitantes por centro de salud de 1er nivel' ||
+        key === 'Habitantes por unidad educativa'
+      ) {
+        compValor = comp.valor * pobFactor
+      }
+      const puntajeRound = Math.round(comp.puntaje)
+      return {
+        key,
+        def,
+        valor: compValor,
+        puntaje: comp.puntaje,
+        puntajeRound,
+        barColor: getSemaphoreColor(puntajeRound),
+      }
+    })
+
+    // Orden ascendente: peor puntaje primero
+    list.sort((a, b) => a.puntajeRound - b.puntajeRound)
+    return list
+  }, [activeDistrito, pobFactor])
 
   const toggleComponent = (key) => {
     setActiveComponents((prev) => ({
@@ -342,36 +455,68 @@ export default function IndiceScreen({
   )
 
   return (
-    <div className="neo-screen">
-      {/* 1. Línea bajo el título y selector de población */}
+    <div className="indice-screen-container neo-screen">
+      {/* 1. Header de Sección con Selector de Base Poblacional */}
       <div
         style={{
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
-          marginBottom: '0.1rem',
           flexWrap: 'wrap',
-          gap: '0.5rem',
+          gap: '0.65rem',
+          background: 'var(--theme-card-bg, #FFFFFF)',
+          border: '1px solid var(--theme-border, #E2E8F0)',
+          borderRadius: '10px',
+          padding: '0.65rem 1rem',
+          boxShadow: '0 1px 3px rgba(0,0,0,0.04)',
         }}
       >
-        <p
-          style={{
-            margin: 0,
-            fontSize: '0.86rem',
-            color: 'var(--theme-text-muted)',
-            lineHeight: 1.45,
-          }}
-        >
-          Una nota de 1 a 100 para cada distrito: cómo está su ambiente y cuántos servicios tiene.
-        </p>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.15rem' }}>
+          <h2
+            style={{
+              margin: 0,
+              fontSize: '1.05rem',
+              fontWeight: 700,
+              color: 'var(--theme-text-primary, #0F172A)',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.5rem',
+            }}
+          >
+            <Activity size={20} strokeWidth={2.2} color="var(--theme-accent, #0284C7)" />
+            6 · Índice Socio-Ambiental Distrital
+          </h2>
+          <p
+            style={{
+              margin: 0,
+              fontSize: '0.82rem',
+              color: 'var(--theme-text-muted, #475569)',
+              lineHeight: 1.4,
+            }}
+          >
+            Evaluación diagnóstica ponderada de 1 a 100 puntos: balance ambiental satelital (50%) y cobertura de servicios urbanos GAMC (50%).
+          </p>
+        </div>
 
-        <PopulationSourceSelector
-          value={basePoblacion}
-          onChange={setBasePoblacion}
-        />
+        {/* Selector claro de base poblacional */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+          <span
+            style={{
+              fontSize: '0.74rem',
+              fontWeight: 600,
+              color: 'var(--theme-text-muted, #475569)',
+            }}
+          >
+            Base Poblacional:
+          </span>
+          <PopulationSourceSelector
+            value={basePoblacion}
+            onChange={setBasePoblacion}
+          />
+        </div>
       </div>
 
-      {/* 2. Tarjetas (4): Índice · Ranking · Dimensión Ambiental · Dimensión Servicios */}
+      {/* 2. Tarjetas KPI Principales (4) */}
       <section
         style={{
           display: 'grid',
@@ -380,34 +525,51 @@ export default function IndiceScreen({
         }}
       >
         {/* Tarjeta 1: Índice del distrito con semáforo */}
-        <div className="hud-kpi-card" style={{ '--kpi-accent': semColor }}>
-          <div className="hud-kpi-top">
-            <span className="hud-kpi-label">ÍNDICE SOCIO-AMBIENTAL</span>
+        <div
+          className="hud-kpi-card"
+          style={{
+            '--kpi-accent': semColor,
+            background: 'var(--theme-card-bg, #FFFFFF)',
+            border: '1px solid var(--theme-border, #E2E8F0)',
+            borderRadius: '10px',
+            padding: '0.85rem 1rem',
+          }}
+        >
+          <div className="hud-kpi-top" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <span className="hud-kpi-label" style={{ fontSize: '0.73rem', fontWeight: 700, letterSpacing: '0.04em', color: 'var(--theme-text-muted, #475569)' }}>
+              ÍNDICE SOCIO-AMBIENTAL
+            </span>
             <span
               className="hud-kpi-delta"
               style={{
                 color: semColor,
-                borderColor: `${semColor}66`,
-                background: `${semColor}18`,
+                borderColor: `${semColor}55`,
+                background: `${semColor}15`,
+                fontWeight: 700,
+                fontSize: '0.7rem',
+                padding: '2px 8px',
+                borderRadius: '6px',
               }}
             >
               {getSemaphoreText(activeDistrito.indice)}
             </span>
           </div>
-          <div className="hud-kpi-val-row">
-            <strong className="hud-kpi-value" style={{ color: semColor }}>
+          <div className="hud-kpi-val-row" style={{ display: 'flex', alignItems: 'baseline', gap: '0.35rem', marginTop: '0.35rem' }}>
+            <strong className="hud-kpi-value" style={{ color: semColor, fontSize: '1.9rem', fontWeight: 800 }}>
               {activeDistrito.indice}
             </strong>
-            <span style={{ fontSize: '0.9rem', color: 'var(--theme-text-muted)', fontWeight: 600 }}>
+            <span style={{ fontSize: '0.9rem', color: 'var(--theme-text-muted, #64748B)', fontWeight: 600 }}>
               / 100
             </span>
           </div>
           <span
+            className="hud-kpi-sub"
             style={{
-              fontSize: '0.74rem',
-              color: 'var(--theme-text-muted)',
+              fontSize: '0.76rem',
+              color: 'var(--theme-text-muted, #64748B)',
               marginTop: '0.2rem',
               display: 'block',
+              fontWeight: 500,
             }}
           >
             {activeDistrito.nombre}
@@ -415,31 +577,48 @@ export default function IndiceScreen({
         </div>
 
         {/* Tarjeta 2: Posición en el ranking */}
-        <div className="hud-kpi-card" style={{ '--kpi-accent': 'var(--theme-accent, #38BDF8)' }}>
-          <div className="hud-kpi-top">
-            <span className="hud-kpi-label">POSICIÓN EN EL RANKING</span>
+        <div
+          className="hud-kpi-card"
+          style={{
+            '--kpi-accent': 'var(--theme-accent, #0284C7)',
+            background: 'var(--theme-card-bg, #FFFFFF)',
+            border: '1px solid var(--theme-border, #E2E8F0)',
+            borderRadius: '10px',
+            padding: '0.85rem 1rem',
+          }}
+        >
+          <div className="hud-kpi-top" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <span className="hud-kpi-label" style={{ fontSize: '0.73rem', fontWeight: 700, letterSpacing: '0.04em', color: 'var(--theme-text-muted, #475569)' }}>
+              POSICIÓN EN EL RANKING
+            </span>
             <span
               className="hud-kpi-delta"
               style={{
-                color: 'var(--theme-accent, #38BDF8)',
-                borderColor: 'var(--theme-border)',
+                color: 'var(--theme-accent, #0284C7)',
+                borderColor: 'var(--theme-border, #E2E8F0)',
+                background: 'rgba(2, 132, 199, 0.08)',
+                fontWeight: 600,
+                fontSize: '0.7rem',
+                padding: '2px 8px',
+                borderRadius: '6px',
               }}
             >
               Oficial GAMC
             </span>
           </div>
-          <div className="hud-kpi-val-row">
-            <strong className="hud-kpi-value">
+          <div className="hud-kpi-val-row" style={{ display: 'flex', alignItems: 'baseline', gap: '0.35rem', marginTop: '0.35rem' }}>
+            <strong className="hud-kpi-value" style={{ color: 'var(--theme-text-primary, #0F172A)', fontSize: '1.9rem', fontWeight: 800 }}>
               {activeDistrito.ranking}{' '}
-              <span style={{ fontSize: '1rem', fontWeight: 500, color: 'var(--theme-text-muted)' }}>
+              <span style={{ fontSize: '1rem', fontWeight: 500, color: 'var(--theme-text-muted, #64748B)' }}>
                 de 15
               </span>
             </strong>
           </div>
           <span
+            className="hud-kpi-sub"
             style={{
-              fontSize: '0.74rem',
-              color: 'var(--theme-text-muted)',
+              fontSize: '0.76rem',
+              color: 'var(--theme-text-muted, #64748B)',
               marginTop: '0.2rem',
               display: 'block',
             }}
@@ -449,28 +628,48 @@ export default function IndiceScreen({
         </div>
 
         {/* Tarjeta 3: Dimensión ambiental */}
-        <div className="hud-kpi-card" style={{ '--kpi-accent': '#22C55E' }}>
-          <div className="hud-kpi-top">
-            <span className="hud-kpi-label">DIMENSIÓN AMBIENTAL</span>
+        <div
+          className="hud-kpi-card"
+          style={{
+            '--kpi-accent': '#10B981',
+            background: 'var(--theme-card-bg, #FFFFFF)',
+            border: '1px solid var(--theme-border, #E2E8F0)',
+            borderRadius: '10px',
+            padding: '0.85rem 1rem',
+          }}
+        >
+          <div className="hud-kpi-top" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <span className="hud-kpi-label" style={{ fontSize: '0.73rem', fontWeight: 700, letterSpacing: '0.04em', color: 'var(--theme-text-muted, #475569)' }}>
+              DIMENSIÓN AMBIENTAL
+            </span>
             <span
               className="hud-kpi-delta"
-              style={{ color: '#22C55E', borderColor: 'rgba(34, 197, 94, 0.44)' }}
+              style={{
+                color: '#10B981',
+                borderColor: '#10B98155',
+                background: '#10B98115',
+                fontWeight: 600,
+                fontSize: '0.7rem',
+                padding: '2px 8px',
+                borderRadius: '6px',
+              }}
             >
               4 componentes
             </span>
           </div>
-          <div className="hud-kpi-val-row">
-            <strong className="hud-kpi-value">
+          <div className="hud-kpi-val-row" style={{ display: 'flex', alignItems: 'baseline', gap: '0.35rem', marginTop: '0.35rem' }}>
+            <strong className="hud-kpi-value" style={{ color: '#10B981', fontSize: '1.9rem', fontWeight: 800 }}>
               {activeDistrito.dimension_ambiental.toFixed(1).replace('.', ',')}
             </strong>
-            <span style={{ fontSize: '0.9rem', color: 'var(--theme-text-muted)', fontWeight: 600 }}>
+            <span style={{ fontSize: '0.9rem', color: 'var(--theme-text-muted, #64748B)', fontWeight: 600 }}>
               pts
             </span>
           </div>
           <span
+            className="hud-kpi-sub"
             style={{
-              fontSize: '0.74rem',
-              color: 'var(--theme-text-muted)',
+              fontSize: '0.76rem',
+              color: 'var(--theme-text-muted, #64748B)',
               marginTop: '0.2rem',
               display: 'block',
             }}
@@ -480,28 +679,48 @@ export default function IndiceScreen({
         </div>
 
         {/* Tarjeta 4: Dimensión servicios */}
-        <div className="hud-kpi-card" style={{ '--kpi-accent': '#F59E0B' }}>
-          <div className="hud-kpi-top">
-            <span className="hud-kpi-label">DIMENSIÓN SERVICIOS</span>
+        <div
+          className="hud-kpi-card"
+          style={{
+            '--kpi-accent': '#F59E0B',
+            background: 'var(--theme-card-bg, #FFFFFF)',
+            border: '1px solid var(--theme-border, #E2E8F0)',
+            borderRadius: '10px',
+            padding: '0.85rem 1rem',
+          }}
+        >
+          <div className="hud-kpi-top" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <span className="hud-kpi-label" style={{ fontSize: '0.73rem', fontWeight: 700, letterSpacing: '0.04em', color: 'var(--theme-text-muted, #475569)' }}>
+              DIMENSIÓN SERVICIOS
+            </span>
             <span
               className="hud-kpi-delta"
-              style={{ color: '#F59E0B', borderColor: 'rgba(245, 158, 11, 0.44)' }}
+              style={{
+                color: '#F59E0B',
+                borderColor: '#F59E0B55',
+                background: '#F59E0B15',
+                fontWeight: 600,
+                fontSize: '0.7rem',
+                padding: '2px 8px',
+                borderRadius: '6px',
+              }}
             >
               3 componentes
             </span>
           </div>
-          <div className="hud-kpi-val-row">
-            <strong className="hud-kpi-value">
+          <div className="hud-kpi-val-row" style={{ display: 'flex', alignItems: 'baseline', gap: '0.35rem', marginTop: '0.35rem' }}>
+            <strong className="hud-kpi-value" style={{ color: '#F59E0B', fontSize: '1.9rem', fontWeight: 800 }}>
               {activeDistrito.dimension_servicios.toFixed(1).replace('.', ',')}
             </strong>
-            <span style={{ fontSize: '0.9rem', color: 'var(--theme-text-muted)', fontWeight: 600 }}>
+            <span style={{ fontSize: '0.9rem', color: 'var(--theme-text-muted, #64748B)', fontWeight: 600 }}>
               pts
             </span>
           </div>
           <span
+            className="hud-kpi-sub"
             style={{
-              fontSize: '0.74rem',
-              color: 'var(--theme-text-muted)',
+              fontSize: '0.76rem',
+              color: 'var(--theme-text-muted, #64748B)',
               marginTop: '0.2rem',
               display: 'block',
             }}
@@ -511,78 +730,124 @@ export default function IndiceScreen({
         </div>
       </section>
 
-      {/* 3. Centro: GamcMap a la izquierda + Desglose de los 7 componentes a la derecha */}
+      {/* 3. Centro: Mapa de Alta Claridad a la izquierda + Desglose de 7 componentes a la derecha */}
       <section
         style={{
           display: 'grid',
           gridTemplateColumns: '1.25fr 1fr',
-          gap: '0.75rem',
+          gap: '0.85rem',
           alignItems: 'start',
         }}
       >
-        {/* Mapa con polígonos coloreados por semáforo */}
+        {/* Mapa con CartoDB Positron / Dark Matter y Filtros tipo Pills */}
         <div
           className="hud-card"
           style={{
-            padding: '0.75rem',
+            padding: '0.85rem',
             display: 'flex',
             flexDirection: 'column',
-            gap: '0.5rem',
+            gap: '0.65rem',
+            background: 'var(--theme-card-bg, #FFFFFF)',
+            border: '1px solid var(--theme-border, #E2E8F0)',
+            borderRadius: '10px',
+            boxShadow: '0 1px 3px rgba(0,0,0,0.05)',
           }}
         >
+          {/* Fila 1 de Filtros: Filtro de Dimensión + Leyenda de Semáforo */}
           <div
             style={{
               display: 'flex',
               justifyContent: 'space-between',
               alignItems: 'center',
+              flexWrap: 'wrap',
+              gap: '0.5rem',
             }}
           >
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
-              <MapPin size={18} strokeWidth={1.75} color="var(--color-icon)" />
-              <h3 style={{ margin: 0, fontSize: '0.88rem', fontWeight: 600 }}>
-                Mapa de Distritos por Semáforo
+              <MapPin size={18} strokeWidth={2.2} color="var(--theme-accent, #0284C7)" />
+              <h3 style={{ margin: 0, fontSize: '0.9rem', fontWeight: 700, color: 'var(--theme-text-primary, #0F172A)' }}>
+                Mapa de Distritos · Semáforo Geoespacial
               </h3>
             </div>
-            <div style={{ display: 'flex', gap: '0.75rem', fontSize: '0.72rem' }}>
-              <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                <span
-                  style={{
-                    width: 10,
-                    height: 10,
-                    borderRadius: '50%',
-                    background: '#22C55E',
-                    display: 'inline-block',
-                  }}
-                />
-                Verde (67–100)
-              </span>
-              <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                <span
-                  style={{
-                    width: 10,
-                    height: 10,
-                    borderRadius: '50%',
-                    background: '#F59E0B',
-                    display: 'inline-block',
-                  }}
-                />
-                Amarillo (34–66)
-              </span>
-              <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                <span
-                  style={{
-                    width: 10,
-                    height: 10,
-                    borderRadius: '50%',
-                    background: '#EF4444',
-                    display: 'inline-block',
-                  }}
-                />
-                Rojo (1–33)
-              </span>
+
+            {/* Pills de dimensión */}
+            <div className="indice-pills-row">
+              <button
+                type="button"
+                className={`indice-pill-btn ${filtroDimension === 'general' ? 'is-active' : ''}`}
+                onClick={() => setFiltroDimension('general')}
+              >
+                Vista General (1–100)
+              </button>
+              <button
+                type="button"
+                className={`indice-pill-btn ${filtroDimension === 'ambiente' ? 'is-active' : ''}`}
+                onClick={() => setFiltroDimension('ambiente')}
+              >
+                Solo Ambiente (50%)
+              </button>
+              <button
+                type="button"
+                className={`indice-pill-btn ${filtroDimension === 'servicios' ? 'is-active' : ''}`}
+                onClick={() => setFiltroDimension('servicios')}
+              >
+                Solo Servicios (50%)
+              </button>
             </div>
           </div>
 
+          {/* Fila 2 de Filtros: Filtro por Estado de Semáforo */}
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              background: 'var(--theme-card-bg-subtle, #F8FAFC)',
+              padding: '0.35rem 0.65rem',
+              borderRadius: '8px',
+              border: '1px solid var(--theme-border, #E2E8F0)',
+              flexWrap: 'wrap',
+              gap: '0.4rem',
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', fontSize: '0.74rem', color: 'var(--theme-text-muted, #475569)', fontWeight: 600 }}>
+              <Filter size={13} />
+              <span>Filtrar semáforo:</span>
+            </div>
+
+            <div className="indice-pills-row">
+              <button
+                type="button"
+                className={`indice-pill-btn ${filtroSemaforo === 'todos' ? 'is-active' : ''}`}
+                onClick={() => setFiltroSemaforo('todos')}
+              >
+                Todos (15)
+              </button>
+              <button
+                type="button"
+                className={`indice-pill-btn pill-rojo ${filtroSemaforo === 'rojo' ? 'is-active' : ''}`}
+                onClick={() => setFiltroSemaforo('rojo')}
+              >
+                Críticos en Rojo (1–33)
+              </button>
+              <button
+                type="button"
+                className={`indice-pill-btn pill-amarillo ${filtroSemaforo === 'amarillo' ? 'is-active' : ''}`}
+                onClick={() => setFiltroSemaforo('amarillo')}
+              >
+                Alerta Amarilla (34–66)
+              </button>
+              <button
+                type="button"
+                className={`indice-pill-btn pill-verde ${filtroSemaforo === 'verde' ? 'is-active' : ''}`}
+                onClick={() => setFiltroSemaforo('verde')}
+              >
+                Óptimos en Verde (67–100)
+              </button>
+            </div>
+          </div>
+
+          {/* Contenedor del Mapa Leaflet (CartoDB Positron / Dark Matter limpio sin marcas) */}
           <GamcMap
             geojson={distritosGeoJsonStyled}
             onClickDistrito={(feat) => {
@@ -591,22 +856,29 @@ export default function IndiceScreen({
                 onSelectZone(`distrito-${dNum}`)
               }
             }}
-            capasWms={['limite_distritos']}
+            capasWms={[]}
             height="440px"
           />
 
-          <span
+          <div
             style={{
-              fontSize: '0.72rem',
-              color: 'var(--theme-text-muted)',
-              fontStyle: 'italic',
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              fontSize: '0.73rem',
+              color: 'var(--theme-text-muted, #64748B)',
             }}
           >
-            Haz clic sobre cualquier distrito para seleccionarlo y auditar sus 7 componentes.
-          </span>
+            <span>
+              ℹ️ Haz clic sobre cualquier distrito para seleccionarlo y auditar sus 7 componentes.
+            </span>
+            <span>
+              Distrito seleccionado: <strong style={{ color: 'var(--theme-text-primary, #0F172A)' }}>{activeDistrito.nombre}</strong>
+            </span>
+          </div>
         </div>
 
-        {/* Desglose de los 7 componentes del distrito */}
+        {/* Panel Derecho: 7 Componentes Ordenados de PEOR a MEJOR puntaje */}
         <div
           className="hud-card"
           style={{
@@ -614,6 +886,10 @@ export default function IndiceScreen({
             display: 'flex',
             flexDirection: 'column',
             gap: '0.65rem',
+            background: 'var(--theme-card-bg, #FFFFFF)',
+            border: '1px solid var(--theme-border, #E2E8F0)',
+            borderRadius: '10px',
+            boxShadow: '0 1px 3px rgba(0,0,0,0.05)',
           }}
         >
           <div
@@ -621,23 +897,28 @@ export default function IndiceScreen({
               display: 'flex',
               justifyContent: 'space-between',
               alignItems: 'center',
-              borderBottom: '1px solid var(--theme-border)',
-              paddingBottom: '0.45rem',
+              borderBottom: '1px solid var(--theme-border, #E2E8F0)',
+              paddingBottom: '0.5rem',
             }}
           >
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
-              <Activity size={18} strokeWidth={1.75} color="var(--color-icon)" />
-              <h3 style={{ margin: 0, fontSize: '0.88rem', fontWeight: 600 }}>
+              <Layers size={18} strokeWidth={2.2} color="var(--theme-accent, #0284C7)" />
+              <h3 style={{ margin: 0, fontSize: '0.9rem', fontWeight: 700, color: 'var(--theme-text-primary, #0F172A)' }}>
                 7 Componentes · {activeDistrito.nombre}
               </h3>
             </div>
             <span
               style={{
                 fontSize: '0.7rem',
-                color: 'var(--theme-text-muted)',
+                fontWeight: 600,
+                color: 'var(--theme-text-muted, #475569)',
+                background: 'var(--theme-card-bg-subtle, #F8FAFC)',
+                padding: '2px 8px',
+                borderRadius: '6px',
+                border: '1px solid var(--theme-border, #E2E8F0)',
               }}
             >
-              Puntaje 0 a 100
+              Orden: Peor → Mejor
             </span>
           </div>
 
@@ -645,30 +926,23 @@ export default function IndiceScreen({
             style={{
               display: 'flex',
               flexDirection: 'column',
-              gap: '0.65rem',
+              gap: '0.5rem',
+              maxHeight: '430px',
+              overflowY: 'auto',
+              paddingRight: '2px',
             }}
           >
-            {Object.entries(COMPONENT_DEFINITIONS).map(([key, def]) => {
-              const comp = activeDistrito.componentes[key] || { valor: 0, puntaje: 0 }
-              let compValor = comp.valor
-              if (
-                key === 'Habitantes por centro de salud de 1er nivel' ||
-                key === 'Habitantes por unidad educativa'
-              ) {
-                compValor = comp.valor * pobFactor
-              }
-              const puntajeRound = Math.round(comp.puntaje)
-              const barColor = getSemaphoreColor(puntajeRound)
-
+            {componentesOrdenados.map(({ key, def, valor, puntajeRound, barColor }) => {
+              const CompIcon = def.icon || Activity
               return (
                 <div
                   key={key}
+                  className="indice-comp-row"
                   style={{
-                    background: 'var(--theme-card-bg-subtle, rgba(255,255,255,0.02))',
-                    border: '1px solid var(--theme-border)',
+                    background: 'var(--theme-card-bg-subtle, #F8FAFC)',
+                    border: '1px solid var(--theme-border, #E2E8F0)',
                     borderRadius: '8px',
-                    padding: '0.55rem 0.65rem',
-                    position: 'relative',
+                    padding: '0.55rem 0.75rem',
                   }}
                 >
                   <div
@@ -683,14 +957,28 @@ export default function IndiceScreen({
                       style={{
                         display: 'flex',
                         alignItems: 'center',
-                        gap: '0.35rem',
+                        gap: '0.4rem',
                       }}
                     >
+                      <div
+                        style={{
+                          width: 22,
+                          height: 22,
+                          borderRadius: '5px',
+                          display: 'grid',
+                          placeItems: 'center',
+                          background: `${barColor}18`,
+                          color: barColor,
+                          flexShrink: 0,
+                        }}
+                      >
+                        <CompIcon size={13} strokeWidth={2.2} />
+                      </div>
                       <span
                         style={{
                           fontSize: '0.78rem',
                           fontWeight: 600,
-                          color: 'var(--theme-text-primary)',
+                          color: 'var(--theme-text-primary, #0F172A)',
                         }}
                       >
                         {def.label}
@@ -714,8 +1002,8 @@ export default function IndiceScreen({
                           size={13}
                           color={
                             activeTooltip === key
-                              ? 'var(--theme-accent)'
-                              : 'var(--color-icon)'
+                              ? 'var(--theme-accent, #0284C7)'
+                              : '#94A3B8'
                           }
                         />
                       </button>
@@ -731,23 +1019,24 @@ export default function IndiceScreen({
                       <span
                         style={{
                           fontSize: '0.75rem',
-                          color: 'var(--theme-text-muted)',
+                          color: 'var(--theme-text-muted, #475569)',
+                          fontWeight: 500,
                         }}
                       >
-                        {def.format(compValor)}
+                        {def.format(valor)}
                       </span>
                       <strong
                         style={{
-                          fontSize: '0.82rem',
+                          fontSize: '0.84rem',
                           color: barColor,
-                          fontWeight: 700,
+                          fontWeight: 800,
                         }}
                       >
                         {puntajeRound}
                         <span
                           style={{
                             fontSize: '0.68rem',
-                            color: 'var(--theme-text-muted)',
+                            color: 'var(--theme-text-muted, #64748B)',
                             fontWeight: 500,
                           }}
                         >
@@ -757,22 +1046,22 @@ export default function IndiceScreen({
                     </div>
                   </div>
 
-                  {/* Barra horizontal 0 a 100 */}
+                  {/* Barra horizontal con alta nitidez en modo claro/oscuro */}
                   <div
                     style={{
                       width: '100%',
-                      height: '6px',
-                      background: 'rgba(148, 163, 184, 0.2)',
-                      borderRadius: '3px',
+                      height: '7px',
+                      background: 'var(--theme-border, #E2E8F0)',
+                      borderRadius: '4px',
                       overflow: 'hidden',
                     }}
                   >
                     <div
                       style={{
-                        width: `${Math.max(2, Math.min(100, comp.puntaje))}%`,
+                        width: `${Math.max(3, Math.min(100, puntajeRound))}%`,
                         height: '100%',
                         background: barColor,
-                        borderRadius: '3px',
+                        borderRadius: '4px',
                         transition: 'width 0.3s ease',
                       }}
                     />
@@ -783,13 +1072,13 @@ export default function IndiceScreen({
                     <div
                       style={{
                         marginTop: '0.4rem',
-                        padding: '0.35rem 0.5rem',
+                        padding: '0.4rem 0.55rem',
                         borderRadius: '6px',
-                        background: 'var(--theme-card-bg)',
-                        border: '1px solid var(--theme-border)',
+                        background: 'var(--theme-card-bg, #FFFFFF)',
+                        border: '1px solid var(--theme-border, #CBD5E1)',
                         fontSize: '0.72rem',
-                        color: 'var(--theme-text-muted)',
-                        lineHeight: 1.35,
+                        color: 'var(--theme-text-muted, #475569)',
+                        lineHeight: 1.4,
                       }}
                     >
                       {def.help}
@@ -802,12 +1091,12 @@ export default function IndiceScreen({
         </div>
       </section>
 
-      {/* 4. Abajo: (1) Línea del índice ambiental histórico · (2) "Ajusta los pesos" */}
+      {/* 4. Abajo: (1) Gráfico Histórico 2001–2025 · (2) "Ajusta los pesos" con Presets y Badge Dinámico */}
       <section
         style={{
           display: 'grid',
           gridTemplateColumns: '1fr 1.15fr',
-          gap: '0.75rem',
+          gap: '0.85rem',
           alignItems: 'start',
         }}
       >
@@ -819,6 +1108,10 @@ export default function IndiceScreen({
             display: 'flex',
             flexDirection: 'column',
             gap: '0.6rem',
+            background: 'var(--theme-card-bg, #FFFFFF)',
+            border: '1px solid var(--theme-border, #E2E8F0)',
+            borderRadius: '10px',
+            boxShadow: '0 1px 3px rgba(0,0,0,0.05)',
           }}
         >
           <div
@@ -829,15 +1122,16 @@ export default function IndiceScreen({
             }}
           >
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
-              <TrendingUp size={18} strokeWidth={1.75} color="var(--color-icon)" />
-              <h3 style={{ margin: 0, fontSize: '0.88rem', fontWeight: 600 }}>
+              <TrendingUp size={18} strokeWidth={2.2} color="var(--theme-accent, #0284C7)" />
+              <h3 style={{ margin: 0, fontSize: '0.9rem', fontWeight: 700, color: 'var(--theme-text-primary, #0F172A)' }}>
                 Índice Ambiental Histórico (2001–2025)
               </h3>
             </div>
             <span
               style={{
                 fontSize: '0.7rem',
-                color: 'var(--theme-text-muted)',
+                color: 'var(--theme-text-muted, #475569)',
+                fontWeight: 600,
               }}
             >
               Serie anual NASA MODIS
@@ -860,14 +1154,14 @@ export default function IndiceScreen({
                       y1={y}
                       x2="480"
                       y2={y}
-                      stroke="var(--theme-border)"
+                      stroke="var(--theme-border, #E2E8F0)"
                       strokeDasharray="3,3"
                       strokeWidth="1"
                     />
                     <text
                       x="32"
                       y={y + 3}
-                      fill="var(--theme-text-muted)"
+                      fill="var(--theme-text-muted, #94A3B8)"
                       fontSize="9"
                       textAnchor="end"
                     >
@@ -885,7 +1179,7 @@ export default function IndiceScreen({
                     key={anio}
                     x={x}
                     y="215"
-                    fill="var(--theme-text-muted)"
+                    fill="var(--theme-text-muted, #94A3B8)"
                     fontSize="9"
                     textAnchor="middle"
                   >
@@ -906,7 +1200,7 @@ export default function IndiceScreen({
                 return (
                   <polyline
                     fill="none"
-                    stroke="#8A94A6"
+                    stroke="#94A3B8"
                     strokeWidth="2"
                     strokeDasharray="4,4"
                     points={points}
@@ -927,7 +1221,7 @@ export default function IndiceScreen({
                   <>
                     <polyline
                       fill="none"
-                      stroke="var(--theme-accent, #38BDF8)"
+                      stroke="var(--theme-accent, #0284C7)"
                       strokeWidth="2.5"
                       points={points}
                     />
@@ -939,8 +1233,8 @@ export default function IndiceScreen({
                           key={h.anio}
                           cx={x}
                           cy={y}
-                          r="3"
-                          fill="var(--theme-accent, #38BDF8)"
+                          r="3.5"
+                          fill="var(--theme-accent, #0284C7)"
                         >
                           <title>
                             {`Año ${h.anio}: ${h.indice_ambiental} pts (${activeDistrito.nombre})`}
@@ -961,7 +1255,7 @@ export default function IndiceScreen({
               justifyContent: 'center',
               gap: '1.2rem',
               fontSize: '0.74rem',
-              borderTop: '1px solid var(--theme-border)',
+              borderTop: '1px solid var(--theme-border, #E2E8F0)',
               paddingTop: '0.45rem',
             }}
           >
@@ -970,11 +1264,11 @@ export default function IndiceScreen({
                 style={{
                   width: 14,
                   height: 3,
-                  background: 'var(--theme-accent, #38BDF8)',
+                  background: 'var(--theme-accent, #0284C7)',
                   display: 'inline-block',
                 }}
               />
-              <strong>{activeDistrito.nombre}</strong> (
+              <strong style={{ color: 'var(--theme-text-primary, #0F172A)' }}>{activeDistrito.nombre}</strong> (
               {activeDistrito.historico?.[activeDistrito.historico.length - 1]?.indice_ambiental || 0} pts en 2025)
             </span>
             <span
@@ -982,16 +1276,16 @@ export default function IndiceScreen({
                 display: 'flex',
                 alignItems: 'center',
                 gap: '5px',
-                color: 'var(--theme-text-muted)',
+                color: 'var(--theme-text-muted, #64748B)',
               }}
             >
               <span
                 style={{
                   width: 14,
                   height: 2,
-                  background: '#8A94A6',
+                  background: '#94A3B8',
                   display: 'inline-block',
-                  borderTop: '1px dashed #8A94A6',
+                  borderTop: '1px dashed #94A3B8',
                 }}
               />
               Promedio de los 15 distritos (
@@ -1000,7 +1294,7 @@ export default function IndiceScreen({
           </div>
         </div>
 
-        {/* Panel 2: "Ajusta los pesos" y ranking interactivo */}
+        {/* Panel 2: "Ajusta los pesos" con Botones Rápidos y Badge Dinámico */}
         <div
           className="hud-card"
           style={{
@@ -1008,6 +1302,10 @@ export default function IndiceScreen({
             display: 'flex',
             flexDirection: 'column',
             gap: '0.65rem',
+            background: 'var(--theme-card-bg, #FFFFFF)',
+            border: '1px solid var(--theme-border, #E2E8F0)',
+            borderRadius: '10px',
+            boxShadow: '0 1px 3px rgba(0,0,0,0.05)',
           }}
         >
           <div
@@ -1015,37 +1313,82 @@ export default function IndiceScreen({
               display: 'flex',
               justifyContent: 'space-between',
               alignItems: 'center',
+              flexWrap: 'wrap',
+              gap: '0.5rem',
             }}
           >
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
-              <SlidersHorizontal size={18} strokeWidth={1.75} color="var(--color-icon)" />
-              <h3 style={{ margin: 0, fontSize: '0.88rem', fontWeight: 600 }}>
+              <SlidersHorizontal size={18} strokeWidth={2.2} color="var(--theme-accent, #0284C7)" />
+              <h3 style={{ margin: 0, fontSize: '0.9rem', fontWeight: 700, color: 'var(--theme-text-primary, #0F172A)' }}>
                 Ajusta los pesos de ponderación
               </h3>
             </div>
+
+            {/* Badge dinámico de distritos que cambian de color */}
+            {distritosQueCambian > 0 ? (
+              <span className="indice-shift-badge">
+                ⚠️ {distritosQueCambian} distritos cambian de semáforo
+              </span>
+            ) : (
+              <span
+                style={{
+                  fontSize: '0.7rem',
+                  color: 'var(--theme-text-muted, #64748B)',
+                  fontWeight: 600,
+                }}
+              >
+                Semáforo estable (0 cambios)
+              </span>
+            )}
+          </div>
+
+          {/* Botones de configuración rápida (Presets) */}
+          <div style={{ display: 'flex', gap: '0.45rem', flexWrap: 'wrap' }}>
+            <button
+              type="button"
+              className={`indice-preset-btn ${pesoAmbiente === 50 ? 'is-active' : ''}`}
+              onClick={() => setPesoAmbiente(50)}
+            >
+              Equilibrado (50/50)
+            </button>
+            <button
+              type="button"
+              className={`indice-preset-btn ${pesoAmbiente === 70 ? 'is-active' : ''}`}
+              onClick={() => setPesoAmbiente(70)}
+            >
+              Prioridad Climática (70/30)
+            </button>
+            <button
+              type="button"
+              className={`indice-preset-btn ${pesoAmbiente === 30 ? 'is-active' : ''}`}
+              onClick={() => setPesoAmbiente(30)}
+            >
+              Prioridad Servicios (30/70)
+            </button>
             <button
               type="button"
               onClick={resetWeights}
               className="gamc-btn-secondary"
               style={{
-                display: 'flex',
+                display: 'inline-flex',
                 alignItems: 'center',
                 gap: '0.35rem',
                 fontSize: '0.72rem',
-                padding: '0.25rem 0.6rem',
+                padding: '0.3rem 0.6rem',
+                marginLeft: 'auto',
               }}
               title="Restablecer al balance oficial 50% / 50%"
             >
-              <RotateCcw size={13} />
-              Volver a los pesos originales
+              <RotateCcw size={12} />
+              Resetear
             </button>
           </div>
 
           {/* Deslizador Ambiente ↔ Servicios */}
           <div
             style={{
-              background: 'var(--theme-card-bg-subtle, rgba(255,255,255,0.02))',
-              border: '1px solid var(--theme-border)',
+              background: 'var(--theme-card-bg-subtle, #F8FAFC)',
+              border: '1px solid var(--theme-border, #E2E8F0)',
               borderRadius: '8px',
               padding: '0.6rem 0.75rem',
             }}
@@ -1055,11 +1398,11 @@ export default function IndiceScreen({
                 display: 'flex',
                 justifyContent: 'space-between',
                 fontSize: '0.78rem',
-                fontWeight: 600,
+                fontWeight: 700,
                 marginBottom: '0.4rem',
               }}
             >
-              <span style={{ color: '#22C55E' }}>
+              <span style={{ color: '#10B981' }}>
                 Ambiente: {pesoAmbiente}%
               </span>
               <span style={{ color: '#F59E0B' }}>
@@ -1075,7 +1418,7 @@ export default function IndiceScreen({
               onChange={(e) => setPesoAmbiente(parseInt(e.target.value, 10))}
               style={{
                 width: '100%',
-                accentColor: 'var(--theme-accent, #38BDF8)',
+                accentColor: 'var(--theme-accent, #0284C7)',
                 cursor: 'pointer',
               }}
             />
@@ -1084,7 +1427,7 @@ export default function IndiceScreen({
                 display: 'flex',
                 justifyContent: 'space-between',
                 fontSize: '0.68rem',
-                color: 'var(--theme-text-muted)',
+                color: 'var(--theme-text-muted, #64748B)',
                 marginTop: '0.2rem',
               }}
             >
@@ -1094,7 +1437,7 @@ export default function IndiceScreen({
             </div>
           </div>
 
-          {/* Casillas de selección de componentes */}
+          {/* Casillas de selección de componentes individuales */}
           <div
             style={{
               display: 'grid',
@@ -1120,15 +1463,15 @@ export default function IndiceScreen({
                     padding: '2px 0',
                     cursor: 'pointer',
                     color: isChecked
-                      ? 'var(--theme-text-primary)'
-                      : 'var(--theme-text-muted)',
+                      ? 'var(--theme-text-primary, #0F172A)'
+                      : 'var(--theme-text-muted, #94A3B8)',
                     textAlign: 'left',
                   }}
                 >
                   {isChecked ? (
-                    <CheckSquare size={14} color="var(--theme-accent, #38BDF8)" />
+                    <CheckSquare size={14} color="var(--theme-accent, #0284C7)" />
                   ) : (
-                    <Square size={14} color="var(--color-icon)" />
+                    <Square size={14} color="#94A3B8" />
                   )}
                   <span style={{ textDecoration: isChecked ? 'none' : 'line-through' }}>
                     {def.label}
@@ -1138,12 +1481,12 @@ export default function IndiceScreen({
             })}
           </div>
 
-          {/* Tabla de Ranking recalculada */}
+          {/* Tabla de Ranking recalculada en tiempo real */}
           <div
             style={{
               maxHeight: '160px',
               overflowY: 'auto',
-              border: '1px solid var(--theme-border)',
+              border: '1px solid var(--theme-border, #E2E8F0)',
               borderRadius: '6px',
             }}
           >
@@ -1157,18 +1500,19 @@ export default function IndiceScreen({
               <thead>
                 <tr
                   style={{
-                    background: 'var(--theme-card-bg-subtle, rgba(255,255,255,0.04))',
-                    borderBottom: '1px solid var(--theme-border)',
-                    color: 'var(--color-icon)',
+                    background: 'var(--theme-card-bg-subtle, #F8FAFC)',
+                    borderBottom: '1px solid var(--theme-border, #E2E8F0)',
+                    color: 'var(--theme-text-muted, #475569)',
                     textAlign: 'left',
+                    fontWeight: 700,
                   }}
                 >
-                  <th style={{ padding: '4px 6px' }}>#</th>
-                  <th style={{ padding: '4px 6px' }}>Distrito</th>
-                  <th style={{ padding: '4px 6px', textAlign: 'right' }}>Amb.</th>
-                  <th style={{ padding: '4px 6px', textAlign: 'right' }}>Serv.</th>
-                  <th style={{ padding: '4px 6px', textAlign: 'right' }}>Nota</th>
-                  <th style={{ padding: '4px 6px', textAlign: 'center' }}>Var.</th>
+                  <th style={{ padding: '5px 7px' }}>#</th>
+                  <th style={{ padding: '5px 7px' }}>Distrito</th>
+                  <th style={{ padding: '5px 7px', textAlign: 'right' }}>Amb.</th>
+                  <th style={{ padding: '5px 7px', textAlign: 'right' }}>Serv.</th>
+                  <th style={{ padding: '5px 7px', textAlign: 'right' }}>Nota</th>
+                  <th style={{ padding: '5px 7px', textAlign: 'center' }}>Var.</th>
                 </tr>
               </thead>
               <tbody>
@@ -1182,15 +1526,15 @@ export default function IndiceScreen({
                       onClick={() => onSelectZone && onSelectZone(`distrito-${d.id}`)}
                       style={{
                         cursor: 'pointer',
-                        borderBottom: '1px solid var(--theme-border)',
+                        borderBottom: '1px solid var(--theme-border, #E2E8F0)',
                         background: isCurrent
-                          ? 'var(--theme-accent-subtle, rgba(56, 189, 248, 0.12))'
+                          ? 'rgba(2, 132, 199, 0.1)'
                           : 'transparent',
                         fontWeight: isCurrent ? 700 : 400,
                       }}
                     >
-                      <td style={{ padding: '3px 6px' }}>{d.nuevoRanking}</td>
-                      <td style={{ padding: '3px 6px' }}>
+                      <td style={{ padding: '4px 7px' }}>{d.nuevoRanking}</td>
+                      <td style={{ padding: '4px 7px' }}>
                         <span
                           style={{
                             display: 'inline-block',
@@ -1203,17 +1547,17 @@ export default function IndiceScreen({
                         />
                         {d.nombre}
                       </td>
-                      <td style={{ padding: '3px 6px', textAlign: 'right' }}>
+                      <td style={{ padding: '4px 7px', textAlign: 'right' }}>
                         {d.dimAmbCalc}
                       </td>
-                      <td style={{ padding: '3px 6px', textAlign: 'right' }}>
+                      <td style={{ padding: '4px 7px', textAlign: 'right' }}>
                         {d.dimServCalc}
                       </td>
                       <td
                         style={{
-                          padding: '3px 6px',
+                          padding: '4px 7px',
                           textAlign: 'right',
-                          fontWeight: 700,
+                          fontWeight: 800,
                           color: dotColor,
                         }}
                       >
@@ -1221,15 +1565,16 @@ export default function IndiceScreen({
                       </td>
                       <td
                         style={{
-                          padding: '3px 6px',
+                          padding: '4px 7px',
                           textAlign: 'center',
                           fontSize: '0.68rem',
+                          fontWeight: 700,
                           color:
                             d.deltaRanking > 0
-                              ? '#22C55E'
+                              ? '#10B981'
                               : d.deltaRanking < 0
                               ? '#EF4444'
-                              : 'var(--theme-text-muted)',
+                              : 'var(--theme-text-muted, #64748B)',
                         }}
                       >
                         {d.deltaRanking > 0
@@ -1247,28 +1592,28 @@ export default function IndiceScreen({
           {rankingItem && (
             <span
               style={{
-                fontSize: '0.7rem',
-                color: 'var(--theme-text-muted)',
+                fontSize: '0.72rem',
+                color: 'var(--theme-text-muted, #64748B)',
                 fontStyle: 'italic',
               }}
             >
-              Con esta configuración, {rankingItem.nombre} queda en el puesto {rankingItem.nuevoRanking} de 15 ({rankingItem.nuevoIndice} pts).
+              Con esta ponderación, {rankingItem.nombre} queda en el puesto {rankingItem.nuevoRanking} de 15 ({rankingItem.nuevoIndice} pts).
             </span>
           )}
         </div>
       </section>
 
-      {/* 5. Aviso metodológico único */}
+      {/* 5. Aviso metodológico */}
       <footer style={{ marginTop: '0.4rem', textAlign: 'center' }}>
         <p
           style={{
             margin: 0,
             fontSize: '0.78rem',
-            color: 'var(--theme-text-muted)',
+            color: 'var(--theme-text-muted, #64748B)',
             fontStyle: 'italic',
           }}
         >
-          Cada componente compara a los 15 distritos entre sí: 100 es el mejor distrito y 0 el peor.
+          Cada componente normaliza a los 15 distritos entre sí (0 a 100). Fuente: NASA MODIS LST/NDVI (2001–2025) y Cartografía GAMC 2024.
         </p>
       </footer>
     </div>

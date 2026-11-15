@@ -61,8 +61,8 @@ export function EvidenceValidationScreen({
 
         <div className="neo-pipeline-6grid">
           {[
-            { step: '01 FUENTE', name: 'S2 MSI + L9 TIRS', sub: '10m / 30m Público', col: '#65C8F2', pct: 95 },
-            { step: '02 PROCESO', name: 'Máscara QA / SCL', sub: 'Filtro nubes/sombras', col: '#43A875', pct: activeZone.validCoverage },
+            { step: '01 FUENTE', name: 'S2 MSI + L9 TIRS', sub: '10m / 30m Público', col: '#00BEFC', pct: 95 },
+            { step: '02 PROCESO', name: 'Máscara QA / SCL', sub: 'Filtro nubes/sombras', col: '#5CEA00', pct: activeZone.validCoverage },
             { step: '03 MÉTODO', name: 'Sen + Spearman', sub: 'No paramétrico', col: '#8875D8', pct: 90 },
             { step: '04 RESULTADO', name: `${activeZone.lstIllustrative}°C · ${activeZone.ndviIllustrative}`, sub: activeZone.evidenceLevel, col: '#FFCB73', pct: 84 },
             { step: '05 VALIDACIÓN', name: 'In-Situ Pendiente', sub: 'LST ≠ Temp. Aire', col: '#F28B50', pct: 46 },
@@ -107,7 +107,7 @@ export function EvidenceValidationScreen({
                 <NeonRadarChart
                   metrics={[activeZone.validCoverage, 88, 92, 46, 82]}
                   axes={['ESPACIAL', 'TEMPORAL', 'RADIOMET.', 'CAMPO', 'CONSIST.']}
-                  accent="#65C8F2"
+                  accent="#00BEFC"
                 />
               </article>
 
@@ -122,7 +122,7 @@ export function EvidenceValidationScreen({
                   </div>
                   <div className="neo-zone-bar-item" onClick={() => onSelectZone('tunari-norte')}>
                     <div className="neo-zb-head">
-                      <strong style={{ color: '#65C8F2' }}>Prioridad #2: Ladera Tunari</strong>
+                      <strong style={{ color: '#00BEFC' }}>Prioridad #2: Ladera Tunari</strong>
                       <span>Pluviómetro / Humedad</span>
                     </div>
                   </div>
@@ -140,12 +140,12 @@ export function EvidenceValidationScreen({
               </div>
 
               <div className="neo-4state-grid">
-                <div className="neo-state-box" style={{ borderColor: '#65C8F255' }}>
-                  <strong style={{ color: '#65C8F2' }}>MAE / RMSE</strong>
+                <div className="neo-state-box" style={{ borderColor: '#00BEFC55' }}>
+                  <strong style={{ color: '#00BEFC' }}>MAE / RMSE</strong>
                   <span>Pendiente Red MÓNICA</span>
                 </div>
-                <div className="neo-state-box" style={{ borderColor: '#43A87555' }}>
-                  <strong style={{ color: '#43A875' }}>R² / Sesgo</strong>
+                <div className="neo-state-box" style={{ borderColor: '#5CEA0055' }}>
+                  <strong style={{ color: '#5CEA00' }}>R² / Sesgo</strong>
                   <span>Separación Train/Val</span>
                 </div>
                 <div className="neo-state-box" style={{ borderColor: '#8875D855' }}>
@@ -254,9 +254,9 @@ export function DataManagementScreen() {
 
         <div className="neo-pipeline-6grid">
           {[
-            { step: '1. FUENTE', name: '12 Catálogos', sub: 'NASA · ESA · GAMC', col: '#65C8F2', pct: 92 },
+            { step: '1. FUENTE', name: '12 Catálogos', sub: 'NASA · ESA · GAMC', col: '#00BEFC', pct: 92 },
             { step: '2. ADQUISICIÓN', name: 'GEE / STAC API', sub: 'En integración', col: '#38BDF8', pct: 80 },
-            { step: '3. CALIDAD QA', name: 'Cloud & Shadow', sub: 'QA_PIXEL / SCL', col: '#43A875', pct: 94 },
+            { step: '3. CALIDAD QA', name: 'Cloud & Shadow', sub: 'QA_PIXEL / SCL', col: '#5CEA00', pct: 94 },
             { step: '4. PROCESO', name: 'NDVI · LST · DEM', sub: 'UTM 19S / WGS84', col: '#8875D8', pct: 88 },
             { step: '5. RASTER DB', name: 'PostGIS / COG', sub: 'Cola en espera', col: '#FFCB73', pct: 65 },
             { step: '6. ANÁLISIS', name: 'PySAL / SciPy', sub: 'Reproducible', col: '#F28B50', pct: 85 },
@@ -333,7 +333,7 @@ export function DataManagementScreen() {
             {[
               { id: 'ALG-01', t: 'Theil-Sen + Mann-Kendall', st: 'Configurado · SciPy', col: '#F28B50' },
               { id: 'ALG-02', t: 'Autocorrelación Moran / LISA', st: 'Configurado · PySAL', col: '#8875D8' },
-              { id: 'ALG-03', t: 'Detección Quiebres Ruptures', st: 'En espera backend', col: '#65C8F2' },
+              { id: 'ALG-03', t: 'Detección Quiebres Ruptures', st: 'En espera backend', col: '#00BEFC' },
               { id: 'ALG-04', t: 'Recorte Oficial 15 Distritos', st: 'Pendiente GeoJSON GAMC', col: '#FFCB73' },
             ].map((a) => (
               <div key={a.id} className="neo-anomaly-card">
@@ -439,8 +439,8 @@ export function PlanningScenariosScreen({
 
               <div className="neo-sliders-stack">
                 {[
-                  { label: '🌳 Arbolado & Corredores Verdes', val: treesPct, set: setTreesPct, col: '#43A875', u: '%' },
-                  { label: '🏠 Techos Reflectantes (Alto Albedo)', val: coolRoofsPct, set: setCoolRoofsPct, col: '#65C8F2', u: '%' },
+                  { label: '🌳 Arbolado & Corredores Verdes', val: treesPct, set: setTreesPct, col: '#5CEA00', u: '%' },
+                  { label: '🏠 Techos Reflectantes (Alto Albedo)', val: coolRoofsPct, set: setCoolRoofsPct, col: '#00BEFC', u: '%' },
                   { label: '📐 Superficie Intervenida', val: corridorHa, set: setCorridorHa, col: '#8875D8', u: ' ha' },
                 ].map((s) => (
                   <div key={s.label} className="neo-slider-box">
@@ -470,7 +470,7 @@ export function PlanningScenariosScreen({
                 ]}
                 baseline={activeZone.radarMetrics}
                 axes={['VERDOR', 'CARGA TÉRM.', 'QA DATOS', 'MITIGACIÓN', 'ABSORCIÓN']}
-                accent="#43A875"
+                accent="#5CEA00"
               />
             </article>
 
@@ -514,7 +514,7 @@ export function PlanningScenariosScreen({
                 <polygon
                   points="160,105 288,152 160,198 32,152"
                   fill="#13233F"
-                  stroke="#65C8F2"
+                  stroke="#00BEFC"
                   strokeWidth="1.5"
                 />
                 {/* Corredor verde isométrico central */}
@@ -561,7 +561,7 @@ export function PlanningScenariosScreen({
                         cx={tx}
                         cy={ty - 16}
                         r={6 + (treesPct % 4)}
-                        fill="#43A875"
+                        fill="#5CEA00"
                         style={{ filter: 'drop-shadow(0 0 6px rgba(67,168,117,0.8))' }}
                       />
                     </g>
@@ -579,8 +579,8 @@ export function PlanningScenariosScreen({
           <div className="neo-anomaly-4grid">
             {[
               { name: '0. Referencia Actual', sup: '0 ha', ben: 'Base observada', inc: 'Observación satelital', col: '#94A3B8' },
-              { name: 'Escenario A · Corredor Verde', sup: `${corridorHa} ha`, ben: ` Conectividad +${treesPct}%`, inc: 'Requiere censo arbóreo', col: '#43A875' },
-              { name: 'Escenario B · Techos Albedo', sup: `${Math.round(corridorHa * 0.7)} ha`, ben: `Reflectancia +${coolRoofsPct}%`, inc: 'Requiere catastro techos', col: '#65C8F2' },
+              { name: 'Escenario A · Corredor Verde', sup: `${corridorHa} ha`, ben: ` Conectividad +${treesPct}%`, inc: 'Requiere censo arbóreo', col: '#5CEA00' },
+              { name: 'Escenario B · Techos Albedo', sup: `${Math.round(corridorHa * 0.7)} ha`, ben: `Reflectancia +${coolRoofsPct}%`, inc: 'Requiere catastro techos', col: '#00BEFC' },
               { name: 'Combinado Integral', sup: `${Math.round(corridorHa * 1.4)} ha`, ben: `Índice Mitigación ${mitigationScore}/100`, inc: 'Simulación multicriterio', col: '#8875D8' },
             ].map((sc) => (
               <div key={sc.name} className="neo-anomaly-card" style={{ borderTop: `2px solid ${sc.col}` }}>
@@ -605,8 +605,8 @@ export function PlanningScenariosScreen({
             <div className="neo-sliders-stack">
               {[
                 { label: '🔥 Exposición Térmica (w₁)', val: wThermal, set: setWThermal, col: '#F28B50' },
-                { label: '🌿 Déficit de Vegetación (w₂)', val: wVegDeficit, set: setWVegDeficit, col: '#43A875' },
-                { label: '👥 Exposición Poblacional (w₃)', val: wPop, set: setWPop, col: '#65C8F2' },
+                { label: '🌿 Déficit de Vegetación (w₂)', val: wVegDeficit, set: setWVegDeficit, col: '#5CEA00' },
+                { label: '👥 Exposición Poblacional (w₃)', val: wPop, set: setWPop, col: '#00BEFC' },
                 { label: '📡 Necesidad de Medición / Vacíos (w₄)', val: wDataGap, set: setWDataGap, col: '#8875D8' },
               ].map((s) => (
                 <div key={s.label} className="neo-slider-box">

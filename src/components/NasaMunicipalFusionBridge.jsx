@@ -30,7 +30,7 @@ const NASA_SATELLITES = [
     band: 'Banda 4 (Rojo) + Banda 8 (NIR Cercano)',
     resolution: '10m Alta Resolución Espacial',
     variable: 'Huella Verde · Vigor Fotosintético (NDVI)',
-    color: '#43A875',
+    color: '#5CEA00',
     glow: 'rgba(67, 168, 117, 0.35)',
     impact: 'Monitorea corredores ecológicos (Río Rocha, Parque Tunari, Laguna Alalay) a escala de cuadra.',
   },
@@ -41,7 +41,7 @@ const NASA_SATELLITES = [
     band: 'Interferometría Radar Banda C + Reanálisis',
     resolution: '30m Relieve · Gradiente Altitudinal',
     variable: 'Elevación (2,500m – 4,500m), Pendiente y Viento',
-    color: '#65C8F2',
+    color: '#00BEFC',
     glow: 'rgba(101, 200, 242, 0.35)',
     impact: 'Corrige el efecto altitudinal del valle para no confundir altura topográfica con anomalía térmica.',
   },
@@ -63,7 +63,7 @@ const ALCALDIA_APIS = [
     name: 'Distritos, Subalcaldías y Morfología Urbana',
     endpoint: 'GET /api/v1/gamc/geodistritos-h3',
     layer: '6 Subalcaldías · 15 Distritos · Impermeabilización',
-    color: '#65C8F2',
+    color: '#00BEFC',
     syncDesc: 'Cruza cada píxel satelital con límites administrativos reales para priorizar gestión municipal.',
   },
   {
@@ -72,7 +72,7 @@ const ALCALDIA_APIS = [
     name: 'Inventario de Arbolado, Parques y Río Rocha',
     endpoint: 'GET /api/v1/gamc/huella-verde-urbana',
     layer: 'Áreas Verdes, Corredores Riparios y Forestación',
-    color: '#43A875',
+    color: '#5CEA00',
     syncDesc: 'Vincula la respuesta espectral NDVI con parques municipales para auditar pérdida o recuperación.',
   },
   {
@@ -162,7 +162,7 @@ export function NasaMunicipalFusionBridge() {
               <span style={{ color: 'var(--color-gray)', display: 'block', fontSize: '0.62rem' }}>
                 ALTITUD MEDIA VALLE
               </span>
-              <strong style={{ color: '#65C8F2' }}>2,558 m s.n.m.</strong>
+              <strong style={{ color: '#00BEFC' }}>2,558 m s.n.m.</strong>
             </div>
             <div style={{ width: 1, backgroundColor: 'rgba(245,247,252,0.14)' }} />
             <div>
@@ -266,7 +266,7 @@ export function NasaMunicipalFusionBridge() {
                 </linearGradient>
                 <linearGradient id="apiBeamGrad" x1="1" y1="1" x2="0" y2="0">
                   <stop offset="0%" stopColor={activeApi.color} stopOpacity="0.85" />
-                  <stop offset="100%" stopColor="#65C8F2" stopOpacity="0.2" />
+                  <stop offset="100%" stopColor="#00BEFC" stopOpacity="0.2" />
                 </linearGradient>
               </defs>
 
@@ -314,8 +314,8 @@ export function NasaMunicipalFusionBridge() {
               {/* Malla Hexagonal H3 del Valle de Cochabamba en el Centro */}
               {[
                 { x: 210, y: 175, c: activeSat.color, label: 'H3 · CENTRO' },
-                { x: 172, y: 153, c: '#43A875', label: 'TUNARI' },
-                { x: 248, y: 153, c: '#65C8F2', label: 'ROCHA' },
+                { x: 172, y: 153, c: '#5CEA00', label: 'TUNARI' },
+                { x: 248, y: 153, c: '#00BEFC', label: 'ROCHA' },
                 { x: 172, y: 197, c: '#FFCB73', label: 'CALATAYUD' },
                 { x: 248, y: 197, c: '#D95757', label: 'SUR / ITOCTA' },
                 { x: 210, y: 132, c: '#8BCB9A', label: 'NORTE' },
@@ -391,7 +391,7 @@ export function NasaMunicipalFusionBridge() {
 
           {/* COLUMNA DERECHA: APIs ALCALDÍA DE COCHABAMBA */}
           <div className="fusion-column">
-            <div className="fusion-col-header" style={{ borderColor: '#43A875' }}>
+            <div className="fusion-col-header" style={{ borderColor: '#5CEA00' }}>
               <span style={{ color: '#8BCB9A', fontFamily: 'var(--font-mono)', fontSize: '0.72rem', fontWeight: 700 }}>
                 02 · SEGMENTO TERRESTRE (APIs ALCALDÍA GAMC)
               </span>
