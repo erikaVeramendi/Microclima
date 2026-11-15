@@ -535,12 +535,15 @@ export default function GamcMap({
             feature?.properties?.fillColor ||
             feature?.properties?.color ||
             '#06B6D4'
+          const borderColor = feature?.properties?.borderColor || (isSelected ? '#0284C7' : '#1E293B')
+          const borderWidth = feature?.properties?.borderWidth ?? (isSelected ? 4 : 2)
+          const fillOpacity = feature?.properties?.fillOpacity ?? (isSelected ? 0.85 : 0.75)
           return {
-            color: isSelected ? '#38BDF8' : '#64748B',
-            weight: isSelected ? 2.5 : 1.2,
-            opacity: 0.8,
+            color: borderColor,
+            weight: borderWidth,
+            opacity: 1,
             fillColor: fillColor,
-            fillOpacity: isSelected ? 0.45 : 0.25,
+            fillOpacity: fillOpacity,
           }
         },
         onEachFeature: (feature, layer) => {
@@ -550,7 +553,13 @@ export default function GamcMap({
               onClickDistrito(feature, layer)
             })
           }
-          if (feature.properties?.labelPermanent) {
+          if (feature.properties?.customTooltipHtml) {
+            layer.bindTooltip(feature.properties.customTooltipHtml, {
+              sticky: true,
+              direction: 'top',
+              className: 'district-rich-tooltip',
+            })
+          } else if (feature.properties?.labelPermanent) {
             layer.bindTooltip(
               String(feature.properties.labelPermanent),
               { permanent: true, direction: 'center', className: 'district-index-badge' }
@@ -626,8 +635,8 @@ export default function GamcMap({
       {/* Contenedor del mapa Leaflet */}
       <div ref={mapContainerRef} className="gamc-map-instance" />
 
-      {/* Aviso discreto si la clave WMS de la Alcaldía no está configurada */}
-      {!hasValidKey && (
+      {/* Selector de capas WMS solo visible si hay capas WMS habilitadas explícitamente */}
+      {capasWms && capasWms.length > 0 && !hasValidKey && (
         <div className="gamc-no-key-badge">
           <AlertCircle size={14} strokeWidth={1.75} />
           <span>Capas de la Alcaldía no configuradas (usando respaldo local)</span>
@@ -635,7 +644,8 @@ export default function GamcMap({
       )}
 
       {/* Panel flotante de capas oficiales GAMC */}
-      <div className="gamc-layers-panel">
+      {capasWms && capasWms.length > 0 && (
+        <div className="gamc-layers-panel">
         <button
           type="button"
           className="gamc-layers-toggle-btn"
@@ -734,6 +744,7 @@ export default function GamcMap({
           </div>
         )}
       </div>
+      )}
     </div>
   )
 }

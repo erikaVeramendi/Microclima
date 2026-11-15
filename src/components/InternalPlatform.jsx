@@ -343,9 +343,9 @@ export function InternalPlatform({ userSession, onLogout }) {
   const [activeModuleId, setActiveModuleId] = useState('modo-detective')
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
 
-  // 1. MODO CLARO / OSCURO con persistencia en localStorage
+  // 1. MODO CLARO / OSCURO con persistencia en localStorage (Modo Claro por defecto)
   const [theme, setTheme] = useState(() => {
-    return localStorage.getItem('microclima_theme') || 'dark'
+    return localStorage.getItem('microclima_theme') || 'light'
   })
 
   useEffect(() => {
