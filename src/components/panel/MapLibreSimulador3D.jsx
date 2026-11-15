@@ -256,8 +256,8 @@ export default function MapLibreSimulador3D({
   // Modo de cámara (3D Isométrico vs 2D Aéreo)
   const [cameraMode, setCameraMode] = useState('3d') // '3d' | '2d'
 
-  // Motor de estilo: 'openfreemap' (vector) o 'carto-raster' (raster)
-  const [styleMode, setStyleMode] = useState('openfreemap')
+  // Motor de estilo: siempre 'carto-raster' (raster público, sin API key, carga garantizada)
+  const [styleMode, setStyleMode] = useState('carto-raster')
 
   // Color de identidad
   const tipoColor = useMemo(() => {
@@ -279,7 +279,7 @@ export default function MapLibreSimulador3D({
     return () => observer.disconnect()
   }, [])
 
-  // Inicialización de MapLibre GL
+  // Inicialización de MapLibre GL — CartoDB Raster como estilo base garantizado
   useEffect(() => {
     if (!mapContainerRef.current) return
     if (mapInstanceRef.current) return
@@ -289,17 +289,10 @@ export default function MapLibreSimulador3D({
       ? [activePoint.lng, activePoint.lat]
       : [-66.158, -17.408]
 
-    // Determinar estilo inicial (OpenFreeMap vector con fallback a raster)
-    const styleUrl =
-      styleMode === 'openfreemap'
-        ? isLight
-          ? 'https://tiles.openfreemap.org/styles/liberty'
-          : 'https://tiles.openfreemap.org/styles/dark'
-        : getRasterStyle(isLight)
-
+    // Estilo raster válido version:8 — carga instantánea sin API key ni CDN externa
     const map = new Map({
       container: mapContainerRef.current,
-      style: styleUrl,
+      style: getRasterStyle(isLight),
       center: initialCenter,
       zoom: 13.5,
       pitch: cameraMode === '3d' ? 48 : 0,
@@ -308,29 +301,7 @@ export default function MapLibreSimulador3D({
       attributionControl: false,
     })
 
-    // Fallback suave si OpenFreeMap presenta timeout o error de red
-    const timeoutFallback = setTimeout(() => {
-      if (!map.isStyleLoaded() && styleMode === 'openfreemap') {
-        console.warn('Cambiando suavemente a teselas raster CartoDB HD...')
-        map.setStyle(getRasterStyle(isLight))
-        setStyleMode('carto-raster')
-      }
-    }, 3200)
-
-    map.on('error', (e) => {
-      if (
-        e.error &&
-        String(e.error.message || '').includes('tiles.openfreemap') &&
-        styleMode === 'openfreemap'
-      ) {
-        clearTimeout(timeoutFallback)
-        map.setStyle(getRasterStyle(isLight))
-        setStyleMode('carto-raster')
-      }
-    })
-
     map.on('style.load', () => {
-      clearTimeout(timeoutFallback)
       setupLayers(map, isLight)
     })
 
@@ -348,32 +319,24 @@ export default function MapLibreSimulador3D({
     ro.observe(mapContainerRef.current)
 
     return () => {
-      clearTimeout(timeoutFallback)
       ro.disconnect()
       map.remove()
       mapInstanceRef.current = null
     }
   }, [])
 
-  // Cambio de tema dinámico (Light / Dark)
+  // Cambio de tema dinámico (Light / Dark) — siempre usa CartoDB Raster
   useEffect(() => {
     const map = mapInstanceRef.current
     if (!map) return
 
     const isLight = theme === 'light'
-    const newStyle =
-      styleMode === 'openfreemap'
-        ? isLight
-          ? 'https://tiles.openfreemap.org/styles/liberty'
-          : 'https://tiles.openfreemap.org/styles/dark'
-        : getRasterStyle(isLight)
-
-    map.setStyle(newStyle)
+    map.setStyle(getRasterStyle(isLight))
     map.once('style.load', () => {
       setupLayers(map, isLight)
       updateCoverageCircle(map)
     })
-  }, [theme, styleMode])
+  }, [theme])
 
   // Configuración de capas 3D y contextuales del GAMC
   const setupLayers = useCallback(
