@@ -3,24 +3,18 @@ import {
   DATA_SOURCES_CATALOG,
 } from '../../data/internalPanelData'
 
-const MONTHS = ['ENE', 'FEB', 'MAR', 'ABR', 'MAY', 'JUN', 'JUL', 'AGO', 'SEP', 'OCT', 'NOV', 'DIC']
-
-/* =========================================================================
-   PESTAÑA 9 · PUNTOS CRÍTICOS (Transición de ResearchDiscoveryScreen)
-   Basada 100% en alertas calculadas de indice_distritos.json
-   ========================================================================= */
+// Re-exports de pantallas independientes
 import PuntosCriticosScreen from './PuntosCriticosScreen'
-export { PuntosCriticosScreen }
-export const ResearchDiscoveryScreen = PuntosCriticosScreen
-
-/* =========================================================================
-   PANTALLA 04. SENSADO VIRTUAL CON IA (Antes Evidencia y Validación)
-   "La Alcaldía tiene 2 estaciones de aire. La IA estima cómo está el aire en los 15 distritos."
-   Integra modelo Gradient Boosting validado y verdad de terreno Red MÓNICA (GAMC)
-   ========================================================================= */
 import { SensadoVirtualScreen } from './SensadoVirtualScreen'
-export { SensadoVirtualScreen }
-export const EvidenceValidationScreen = SensadoVirtualScreen
+import { SimuladorClimaticoScreen } from './SimuladorClimaticoScreen'
+import InformeScreen from './InformeScreen'
+
+export { PuntosCriticosScreen, PuntosCriticosScreen as ResearchDiscoveryScreen }
+export { SensadoVirtualScreen, SensadoVirtualScreen as EvidenceValidationScreen }
+export { SimuladorClimaticoScreen, SimuladorClimaticoScreen as PlanningScenariosScreen }
+export { InformeScreen, InformeScreen as ResearchReportsScreen }
+
+const MONTHS = ['ENE', 'FEB', 'MAR', 'ABR', 'MAY', 'JUN', 'JUL', 'AGO', 'SEP', 'OCT', 'NOV', 'DIC']
 
 /* =========================================================================
    PANTALLA 08. GESTIÓN DE DATOS
@@ -192,22 +186,3 @@ export function DataManagementScreen() {
     </div>
   )
 }
-
-/* =========================================================================
-   PANTALLA 05. SIMULADOR CLIMÁTICO (Antes Planificación y Escenarios)
-   "¿Qué pasaría con el calor del suelo si el distrito tuviera más (o menos) vegetación?"
-   Regresión lineal real: LST vs NDVI de los 15 distritos (2024), pendiente -2,72 °C / +0,10 NDVI, R² = 0,35
-   ========================================================================= */
-import SimuladorClimaticoScreen from './SimuladorClimaticoScreen'
-export { SimuladorClimaticoScreen }
-export const PlanningScenariosScreen = SimuladorClimaticoScreen
-
-/* =========================================================================
-   PANTALLA: INFORME SOCIO-AMBIENTAL DISTRITAL
-   Transformación de ResearchReportsScreen en "Informe"
-   Usa solo datos reales de: indice_distritos.json, tendencias_distritos.json,
-   internalPanelData.js, y opcionales sensado_virtual.json / lluvias_inundaciones.json
-   ========================================================================= */
-import InformeScreen from './InformeScreen'
-export { InformeScreen }
-export const ResearchReportsScreen = InformeScreen

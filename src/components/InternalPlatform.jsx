@@ -35,25 +35,25 @@ import {
   COCHABAMBA_ZONES,
   SCIENTIFIC_GLOSSARY_TERMS,
 } from '../data/internalPanelData'
+import DiagnosticoDistritalScreen from './panel/DiagnosticoDistritalScreen'
+import { DetectiveTendenciasScreen } from './panel/DetectiveTendenciasScreen'
+import { SensadoVirtualScreen } from './panel/SensadoVirtualScreen'
+import SimuladorClimaticoScreen from './panel/SimuladorClimaticoScreen'
+import IndiceScreen from './panel/IndiceScreen'
+import ComparadorScreen from './panel/ComparadorScreen'
+import CoberturaServiciosScreen from './panel/CoberturaServiciosScreen'
+import PuntosCriticosScreen from './panel/PuntosCriticosScreen'
+import PlanificacionScreen from './panel/PlanificacionScreen'
+import SimuladorEquipamientosScreen from './panel/SimuladorEquipamientosScreen'
+import InformeScreen from './panel/InformeScreen'
 import {
-  MonitoreoGeneralScreen,
   IntelligenceCenterScreen,
-  TerritorialExplorerScreen,
   VegetationIntelligenceScreen,
-  ThermalIntelligenceScreen,
   EnvironmentalRelationsScreen,
 } from './panel/ScreensPart1'
 import {
-  ResearchDiscoveryScreen,
-  EvidenceValidationScreen,
   DataManagementScreen,
-  ResearchReportsScreen,
-  PlanningScenariosScreen,
 } from './panel/ScreensPart2'
-import IndiceScreen from './panel/IndiceScreen'
-import ComparadorScreen from './panel/ComparadorScreen'
-import PlanificacionScreen from './panel/PlanificacionScreen'
-import SimuladorEquipamientosScreen from './panel/SimuladorEquipamientosScreen'
 import FloatingAiAvatar from './panel/FloatingAiAvatar'
 
 // Definición de grupos y pestañas del menú reorganizado con Paleta Oficial LlajtaLab
@@ -424,20 +424,20 @@ export function InternalPlatform({ userSession, onLogout }) {
       // ENFOQUE 1 · CLIMA URBANO
       case 'diagnostico-distrital':
       case 'monitoreo-general':
-        return <MonitoreoGeneralScreen {...commonProps} />
+        return <DiagnosticoDistritalScreen {...commonProps} />
       case 'detective-tendencias':
       case 'inteligencia-termica':
-        return <ThermalIntelligenceScreen {...commonProps} />
+        return <DetectiveTendenciasScreen {...commonProps} />
       case 'lluvias-inundaciones':
       case 'red-monica':
       case 'relaciones-ambientales':
         return <EnvironmentalRelationsScreen {...commonProps} />
       case 'sensado-virtual-ia':
       case 'evidencia-validacion':
-        return <EvidenceValidationScreen {...commonProps} />
+        return <SensadoVirtualScreen {...commonProps} />
       case 'simulador-climatico':
       case 'planificacion-escenarios':
-        return <PlanningScenariosScreen {...commonProps} />
+        return <SimuladorClimaticoScreen {...commonProps} />
 
       // ENFOQUE 2 · CIUDAD Y SERVICIOS
       case 'indice-socioambiental':
@@ -446,10 +446,10 @@ export function InternalPlatform({ userSession, onLogout }) {
         return <ComparadorScreen {...commonProps} />
       case 'cobertura-servicios':
       case 'explorador-territorial':
-        return <TerritorialExplorerScreen {...commonProps} />
+        return <CoberturaServiciosScreen {...commonProps} />
       case 'puntos-criticos':
       case 'investigacion-descubrimiento':
-        return <ResearchDiscoveryScreen {...commonProps} />
+        return <PuntosCriticosScreen {...commonProps} />
       case 'planificacion-5-anos':
       case 'planificacion-5anios':
         return <PlanificacionScreen {...commonProps} />
@@ -462,7 +462,7 @@ export function InternalPlatform({ userSession, onLogout }) {
         return <DataManagementScreen {...commonProps} />
       case 'informe':
       case 'investigaciones-informes':
-        return <ResearchReportsScreen {...commonProps} />
+        return <InformeScreen {...commonProps} />
 
       // Pantalla de vegetación se preserva por compatibilidad
       case 'inteligencia-vegetacion':

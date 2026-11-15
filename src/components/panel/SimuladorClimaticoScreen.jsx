@@ -19,9 +19,6 @@ import {
   Sliders,
   Moon,
   ChevronRight,
-  TrendingUp,
-  TrendingDown,
-  Sparkles,
 } from 'lucide-react'
 import { COCHABAMBA_ZONES } from '../../data/internalPanelData'
 import { COCHABAMBA_DISTRICT_SVGS } from '../../data/cochabambaDistrictsSvg'
@@ -92,7 +89,7 @@ function getLstColor(lst) {
 export function SimuladorClimaticoScreen({
   selectedZoneId = 'distrito-1',
   onSelectZone,
-  onNavigateModule,
+  onNavigateModule: _onNavigateModule,
 }) {
   // Deslizador de cambio de vegetación (-0.10 a +0.15 en NDVI)
   const [cambioNdvi, setCambioNdvi] = useState(0.0)

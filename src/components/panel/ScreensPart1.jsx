@@ -22,9 +22,7 @@ const YEAR_LABELS = ['19', '20', '21', '22', '23', '24', '25', '26']
    "Cómo está hoy tu distrito: calor del suelo y vegetación, medidos por satélite en 2024."
    Datos 100% reales de internalPanelData.js y tendencias_distritos.json
    ========================================================================= */
-import DiagnosticoDistritalScreen from './DiagnosticoDistritalScreen'
-export { DiagnosticoDistritalScreen }
-export const MonitoreoGeneralScreen = DiagnosticoDistritalScreen
+export { DiagnosticoDistritalScreen, DiagnosticoDistritalScreen as MonitoreoGeneralScreen } from './DiagnosticoDistritalScreen'
 
 /* =========================================================================
    PANTALLA 01. CENTRO DE INTELIGENCIA
