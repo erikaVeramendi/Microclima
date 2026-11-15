@@ -198,6 +198,36 @@ const VARIABLES_CONFIG = {
     hideMap: true,
     hideBars: true,
   },
+  focos_incendio: {
+    id: 'focos_incendio',
+    nombre: 'Focos de incendio · Parque Tunari (NASA FIRMS)',
+    grupo: 'veg_aire',
+    tipo: 'ciudad_focos',
+    key: 'tunari',
+    minYear: 2001,
+    maxYear: 2026,
+    unidad: 'focos/año',
+    unidadTotal: 'focos',
+    decimals: 2,
+    avisoKey: 'nota_focos',
+    hideMap: true,
+    hideBars: true,
+  },
+  focos_region: {
+    id: 'focos_region',
+    nombre: 'Focos de incendio · Región 150 km (NASA FIRMS)',
+    grupo: 'veg_aire',
+    tipo: 'ciudad_focos',
+    key: 'region_150km',
+    minYear: 2001,
+    maxYear: 2026,
+    unidad: 'focos/año',
+    unidadTotal: 'focos',
+    decimals: 2,
+    avisoKey: 'nota_focos',
+    hideMap: true,
+    hideBars: true,
+  },
 }
 
 // Estaciones de monitoreo continuo Red MÓNICA
@@ -283,6 +313,14 @@ export function DetectiveTendenciasScreen({
       if (!tj.ciudad || !tj.ciudad.anual) return []
       return tj.ciudad.anual.map((item) => ({
         fecha: String(item.anio),
+        valor: item[varConfig.key],
+      }))
+    }
+
+    if (varConfig.tipo === 'ciudad_focos') {
+      if (!tj.ciudad || !tj.ciudad.focos_mensual) return []
+      return tj.ciudad.focos_mensual.map((item) => ({
+        fecha: item.fecha,
         valor: item[varConfig.key],
       }))
     }
@@ -430,6 +468,7 @@ export function DetectiveTendenciasScreen({
     if (varConfig.id === 'lluvia') return tj.meta.nota_lluvia
     if (varConfig.id === 'lst_landsat') return tj.meta.nota_lst_landsat
     if (varConfig.id === 'lst_noche') return tj.meta.nota_lst_noche
+    if (varConfig.avisoKey === 'nota_focos') return tj.meta.nota_focos
     if (varConfig.tipo === 'ciudad_anual') return tj.meta.nota_ciudad
     if (varConfig.id === 'pm10') {
       return 'Datos continuos de las estaciones de calidad del aire GAMC (Red MÓNICA). La guía de la OMS recomienda no superar 45 µg/m³ en 24 horas.'
@@ -569,6 +608,8 @@ export function DetectiveTendenciasScreen({
   const targetEntityName =
     varConfig.tipo === 'estacion'
       ? `la Estación ${selectedStation}`
+      : varConfig.tipo === 'ciudad_focos'
+      ? 'la cuenca del Tunari y Cochabamba'
       : varConfig.tipo === 'ciudad_anual'
       ? 'la ciudad de Cochabamba'
       : activeZoneInfo.name
@@ -625,6 +666,8 @@ export function DetectiveTendenciasScreen({
                   <option value="ndvi">NDVI (vegetación)</option>
                   <option value="aod">AOD (polvo y humo en el aire)</option>
                   <option value="pm10">PM10 en estaciones</option>
+                  <option value="focos_incendio">Focos de incendio · Parque Tunari</option>
+                  <option value="focos_region">Focos de incendio · Región 150 km</option>
                 </optgroup>
               </select>
             </div>
@@ -649,7 +692,7 @@ export function DetectiveTendenciasScreen({
                   ))}
                 </select>
               </div>
-            ) : varConfig.tipo === 'ciudad_anual' ? (
+            ) : varConfig.tipo === 'ciudad_anual' || varConfig.tipo === 'ciudad_focos' ? (
               <div className="detective-control-field">
                 <span className="detective-control-label">
                   <MapPin size={13} color="var(--color-icon)" />
