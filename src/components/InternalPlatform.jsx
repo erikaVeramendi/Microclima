@@ -223,16 +223,16 @@ const MENU_GROUPS = [
       },
       {
         id: 'planificacion-5-anos',
-        title: '10 Planificación a 5 años',
-        shortLabel: '10 Planificación a 5 años',
+        title: '10 Planificación a 5 y 10 años (2030 – 2035)',
+        shortLabel: '10 Planificación (2030–2035)',
         icon: 'calendar',
         accent: '#818CF8',
-        aiRole: 'Planificador Quinquenal',
+        aiRole: 'Planificador Quinquenal y Decenal',
         aiGreeting:
-          'Planificación a 5 Años activa. Proyecto el crecimiento demográfico acelerado y demandas de infraestructura.',
+          'Planificación a 5 y 10 Años activa. Proyecto el crecimiento demográfico (2030–2035), saturación de equipamientos y cálculo de demanda de servicios.',
         aiPrompts: [
-          '¿Cómo crecerá la población en el sur hacia 2030?',
-          '¿Cuántos equipamientos nuevos se requerirán?',
+          '¿Cómo crecerá la población en el sur hacia 2030 y 2035?',
+          '¿Cuántos centros de salud y colegios nuevos se requerirán?',
         ],
       },
       {
