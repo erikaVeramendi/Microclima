@@ -1,0 +1,582 @@
+/* =========================================================================
+   ESTILOS DEDICADOS PARA EL SIMULADOR DE EQUIPAMIENTOS (MODO CLARO + OSCURO)
+   Pantalla 11: LlajtaLab - Enfoque 2: Ciudad y Servicios
+   Paleta: #F8FAFC (fondo), #FFFFFF (tarjetas), #E2E8F0 (bordes), #0F172A (texto)
+   Colores de tipos: Salud #DC2626, Colegios #2563EB, Parques #059669, Terrenos #0284C7.
+   ========================================================================= */
+
+.simulador-screen-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.95rem;
+}
+
+/* Modo Claro explícito predeterminado */
+[data-theme='light'] .simulador-screen-container {
+  color: #0F172A;
+}
+
+[data-theme='light'] .simulador-screen-container .sim-card,
+[data-theme='light'] .simulador-screen-container .sim-kpi-card {
+  background-color: #FFFFFF !important;
+  border-color: #E2E8F0 !important;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05), 0 1px 2px -1px rgba(0, 0, 0, 0.05) !important;
+}
+
+/* BARRA DE CONTROLES PRINCIPALES: TIPO, AÑO Y RADIO */
+.sim-controls-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.85rem;
+  flex-wrap: wrap;
+  padding: 0.85rem 1rem;
+  border-radius: 12px;
+  background: var(--theme-card-bg, #FFFFFF);
+  border: 1px solid var(--theme-border, #E2E8F0);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+[data-theme='dark'] .sim-controls-toolbar {
+  background: #1E293B;
+  border-color: rgba(56, 189, 248, 0.18);
+}
+
+.sim-control-group {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.sim-control-title {
+  font-size: 0.73rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #475569;
+}
+
+[data-theme='dark'] .sim-control-title {
+  color: #CBD5E1;
+}
+
+/* PILLS PARA SELECCIÓN DE TIPO DE EQUIPAMIENTO */
+.sim-type-pills {
+  display: flex;
+  gap: 0.35rem;
+  align-items: center;
+}
+
+.sim-type-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.35rem 0.75rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.15s ease-in-out;
+  border: 1.5px solid var(--theme-border, #E2E8F0);
+  background: var(--theme-card-bg, #FFFFFF);
+  color: #475569;
+  user-select: none;
+}
+
+[data-theme='dark'] .sim-type-btn {
+  background: rgba(15, 23, 42, 0.7);
+  border-color: rgba(56, 189, 248, 0.2);
+  color: #94A3B8;
+}
+
+.sim-type-btn:hover {
+  transform: translateY(-1px);
+}
+
+.sim-type-btn.type-salud.is-active,
+[data-theme='light'] .sim-type-btn.type-salud.is-active {
+  background: #DC2626 !important;
+  border-color: #B91C1C !important;
+  color: #FFFFFF !important;
+  font-weight: 800 !important;
+  box-shadow: 0 3px 10px rgba(220, 38, 38, 0.35);
+}
+
+.sim-type-btn.type-salud.is-active span,
+[data-theme='light'] .sim-type-btn.type-salud.is-active span,
+.sim-type-btn.type-salud.is-active svg {
+  color: #FFFFFF !important;
+  stroke: #FFFFFF !important;
+  font-weight: 800 !important;
+}
+
+.sim-type-btn.type-colegio.is-active,
+[data-theme='light'] .sim-type-btn.type-colegio.is-active {
+  background: #2563EB !important;
+  border-color: #1D4ED8 !important;
+  color: #FFFFFF !important;
+  font-weight: 800 !important;
+  box-shadow: 0 3px 10px rgba(37, 99, 235, 0.35);
+}
+
+.sim-type-btn.type-colegio.is-active span,
+[data-theme='light'] .sim-type-btn.type-colegio.is-active span,
+.sim-type-btn.type-colegio.is-active svg {
+  color: #FFFFFF !important;
+  stroke: #FFFFFF !important;
+  font-weight: 800 !important;
+}
+
+.sim-type-btn.type-parque.is-active,
+[data-theme='light'] .sim-type-btn.type-parque.is-active {
+  background: #059669 !important;
+  border-color: #047857 !important;
+  color: #FFFFFF !important;
+  font-weight: 800 !important;
+  box-shadow: 0 3px 10px rgba(5, 150, 105, 0.35);
+}
+
+.sim-type-btn.type-parque.is-active span,
+[data-theme='light'] .sim-type-btn.type-parque.is-active span,
+.sim-type-btn.type-parque.is-active svg {
+  color: #FFFFFF !important;
+  stroke: #FFFFFF !important;
+  font-weight: 800 !important;
+}
+
+/* PILLS DE AÑO DE CÁLCULO */
+.sim-year-pills {
+  display: inline-flex;
+  background: #F1F5F9;
+  border-radius: 8px;
+  padding: 2px;
+  border: 1px solid #E2E8F0;
+}
+
+[data-theme='dark'] .sim-year-pills {
+  background: rgba(15, 23, 42, 0.7);
+  border-color: rgba(56, 189, 248, 0.2);
+}
+
+.sim-year-btn {
+  padding: 0.25rem 0.65rem;
+  font-size: 0.73rem;
+  font-weight: 600;
+  border-radius: 6px;
+  border: none;
+  background: transparent;
+  color: #64748B;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+[data-theme='dark'] .sim-year-btn {
+  color: #94A3B8;
+}
+
+.sim-year-btn.is-active,
+[data-theme='light'] .sim-year-btn.is-active,
+[data-theme='dark'] .sim-year-btn.is-active {
+  background: #0284C7 !important;
+  color: #FFFFFF !important;
+  font-weight: 800 !important;
+  box-shadow: 0 2px 6px rgba(2, 132, 199, 0.25);
+}
+
+.sim-year-btn.is-active span,
+[data-theme='light'] .sim-year-btn.is-active span {
+  color: #FFFFFF !important;
+  font-weight: 800 !important;
+}
+
+/* GRID PRINCIPAL: MAPA INTERACTIVO (1.3) Y PANEL DE IMPACTO (1) */
+.sim-main-grid {
+  display: grid;
+  grid-template-columns: 1.35fr 1fr;
+  gap: 0.85rem;
+  align-items: stretch;
+}
+
+@media (max-width: 1024px) {
+  .sim-main-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* CARD DEL MAPA */
+.sim-map-card {
+  padding: 0.75rem;
+  border-radius: 12px;
+  background: var(--theme-card-bg, #FFFFFF);
+  border: 1px solid var(--theme-border, #E2E8F0);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+[data-theme='dark'] .sim-map-card {
+  background: #1E293B;
+  border-color: rgba(56, 189, 248, 0.18);
+}
+
+.sim-map-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.sim-map-title-box h3 {
+  margin: 0;
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: #0F172A;
+}
+
+[data-theme='dark'] .sim-map-title-box h3 {
+  color: #F8FAFC;
+}
+
+/* TOP 10 CANDIDATOS BARRA DE PILLS */
+.sim-candidates-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  flex-wrap: wrap;
+  padding: 0.45rem 0.65rem;
+  border-radius: 8px;
+  background: #F8FAFC;
+  border: 1px solid var(--theme-border, #E2E8F0);
+}
+
+[data-theme='dark'] .sim-candidates-bar {
+  background: rgba(15, 23, 42, 0.6);
+  border-color: rgba(56, 189, 248, 0.15);
+}
+
+.sim-candidate-pill {
+  padding: 0.2rem 0.5rem;
+  font-size: 0.7rem;
+  font-weight: 700;
+  border-radius: 6px;
+  border: 1px solid var(--theme-border, #E2E8F0);
+  background: var(--theme-card-bg, #FFFFFF);
+  color: #475569;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  font-family: var(--font-mono, monospace);
+}
+
+[data-theme='dark'] .sim-candidate-pill {
+  background: rgba(15, 23, 42, 0.8);
+  border-color: rgba(56, 189, 248, 0.2);
+  color: #CBD5E1;
+}
+
+.sim-candidate-pill:hover {
+  border-color: #0284C7;
+  color: #0284C7;
+}
+
+.sim-candidate-pill.is-active,
+[data-theme='light'] .sim-candidate-pill.is-active {
+  background: #0284C7 !important;
+  color: #FFFFFF !important;
+  font-weight: 800 !important;
+  border-color: #0284C7 !important;
+  box-shadow: 0 2px 6px rgba(2, 132, 199, 0.3);
+}
+
+.sim-candidate-pill.is-active span,
+[data-theme='light'] .sim-candidate-pill.is-active span,
+.sim-candidate-pill.is-active svg {
+  color: #FFFFFF !important;
+  font-weight: 800 !important;
+}
+
+/* LEYENDA DEL SIMULADOR */
+.sim-map-legend {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+  padding: 0.35rem 0.2rem 0;
+  font-size: 0.72rem;
+  color: #475569;
+}
+
+[data-theme='dark'] .sim-map-legend {
+  color: #94A3B8;
+}
+
+/* PANEL DERECHO DE IMPACTO ESTIMADO Y AUDITORÍA */
+.sim-impact-card {
+  padding: 0.85rem 1rem;
+  border-radius: 12px;
+  background: var(--theme-card-bg, #FFFFFF);
+  border: 1px solid var(--theme-border, #E2E8F0);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+[data-theme='dark'] .sim-impact-card {
+  background: #1E293B;
+  border-color: rgba(56, 189, 248, 0.18);
+}
+
+.sim-impact-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--theme-border, #E2E8F0);
+  padding-bottom: 0.45rem;
+}
+
+[data-theme='dark'] .sim-impact-header {
+  border-color: rgba(56, 189, 248, 0.15);
+}
+
+/* KPI PRINCIPAL: PERSONAS QUE GANAN COBERTURA */
+.sim-kpi-main-box {
+  padding: 0.85rem 1rem;
+  border-radius: 10px;
+  background: #F0F9FF;
+  border: 1px solid #BAE6FD;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+[data-theme='dark'] .sim-kpi-main-box {
+  background: rgba(2, 132, 199, 0.15);
+  border-color: rgba(56, 189, 248, 0.3);
+}
+
+.sim-kpi-main-val {
+  font-size: 1.85rem;
+  font-weight: 800;
+  font-family: var(--font-mono, monospace);
+  color: #0284C7;
+  line-height: 1.1;
+}
+
+[data-theme='dark'] .sim-kpi-main-val {
+  color: #38BDF8;
+}
+
+/* INDICADORES DE COBERTURA Y CONGESTIÓN */
+.sim-impact-metrics-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.sim-metric-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 0.65rem;
+  border-radius: 7px;
+  background: #F8FAFC;
+  border: 1px solid var(--theme-border, #E2E8F0);
+  font-size: 0.75rem;
+}
+
+[data-theme='dark'] .sim-metric-row {
+  background: rgba(15, 23, 42, 0.6);
+  border-color: rgba(56, 189, 248, 0.15);
+}
+
+/* SECCIÓN: AUDITORÍA CLIMÁTICA Y DE RIESGO */
+.sim-audit-card {
+  padding: 0.75rem 0.85rem;
+  border-radius: 9px;
+  background: #F8FAFC;
+  border: 1px solid var(--theme-border, #E2E8F0);
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+[data-theme='dark'] .sim-audit-card {
+  background: rgba(15, 23, 42, 0.6);
+  border-color: rgba(56, 189, 248, 0.15);
+}
+
+.sim-audit-title {
+  font-size: 0.73rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #475569;
+  letter-spacing: 0.04em;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+[data-theme='dark'] .sim-audit-title {
+  color: #CBD5E1;
+}
+
+.sim-audit-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.45rem;
+  font-size: 0.74rem;
+  line-height: 1.35;
+}
+
+.sim-audit-badge {
+  font-size: 0.65rem;
+  font-weight: 700;
+  padding: 0.12rem 0.45rem;
+  border-radius: 4px;
+  flex-shrink: 0;
+  text-transform: uppercase;
+}
+
+.sim-audit-badge.badge-safe {
+  background: #D1FAE5;
+  color: #059669;
+}
+
+.sim-audit-badge.badge-warn {
+  background: #FEF9C3;
+  color: #A16207;
+}
+
+.sim-audit-badge.badge-danger {
+  background: #FEE2E2;
+  color: #DC2626;
+}
+
+/* BOTÓN DE GUARDAR Y COMPARAR (ALTO CONTRASTE BLANCO PURO) */
+.sim-btn-save,
+[data-theme='light'] .sim-btn-save {
+  width: 100%;
+  padding: 0.65rem;
+  border-radius: 8px;
+  border: 1.5px solid #0284C7;
+  background: #0284C7 !important;
+  color: #FFFFFF !important;
+  font-size: 0.78rem;
+  font-weight: 800 !important;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  transition: all 0.15s ease;
+  box-shadow: 0 2px 6px rgba(2, 132, 199, 0.25);
+}
+
+.sim-btn-save span,
+[data-theme='light'] .sim-btn-save span,
+.sim-btn-save svg {
+  color: #FFFFFF !important;
+  stroke: #FFFFFF !important;
+  font-weight: 800 !important;
+}
+
+.sim-btn-save:hover {
+  background: #0369A1 !important;
+  border-color: #0369A1 !important;
+  box-shadow: 0 4px 12px rgba(2, 132, 199, 0.35);
+}
+
+/* BANNER DE VEREDICTO DE VIABILIDAD EN EL PANEL DERECHO */
+.sim-verdict-banner {
+  padding: 0.65rem 0.75rem;
+  border-radius: 10px;
+  border: 1.5px solid transparent;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.sim-verdict-banner.verdict-green {
+  background: #ECFDF5;
+  border-color: #10B981;
+  color: #065F46;
+}
+
+.sim-verdict-banner.verdict-yellow {
+  background: #FFFBEB;
+  border-color: #F59E0B;
+  color: #92400E;
+}
+
+.sim-verdict-banner.verdict-red {
+  background: #FEF2F2;
+  border-color: #EF4444;
+  color: #991B1B;
+}
+
+[data-theme='dark'] .sim-verdict-banner.verdict-green {
+  background: rgba(16, 185, 129, 0.14);
+  border-color: #10B981;
+  color: #6EE7B7;
+}
+
+[data-theme='dark'] .sim-verdict-banner.verdict-yellow {
+  background: rgba(245, 158, 11, 0.14);
+  border-color: #F59E0B;
+  color: #FDE68A;
+}
+
+[data-theme='dark'] .sim-verdict-banner.verdict-red {
+  background: rgba(239, 68, 68, 0.14);
+  border-color: #EF4444;
+  color: #FCA5A5;
+}
+
+/* SECCIÓN INFERIOR: COMPARADOR DE ESCENARIOS (HASTA 3) */
+.sim-scenarios-section {
+  padding: 0.85rem 1rem;
+  border-radius: 12px;
+  background: var(--theme-card-bg, #FFFFFF);
+  border: 1px solid var(--theme-border, #E2E8F0);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+[data-theme='dark'] .sim-scenarios-section {
+  background: #1E293B;
+  border-color: rgba(56, 189, 248, 0.18);
+}
+
+.sim-scenarios-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.75rem;
+}
+
+@media (max-width: 900px) {
+  .sim-scenarios-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.sim-scenario-box {
+  padding: 0.75rem 0.85rem;
+  border-radius: 9px;
+  background: #F8FAFC;
+  border: 1px solid var(--theme-border, #E2E8F0);
+  border-top-width: 4px !important;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+[data-theme='dark'] .sim-scenario-box {
+  background: rgba(15, 23, 42, 0.6);
+  border-color: rgba(56, 189, 248, 0.15);
+}

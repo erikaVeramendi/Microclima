@@ -69,8 +69,8 @@ function CapabilityMiniGraphic({ index }) {
   if (index === 0) {
     return (
       <svg viewBox="0 0 220 44" style={{ width: '100%', height: '42px', display: 'block' }} aria-hidden="true">
-        <rect x="2" y="8" width="38" height="28" rx="4" fill="rgba(67,168,117,0.22)" stroke="#43A875" strokeWidth="1" />
-        <rect x="46" y="8" width="38" height="28" rx="4" fill="rgba(101,200,242,0.2)" stroke="#65C8F2" strokeWidth="1" />
+        <rect x="2" y="8" width="38" height="28" rx="4" fill="rgba(67,168,117,0.22)" stroke="#5CEA00" strokeWidth="1" />
+        <rect x="46" y="8" width="38" height="28" rx="4" fill="rgba(101,200,242,0.2)" stroke="#00BEFC" strokeWidth="1" />
         <rect x="90" y="8" width="38" height="28" rx="4" fill="rgba(255,203,115,0.22)" stroke="#FFCB73" strokeWidth="1" />
         <rect x="134" y="8" width="38" height="28" rx="4" fill="rgba(242,139,80,0.25)" stroke="#F28B50" strokeWidth="1" />
         <rect x="178" y="8" width="38" height="28" rx="4" fill="rgba(136,117,216,0.25)" stroke="#8875D8" strokeWidth="1" />
@@ -82,14 +82,14 @@ function CapabilityMiniGraphic({ index }) {
       <svg viewBox="0 0 220 44" style={{ width: '100%', height: '42px', display: 'block' }} aria-hidden="true">
         <defs>
           <linearGradient id="capVegGrad" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#43A875" stopOpacity="0.45" />
-            <stop offset="100%" stopColor="#43A875" stopOpacity="0" />
+            <stop offset="0%" stopColor="#5CEA00" stopOpacity="0.45" />
+            <stop offset="100%" stopColor="#5CEA00" stopOpacity="0" />
           </linearGradient>
         </defs>
         <path d="M 4 36 Q 45 14, 90 22 T 170 10 L 216 14 L 216 40 L 4 40 Z" fill="url(#capVegGrad)" />
         <path d="M 4 36 Q 45 14, 90 22 T 170 10 L 216 14" fill="none" stroke="#8BCB9A" strokeWidth="2" />
         <circle cx="90" cy="22" r="3.5" fill="#8BCB9A" />
-        <circle cx="170" cy="10" r="3.5" fill="#43A875" />
+        <circle cx="170" cy="10" r="3.5" fill="#5CEA00" />
       </svg>
     )
   }
@@ -98,7 +98,7 @@ function CapabilityMiniGraphic({ index }) {
       <svg viewBox="0 0 220 44" style={{ width: '100%', height: '42px', display: 'block' }} aria-hidden="true">
         <defs>
           <linearGradient id="capLstGrad" x1="0" y1="0" x2="1" y2="0">
-            <stop offset="0%" stopColor="#65C8F2" />
+            <stop offset="0%" stopColor="#00BEFC" />
             <stop offset="45%" stopColor="#FFCB73" />
             <stop offset="100%" stopColor="#D95757" />
           </linearGradient>
@@ -115,9 +115,9 @@ function CapabilityMiniGraphic({ index }) {
         <line x1="25" y1="22" x2="85" y2="12" stroke="rgba(136,117,216,0.5)" strokeWidth="1.5" />
         <line x1="85" y1="12" x2="145" y2="30" stroke="rgba(101,200,242,0.5)" strokeWidth="1.5" />
         <line x1="145" y1="30" x2="198" y2="14" stroke="rgba(242,139,80,0.5)" strokeWidth="1.5" />
-        <circle cx="25" cy="22" r="5" fill="#43A875" />
+        <circle cx="25" cy="22" r="5" fill="#5CEA00" />
         <circle cx="85" cy="12" r="6" fill="#8875D8" />
-        <circle cx="145" cy="30" r="5" fill="#65C8F2" />
+        <circle cx="145" cy="30" r="5" fill="#00BEFC" />
         <circle cx="198" cy="14" r="6" fill="#F28B50" />
       </svg>
     )
@@ -125,16 +125,16 @@ function CapabilityMiniGraphic({ index }) {
   if (index === 4) {
     return (
       <svg viewBox="0 0 220 44" style={{ width: '100%', height: '42px', display: 'block' }} aria-hidden="true">
-        <rect x="6" y="16" width="58" height="12" rx="6" fill="rgba(67,168,117,0.3)" stroke="#43A875" />
+        <rect x="6" y="16" width="58" height="12" rx="6" fill="rgba(67,168,117,0.3)" stroke="#5CEA00" />
         <rect x="74" y="16" width="58" height="12" rx="6" fill="rgba(230,184,92,0.3)" stroke="#E6B85C" />
-        <rect x="142" y="16" width="68" height="12" rx="6" fill="rgba(101,200,242,0.28)" stroke="#65C8F2" />
+        <rect x="142" y="16" width="68" height="12" rx="6" fill="rgba(101,200,242,0.28)" stroke="#00BEFC" />
       </svg>
     )
   }
   return (
     <svg viewBox="0 0 220 44" style={{ width: '100%', height: '42px', display: 'block' }} aria-hidden="true">
-      <rect x="10" y="22" width="24" height="16" rx="3" fill="#65C8F2" opacity="0.6" />
-      <rect x="46" y="14" width="24" height="24" rx="3" fill="#43A875" opacity="0.8" />
+      <rect x="10" y="22" width="24" height="16" rx="3" fill="#00BEFC" opacity="0.6" />
+      <rect x="46" y="14" width="24" height="24" rx="3" fill="#5CEA00" opacity="0.8" />
       <rect x="82" y="8" width="24" height="30" rx="3" fill="#8BCB9A" />
       <rect x="118" y="16" width="24" height="22" rx="3" fill="#FFCB73" opacity="0.85" />
       <rect x="154" y="10" width="24" height="28" rx="3" fill="#8875D8" opacity="0.85" />
@@ -248,11 +248,11 @@ function App() {
     'bento-card--cyan',
   ]
 
-  const bentoAccentColors = ['#F28B50', '#43A875', '#8875D8', '#65C8F2']
+  const bentoAccentColors = ['#F28B50', '#5CEA00', '#8875D8', '#00BEFC']
 
   const capabilityBorderColors = [
-    '#65C8F2',
-    '#43A875',
+    '#00BEFC',
+    '#5CEA00',
     '#F28B50',
     '#8875D8',
     '#FFCB73',
@@ -274,23 +274,13 @@ function App() {
                 e.preventDefault()
                 scrollToSection('inicio')
               }}
+              title="LlajtaLab — Laboratorio climático urbano de Cochabamba"
             >
-              <div className="brand-logo" aria-hidden="true">
-                <svg width="22" height="22" viewBox="0 0 32 32" fill="none">
-                  <circle cx="16" cy="16" r="11" stroke="#43A875" strokeWidth="1.8" />
-                  <path
-                    d="M7 18C10.5 12.5 14.5 20 18 13.5C20.5 9.5 22.8 15 25.5 12"
-                    stroke="#FFCB73"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                  />
-                  <circle cx="18" cy="13.5" r="2.6" fill="#F28B50" />
-                </svg>
-              </div>
-              <div className="brand-text-group">
-                <span className="brand-name">LlajtaLab</span>
-                <span className="brand-sub">Laboratorio climático urbano de Cochabamba</span>
-              </div>
+              <img
+                src="/brand/logo-horizontal.png"
+                alt="LlajtaLab"
+                className="site-navbar-brand-img"
+              />
             </a>
 
             <nav aria-label="Navegación principal">
@@ -473,7 +463,7 @@ function App() {
                       cy="36"
                       r="28"
                       fill="none"
-                      stroke="#43A875"
+                      stroke="#5CEA00"
                       strokeWidth="6"
                       strokeDasharray="128 176"
                       strokeLinecap="round"
@@ -549,8 +539,8 @@ function App() {
                 <svg viewBox="0 0 360 150" style={{ width: '100%', height: '100%' }} aria-hidden="true">
                   <defs>
                     <linearGradient id="hudVegArea" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stopColor="#43A875" stopOpacity="0.36" />
-                      <stop offset="100%" stopColor="#43A875" stopOpacity="0" />
+                      <stop offset="0%" stopColor="#5CEA00" stopOpacity="0.36" />
+                      <stop offset="100%" stopColor="#5CEA00" stopOpacity="0" />
                     </linearGradient>
                     <linearGradient id="hudThermArea" x1="0" y1="0" x2="0" y2="1">
                       <stop offset="0%" stopColor="#F28B50" stopOpacity="0.34" />
@@ -570,7 +560,7 @@ function App() {
                   <path
                     d="M 10 105 Q 75 38, 145 84 T 275 46 L 350 62"
                     fill="none"
-                    stroke="#43A875"
+                    stroke="#5CEA00"
                     strokeWidth="2.4"
                   />
 
@@ -605,13 +595,13 @@ function App() {
             <div className="orbital-ticker-track">
               <span style={{ color: '#FFCB73' }}>▲ NASA LANDSAT 8/9 TIRS · TEMPERATURA SUPERFICIAL (LST 30M)</span>
               <span style={{ color: '#8BCB9A' }}>● API ALCALDÍA GAMC · RED DE MONITOREO AMBIENTAL & ARBOLADO</span>
-              <span style={{ color: '#65C8F2' }}>◆ NASA ISS ECOSTRESS & MODIS · FLUJO TÉRMICO DIURNO/NOCTURNO</span>
+              <span style={{ color: '#00BEFC' }}>◆ NASA ISS ECOSTRESS & MODIS · FLUJO TÉRMICO DIURNO/NOCTURNO</span>
               <span style={{ color: '#C4B5FD' }}>● API ALCALDÍA GAMC · CATASTRO 15 DISTRITOS & 6 SUBALCALDÍAS</span>
-              <span style={{ color: '#43A875' }}>● SENTINEL-2 MSI & NASA HLS · HUELLA VERDE (NDVI 10M)</span>
+              <span style={{ color: '#5CEA00' }}>● SENTINEL-2 MSI & NASA HLS · HUELLA VERDE (NDVI 10M)</span>
               <span style={{ color: '#F28B50' }}>▲ NASA JPL NASADEM · MODELO TOPOGRÁFICO 3D DEL VALLE (2,558M)</span>
               <span style={{ color: '#FFCB73' }}>▲ NASA LANDSAT 8/9 TIRS · TEMPERATURA SUPERFICIAL (LST 30M)</span>
               <span style={{ color: '#8BCB9A' }}>● API ALCALDÍA GAMC · RED DE MONITOREO AMBIENTAL & ARBOLADO</span>
-              <span style={{ color: '#65C8F2' }}>◆ NASA ISS ECOSTRESS & MODIS · FLUJO TÉRMICO DIURNO/NOCTURNO</span>
+              <span style={{ color: '#00BEFC' }}>◆ NASA ISS ECOSTRESS & MODIS · FLUJO TÉRMICO DIURNO/NOCTURNO</span>
               <span style={{ color: '#C4B5FD' }}>● API ALCALDÍA GAMC · CATASTRO 15 DISTRITOS & 6 SUBALCALDÍAS</span>
             </div>
           </div>
@@ -759,7 +749,7 @@ function App() {
                 </div>
 
                 <div className="pipeline-node pipeline-node--cyan">
-                  <span className="pipeline-step-num" style={{ color: '#65C8F2' }}>
+                  <span className="pipeline-step-num" style={{ color: '#00BEFC' }}>
                     02 · CALIBRACIÓN
                   </span>
                   <h3>Cómputo Espectral</h3>
@@ -866,7 +856,7 @@ function App() {
             </h2>
 
             <div className="research-grid">
-              <article className="research-card" style={{ borderTop: '3px solid #43A875' }}>
+              <article className="research-card" style={{ borderTop: '3px solid #5CEA00' }}>
                 <span className="bento-num" style={{ color: '#8BCB9A' }}>
                   01 · CRUCE BIVARIADO NDVI × LST
                 </span>
@@ -1075,18 +1065,11 @@ function App() {
           <div className="footer-grid">
             <div className="footer-col">
               <div className="brand-link" style={{ marginBottom: '0.75rem' }}>
-                <div className="brand-logo" aria-hidden="true">
-                  <svg width="18" height="18" viewBox="0 0 32 32" fill="none">
-                    <circle cx="16" cy="16" r="11" stroke="#43A875" strokeWidth="1.8" />
-                    <path d="M8 17C11 13 15 19 18 14C20.5 10.5 22.5 15 25 13" stroke="#FFCB73" strokeWidth="1.8" strokeLinecap="round" />
-                  </svg>
-                </div>
-                <div className="brand-text-group">
-                  <span className="brand-name">LlajtaLab</span>
-                  <span className="brand-sub">
-                    Laboratorio climático urbano de Cochabamba
-                  </span>
-                </div>
+                <img
+                  src="/brand/logo-horizontal.png"
+                  alt="LlajtaLab"
+                  className="site-footer-brand-img"
+                />
               </div>
               <p style={{ fontSize: '0.82rem', maxWidth: '38ch' }}>
                 Plataforma de inteligencia geoespacial y análisis científico dedicada a

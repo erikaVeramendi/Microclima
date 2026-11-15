@@ -205,17 +205,21 @@ Instrucción: Responde en español con tono amable, directo, científico y sin r
       : 'Guardián del Valle'
 
   return (
-    <div className="floating-avatar-container" aria-label="Pacha, asistente de LlajtaLab">
+    <div className="floating-avatar-container" aria-label="Pacha, mascota y asistente de LlajtaLab">
       {!isOpen ? (
-        // Estado Minimizado: Pacha Flotando con su Chullito (limpio, sin etiquetas innecesarias)
+        // Estado Minimizado: Pacha Mascota Oficial Flotando
         <button
           type="button"
           className="floating-avatar-trigger"
           onClick={() => setIsOpen(true)}
-          title="Hablar con Pacha · LlajtaLab"
+          title="Hablar con Pacha · Mascota de LlajtaLab"
         >
           <div className="wayrita-sprite-wrap">
-            <PachaAvatarSvg mood={mood} size={48} />
+            <img
+              src="/brand/labi-mascota.png"
+              alt="Pacha"
+              className="labi-sprite-img"
+            />
           </div>
           <div className="floating-avatar-label-box">
             <div className="floating-avatar-name-row">
@@ -234,10 +238,14 @@ Instrucción: Responde en español con tono amable, directo, científico y sin r
           <div className="avatar-panel-header">
             <div className="avatar-header-left">
               <div className="avatar-header-sprite">
-                <PachaAvatarSvg mood={mood} size={44} />
+                <img
+                  src="/brand/labi-mascota.png"
+                  alt="Pacha"
+                  className="labi-header-img"
+                />
               </div>
               <div className="avatar-header-title-box">
-                <div className="avatar-header-title">Pacha · LlajtaLab</div>
+                <div className="avatar-header-title">Pacha · Guardián LlajtaLab</div>
                 <div className="avatar-header-subtitle">
                   <span>Laboratorio climático urbano de Cochabamba</span>
                   <span className={`avatar-backend-badge ${ollamaConnected ? 'is-ollama' : ''}`}>

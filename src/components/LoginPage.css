@@ -97,7 +97,7 @@
   overflow: hidden;
 }
 
-/* Línea luminosa superior animada */
+/* Línea luminosa superior animada con la Paleta Oficial LlajtaLab */
 .login-card::before {
   content: '';
   position: absolute;
@@ -105,7 +105,7 @@
   left: 0;
   right: 0;
   height: 3px;
-  background: linear-gradient(90deg, #43A875, #65C8F2, #8875D8, #F28B50, #43A875);
+  background: linear-gradient(90deg, #00BEFC, #006EFD, #5CEA00, #FDE300, #00BEFC);
   background-size: 200% 100%;
   animation: spectrumFlow 4s linear infinite;
 }
@@ -124,7 +124,26 @@
   flex-direction: column;
   align-items: center;
   text-align: center;
-  gap: 0.45rem;
+  gap: 0.35rem;
+}
+
+.login-brand-hero {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 0.35rem;
+}
+
+.login-brand-logo-img {
+  max-width: 145px;
+  height: auto;
+  object-fit: contain;
+  filter: drop-shadow(0 8px 24px rgba(0, 110, 253, 0.4));
+  transition: transform 0.25s ease;
+}
+
+.login-brand-logo-img:hover {
+  transform: scale(1.04);
 }
 
 .portal-ring-avatar {
@@ -132,8 +151,8 @@
   width: 56px;
   height: 56px;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(136, 117, 216, 0.22), rgba(11, 18, 34, 0.9));
-  border: 1px solid rgba(101, 200, 242, 0.45);
+  background: radial-gradient(circle, rgba(0, 110, 253, 0.22), rgba(11, 18, 34, 0.9));
+  border: 1px solid rgba(0, 190, 252, 0.45);
   display: grid;
   place-items: center;
   margin-bottom: 0.35rem;
@@ -242,7 +261,7 @@
 }
 
 .forgot-password-btn:hover {
-  color: #65C8F2;
+  color: var(--brand-cyan, #00BEFC);
 }
 
 /* Botón principal */
@@ -250,9 +269,9 @@
   width: 100%;
   padding: 0.85rem 1.25rem;
   border-radius: 10px;
-  border: 1px solid rgba(255, 203, 115, 0.45);
-  background: linear-gradient(135deg, #43A875 0%, #65C8F2 50%, #8875D8 100%);
-  color: #070910;
+  border: 1px solid rgba(0, 190, 252, 0.45);
+  background: linear-gradient(135deg, #006EFD 0%, #00BEFC 100%);
+  color: #FFFFFF;
   font-size: 0.92rem;
   font-weight: 700;
   cursor: pointer;
@@ -260,14 +279,14 @@
   align-items: center;
   justify-content: center;
   gap: 0.6rem;
-  box-shadow: 0 12px 28px -6px rgba(101, 200, 242, 0.42);
+  box-shadow: 0 12px 28px -6px rgba(0, 110, 253, 0.45);
   transition: all 0.22s ease;
 }
 
 .login-submit-btn:hover:not(:disabled) {
   transform: translateY(-2px);
-  box-shadow: 0 16px 34px -4px rgba(136, 117, 216, 0.6);
-  filter: brightness(1.06);
+  box-shadow: 0 16px 34px -4px rgba(0, 190, 252, 0.6);
+  filter: brightness(1.08);
 }
 
 .spinner-ring {

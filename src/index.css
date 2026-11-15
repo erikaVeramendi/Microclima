@@ -1,60 +1,70 @@
 :root {
-  /* 1. Paleta Oficial — Identidad Visual */
-  --color-navy: #111B32;
-  --color-slate: #263B59;
-  --color-cyan: #65C8F2;
+  /* 1. Paleta Oficial LlajtaLab (Cochabamba 2026) */
+  --brand-cyan: #00BEFC;     /* Agua, cielo, acentos tecnológicos y sensores */
+  --brand-blue: #006EFD;     /* Azul de acción primaria, botones y enlaces */
+  --brand-navy: #00126B;     /* Azul institucional profundo, contraste y títulos */
+  --brand-yellow: #FDE300;   /* Amarillo solar, alertas y energía */
+  --brand-lime: #5CEA00;     /* Verde lima ecológico, vegetación y parques */
+  --brand-slate: #4C6971;    /* Slate neutro institucional */
+
+  /* Identidad Visual Histórica & Mapeos Semánticos */
+  --color-navy: #00126B;
+  --color-slate: #1E293B;
+  --color-cyan: #00BEFC;
   --color-purple: #8875D8;
-  --color-cloud: #F5F7FC;
-  --color-gray: #A9B8CC;
+  --color-cloud: #F8FAFC;
+  --color-gray: #94A3B8;
 
   /* Variantes de superficie basadas en la paleta oficial */
-  --color-navy-deep: #0b1222;
-  --color-navy-glass: rgba(17, 27, 50, 0.88);
-  --color-slate-soft: rgba(38, 59, 89, 0.55);
-  --color-slate-hover: #2e476b;
-  --color-border-dark: rgba(169, 184, 204, 0.16);
-  --color-border-strong: rgba(169, 184, 204, 0.32);
-  --color-border-light: rgba(38, 59, 89, 0.14);
+  --color-navy-deep: #050B1A;
+  --color-navy-glass: rgba(0, 18, 107, 0.88);
+  --color-slate-soft: rgba(30, 41, 59, 0.55);
+  --color-slate-hover: #1E293B;
+  --color-border-dark: rgba(0, 190, 252, 0.18);
+  --color-border-strong: rgba(0, 190, 252, 0.36);
+  --color-border-light: rgba(0, 110, 253, 0.16);
 
-  /* Variables de Tema Global (Modo Oscuro por Defecto - Azul Noche) */
-  --theme-bg: #0b132b;
-  --theme-surface: #101b37;
-  --theme-card-bg: rgba(15, 25, 46, 0.85);
-  --theme-card-solid: #0f192e;
-  --theme-card-hover: rgba(22, 36, 66, 0.9);
-  --theme-border: rgba(56, 189, 248, 0.16);
+  /* Variables de Tema Global (Modo Oscuro — Azul Profundo LlajtaLab) */
+  --theme-bg: #070D1E;
+  --theme-surface: #0E172F;
+  --theme-card-bg: rgba(14, 23, 47, 0.88);
+  --theme-card-solid: #0E172F;
+  --theme-card-hover: rgba(20, 34, 68, 0.92);
+  --theme-border: rgba(0, 190, 252, 0.18);
   --theme-border-subtle: rgba(148, 163, 184, 0.14);
-  --theme-border-strong: rgba(56, 189, 248, 0.35);
-  --theme-text: #F1F5F9;
+  --theme-border-strong: rgba(0, 190, 252, 0.38);
+  --theme-text: #F8FAFC;
   --theme-text-secondary: #94A3B8;
   --theme-text-muted: #64748B;
-  --color-icon: #8A94A6;
-  --theme-accent: #0D9488;
-  --theme-accent-hover: #14B8A6;
-  --theme-accent-subtle: rgba(13, 148, 136, 0.15);
-  --theme-chip-bg: rgba(12, 22, 42, 0.85);
-  --theme-topbar-bg: rgba(6, 12, 24, 0.86);
-  --theme-sidebar-bg: linear-gradient(180deg, rgba(8, 15, 30, 0.96) 0%, rgba(4, 8, 17, 0.98) 100%);
-  --theme-shell-bg: radial-gradient(circle at 55% 15%, #0b1b36 0%, #050a15 58%, #03060d 100%);
+  --color-icon: #94A3B8;
+  --theme-accent: #00BEFC;
+  --theme-accent-hover: #38BDF8;
+  --theme-accent-subtle: rgba(0, 190, 252, 0.14);
+  --theme-primary: #006EFD;
+  --theme-primary-hover: #2563EB;
+  --theme-chip-bg: rgba(14, 23, 47, 0.88);
+  --theme-topbar-bg: rgba(7, 13, 30, 0.88);
+  --theme-sidebar-bg: linear-gradient(180deg, rgba(7, 13, 30, 0.98) 0%, rgba(4, 8, 18, 0.99) 100%);
+  --theme-shell-bg: radial-gradient(circle at 55% 15%, #0B1A3D 0%, #060B1A 58%, #03060E 100%);
 
   /* 2. Escalas Semánticas Científicas */
-  /* Vegetación – Huella Verde */
-  --veg-100: #D9F0DC;
-  --veg-300: #8BCB9A;
-  --veg-500: #43A875;
-  --veg-700: #237B5B;
+  /* Vegetación – Huella Verde (Alineada con Verde Lima Oficial #5CEA00) */
+  --veg-100: #E8FBD9;
+  --veg-300: #8CEF4A;
+  --veg-500: #5CEA00;
+  --veg-700: #2E8A00;
 
   /* Temperatura superficial (LST) */
-  --lst-100: #FFF0B3;
-  --lst-300: #FFCB73;
-  --lst-500: #F28B50;
-  --lst-700: #D95757;
-  --lst-900: #963D63;
+  --lst-100: #FFF9C4;
+  --lst-300: #FDE300;
+  --lst-500: #F59E0B;
+  --lst-700: #EF4444;
+  --lst-900: #991B1B;
 
   /* Calidad de evidencia */
-  --evidence-high: #43A875;
-  --evidence-moderate: #E6B85C;
-  --evidence-low: #D95757;
+  --evidence-high: #5CEA00;
+  --evidence-moderate: #FDE300;
+  --evidence-low: #EF4444;
 
   /* 3. Tipografía y Layout */
   --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
@@ -126,42 +136,44 @@ a {
   outline-offset: 3px;
 }
 
-/* Modo Claro según especificaciones exactas:
-   Fondo crema #F6F1E7, Tarjetas #FFFDF8, Bordes #E6DFD0,
-   Texto principal #2B2A26, Texto secundario #6B6559, mismo color de acento */
+/* Modo Claro Oficial LlajtaLab:
+   Fondo nítido #F8FAFC, Tarjetas blancas puras #FFFFFF, Bordes #E2E8F0,
+   Texto oscuro #0F172A, Acentos Azul Eléctrico #006EFD y Cyan #00BEFC */
 [data-theme="light"] {
-  --theme-bg: #F6F1E7;
-  --theme-surface: #EDE7DC;
-  --theme-card-bg: #FFFDF8;
-  --theme-card-solid: #FFFDF8;
-  --theme-card-hover: #FAF7F0;
-  --theme-border: #E6DFD0;
-  --theme-border-subtle: #E6DFD0;
-  --theme-border-strong: #D5CCBB;
-  --theme-text: #2B2A26;
-  --theme-text-secondary: #6B6559;
-  --theme-text-muted: #8C8476;
-  --color-icon: #6B6559;
-  --theme-accent: #0D9488;
-  --theme-accent-hover: #0F766E;
-  --theme-accent-subtle: rgba(13, 148, 136, 0.12);
-  --theme-chip-bg: #EDE7DC;
-  --theme-topbar-bg: rgba(246, 241, 231, 0.94);
-  --theme-sidebar-bg: linear-gradient(180deg, #F3ECE1 0%, #EDE5D7 100%);
-  --theme-shell-bg: #F6F1E7;
+  --theme-bg: #F8FAFC;
+  --theme-surface: #F1F5F9;
+  --theme-card-bg: #FFFFFF;
+  --theme-card-solid: #FFFFFF;
+  --theme-card-hover: #F8FAFC;
+  --theme-border: #E2E8F0;
+  --theme-border-subtle: #EDF2F7;
+  --theme-border-strong: #CBD5E1;
+  --theme-text: #0F172A;
+  --theme-text-secondary: #475569;
+  --theme-text-muted: #64748B;
+  --color-icon: #64748B;
+  --theme-accent: #006EFD;
+  --theme-accent-hover: #0056C6;
+  --theme-accent-subtle: rgba(0, 110, 253, 0.08);
+  --theme-primary: #006EFD;
+  --theme-primary-hover: #0056C6;
+  --theme-chip-bg: #F1F5F9;
+  --theme-topbar-bg: rgba(255, 255, 255, 0.94);
+  --theme-sidebar-bg: linear-gradient(180deg, #FFFFFF 0%, #F8FAFC 100%);
+  --theme-shell-bg: #F8FAFC;
 
-  /* Mapeos a variables originales para retrocompatibilidad */
-  --color-navy: #F6F1E7;
-  --color-slate: #EDE7DC;
-  --color-cloud: #2B2A26;
-  --color-gray: #6B6559;
-  --color-navy-deep: #F6F1E7;
-  --color-navy-glass: rgba(246, 241, 231, 0.92);
-  --color-slate-soft: rgba(237, 231, 220, 0.7);
-  --color-slate-hover: #E3DCCC;
-  --color-border-dark: #E6DFD0;
-  --color-border-strong: #D5CCBB;
-  --color-border-light: #E6DFD0;
+  /* Mapeos de compatibilidad */
+  --color-navy: #F8FAFC;
+  --color-slate: #F1F5F9;
+  --color-cloud: #0F172A;
+  --color-gray: #475569;
+  --color-navy-deep: #F8FAFC;
+  --color-navy-glass: rgba(255, 255, 255, 0.92);
+  --color-slate-soft: rgba(241, 245, 249, 0.7);
+  --color-slate-hover: #E2E8F0;
+  --color-border-dark: #E2E8F0;
+  --color-border-strong: #CBD5E1;
+  --color-border-light: #E2E8F0;
 }
 
 [data-theme="light"] body {

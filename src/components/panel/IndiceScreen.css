@@ -1,4 +1,183 @@
-/* Estilos complementarios para IndiceScreen (Índice Socio-Ambiental) */
+/* =========================================================================
+   ESTILOS DEDICADOS PARA ÍNDICE SOCIO-AMBIENTAL (MODO CLARO + OSCURO)
+   Sistema de diseño geoespacial: #F8FAFC, #FFFFFF, bordes #E2E8F0, texto #0F172A
+   ========================================================================= */
+
+.indice-screen-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.95rem;
+}
+
+/* Modo Claro explícito para el módulo del Índice Socio-Ambiental */
+[data-theme='light'] .indice-screen-container {
+  color: #0F172A;
+}
+
+[data-theme='light'] .indice-screen-container .hud-card,
+[data-theme='light'] .indice-screen-container .hud-kpi-card {
+  background-color: #FFFFFF !important;
+  border-color: #E2E8F0 !important;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05), 0 1px 2px -1px rgba(0, 0, 0, 0.05) !important;
+}
+
+[data-theme='light'] .indice-screen-container .hud-kpi-label {
+  color: #475569 !important;
+}
+
+[data-theme='light'] .indice-screen-container .hud-kpi-value {
+  color: #0F172A !important;
+}
+
+[data-theme='light'] .indice-screen-container .hud-kpi-sub {
+  color: #64748B !important;
+}
+
+/* Pills de filtros sobre el mapa */
+.indice-pills-row {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  flex-wrap: wrap;
+}
+
+.indice-pill-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.32rem 0.72rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  border-radius: 9999px;
+  cursor: pointer;
+  transition: all 0.15s ease-in-out;
+  border: 1px solid var(--theme-border, #E2E8F0);
+  background: var(--theme-card-bg, #FFFFFF);
+  color: var(--theme-text-muted, #475569);
+  user-select: none;
+}
+
+[data-theme='light'] .indice-pill-btn {
+  background: #FFFFFF;
+  border-color: #E2E8F0;
+  color: #475569;
+}
+
+.indice-pill-btn:hover {
+  border-color: var(--theme-accent, #0284C7);
+  color: var(--theme-accent, #0284C7);
+  background: rgba(2, 132, 199, 0.05);
+}
+
+.indice-pill-btn.is-active {
+  background: #0284C7 !important;
+  border-color: #0284C7 !important;
+  color: #FFFFFF !important;
+  box-shadow: 0 2px 6px rgba(2, 132, 199, 0.3);
+}
+
+[data-theme='dark'] .indice-pill-btn {
+  background: rgba(15, 23, 42, 0.85);
+  border-color: rgba(56, 189, 248, 0.2);
+  color: #94A3B8;
+}
+
+[data-theme='dark'] .indice-pill-btn.is-active {
+  background: #38BDF8 !important;
+  border-color: #38BDF8 !important;
+  color: #0F172A !important;
+}
+
+/* Pills de colores del semáforo */
+.indice-pill-btn.pill-verde.is-active {
+  background: #10B981 !important;
+  border-color: #10B981 !important;
+  color: #FFFFFF !important;
+}
+
+.indice-pill-btn.pill-amarillo.is-active {
+  background: #F59E0B !important;
+  border-color: #F59E0B !important;
+  color: #FFFFFF !important;
+}
+
+.indice-pill-btn.pill-rojo.is-active {
+  background: #EF4444 !important;
+  border-color: #EF4444 !important;
+  color: #FFFFFF !important;
+}
+
+/* Tarjetas de componentes en la lista lateral */
+.indice-comp-row {
+  border-radius: 8px;
+  padding: 0.6rem 0.75rem;
+  border: 1px solid var(--theme-border, #E2E8F0);
+  background: var(--theme-card-bg-subtle, #F8FAFC);
+  transition: all 0.2s ease;
+}
+
+[data-theme='light'] .indice-comp-row {
+  background: #F8FAFC;
+  border-color: #E2E8F0;
+}
+
+[data-theme='light'] .indice-comp-row:hover {
+  background: #FFFFFF;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+/* Botones de acción rápida en el slider de ponderación */
+.indice-preset-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.3rem 0.6rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+  border-radius: 6px;
+  cursor: pointer;
+  border: 1px solid var(--theme-border, #CBD5E1);
+  background: var(--theme-card-bg, #FFFFFF);
+  color: var(--theme-text-primary, #0F172A);
+  transition: all 0.15s ease;
+}
+
+[data-theme='light'] .indice-preset-btn {
+  background: #FFFFFF;
+  border-color: #CBD5E1;
+  color: #0F172A;
+}
+
+.indice-preset-btn:hover {
+  border-color: #0284C7;
+  color: #0284C7;
+  background: rgba(2, 132, 199, 0.06);
+}
+
+.indice-preset-btn.is-active {
+  background: #0284C7;
+  border-color: #0284C7;
+  color: #FFFFFF;
+}
+
+/* Badge dinámico de cambios en el semáforo */
+.indice-shift-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 0.2rem 0.55rem;
+  border-radius: 6px;
+  background: rgba(245, 158, 11, 0.14);
+  color: #B45309;
+  border: 1px solid rgba(245, 158, 11, 0.3);
+}
+
+[data-theme='dark'] .indice-shift-badge {
+  background: rgba(245, 158, 11, 0.2);
+  color: #FBBF24;
+}
 
 .gamc-btn-secondary {
   background: var(--theme-card-bg-subtle, rgba(255, 255, 255, 0.05));
@@ -16,13 +195,13 @@
 }
 
 [data-theme='light'] .gamc-btn-secondary {
-  background: #FFFDF8;
-  border-color: #E6DFD0;
-  color: #2B2A26;
+  background: #FFFFFF;
+  border-color: #CBD5E1;
+  color: #0F172A;
 }
 
 [data-theme='light'] .gamc-btn-secondary:hover {
-  background: rgba(56, 189, 248, 0.1);
-  border-color: var(--theme-accent, #38BDF8);
-  color: var(--theme-accent, #38BDF8);
+  background: rgba(2, 132, 199, 0.08);
+  border-color: #0284C7;
+  color: #0284C7;
 }

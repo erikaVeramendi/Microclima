@@ -1,0 +1,799 @@
+/* =========================================================================
+   ESTILOS DEDICADOS PARA COBERTURA DE SERVICIOS (MODO CLARO + OSCURO)
+   Pantalla 8: LlajtaLab - Enfoque 2: Ciudad y Servicios
+   Paleta: #F8FAFC (fondo), #FFFFFF (tarjetas), #E2E8F0 (bordes), #0F172A (texto)
+   Colores de capas: Salud #DC2626, Colegios #2563EB, Áreas Verdes #059669,
+   Transporte #7C3AED, Geográficas #0891B2, Zonas déficit #EF4444.
+   ========================================================================= */
+
+.cobertura-screen-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.95rem;
+}
+
+/* Modo Claro explícito predeterminado */
+[data-theme='light'] .cobertura-screen-container {
+  color: #0F172A;
+}
+
+[data-theme='light'] .cobertura-screen-container .hud-card,
+[data-theme='light'] .cobertura-screen-container .cobertura-kpi-card {
+  background-color: #FFFFFF !important;
+  border-color: #E2E8F0 !important;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05), 0 1px 2px -1px rgba(0, 0, 0, 0.05) !important;
+}
+
+/* 4 TARJETAS KPI SUPERIORES */
+.cobertura-kpis-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.75rem;
+}
+
+@media (max-width: 1024px) {
+  .cobertura-kpis-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+  .cobertura-kpis-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.cobertura-kpi-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  padding: 0.85rem 1rem;
+  border-radius: 10px;
+  background: var(--theme-card-bg, #FFFFFF);
+  border: 1px solid var(--theme-border, #E2E8F0);
+  border-top-width: 4px !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.cobertura-kpi-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.cobertura-kpi-card.kpi-salud {
+  border-top-color: #DC2626 !important;
+}
+
+.cobertura-kpi-card.kpi-colegios {
+  border-top-color: #2563EB !important;
+}
+
+.cobertura-kpi-card.kpi-transporte {
+  border-top-color: #7C3AED !important;
+}
+
+.cobertura-kpi-card.kpi-verde {
+  border-top-color: #059669 !important;
+}
+
+.cobertura-kpi-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.35rem;
+}
+
+.cobertura-kpi-label {
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: #475569;
+}
+
+[data-theme='dark'] .cobertura-kpi-label {
+  color: #94A3B8;
+}
+
+.cobertura-kpi-badge {
+  font-size: 0.65rem;
+  font-weight: 700;
+  padding: 0.15rem 0.45rem;
+  border-radius: 9999px;
+  font-family: var(--font-mono, monospace);
+}
+
+.cobertura-kpi-badge.badge-salud {
+  background: rgba(220, 38, 38, 0.1);
+  color: #DC2626;
+  border: 1px solid rgba(220, 38, 38, 0.25);
+}
+
+.cobertura-kpi-badge.badge-colegios {
+  background: rgba(37, 99, 235, 0.1);
+  color: #2563EB;
+  border: 1px solid rgba(37, 99, 235, 0.25);
+}
+
+.cobertura-kpi-badge.badge-transporte {
+  background: rgba(124, 58, 237, 0.1);
+  color: #7C3AED;
+  border: 1px solid rgba(124, 58, 237, 0.25);
+}
+
+.cobertura-kpi-badge.badge-verde {
+  background: rgba(5, 150, 105, 0.1);
+  color: #059669;
+  border: 1px solid rgba(5, 150, 105, 0.25);
+}
+
+.cobertura-kpi-val-row {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  margin: 0.15rem 0 0.4rem;
+}
+
+.cobertura-kpi-val {
+  font-size: 1.65rem;
+  font-weight: 800;
+  line-height: 1.1;
+  color: #0F172A;
+  font-family: var(--font-mono, monospace);
+}
+
+[data-theme='dark'] .cobertura-kpi-val {
+  color: #F8FAFC;
+}
+
+.cobertura-kpi-unit {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #64748B;
+}
+
+/* Barra de progreso de KPI */
+.cobertura-progress-track {
+  width: 100%;
+  height: 6px;
+  background: #F1F5F9;
+  border-radius: 9999px;
+  overflow: hidden;
+  margin: 0.35rem 0 0.45rem;
+  position: relative;
+}
+
+[data-theme='dark'] .cobertura-progress-track {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.cobertura-progress-fill {
+  height: 100%;
+  border-radius: 9999px;
+  transition: width 0.35s ease-in-out;
+}
+
+.cobertura-kpi-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.72rem;
+  color: #64748B;
+  margin-top: auto;
+}
+
+[data-theme='dark'] .cobertura-kpi-footer {
+  color: #94A3B8;
+}
+
+/* GRID PRINCIPAL: MAPA (7) Y PANEL DERECHO (5) */
+.cobertura-main-grid {
+  display: grid;
+  grid-template-columns: 7fr 5fr;
+  gap: 0.85rem;
+  align-items: stretch;
+}
+
+@media (max-width: 1024px) {
+  .cobertura-main-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* CARD DEL MAPA */
+.cobertura-map-card {
+  padding: 0.65rem;
+  border-radius: 12px;
+  background: var(--theme-card-bg, #FFFFFF);
+  border: 1px solid var(--theme-border, #E2E8F0);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+}
+
+[data-theme='dark'] .cobertura-map-card {
+  background: #1E293B;
+  border-color: rgba(56, 189, 248, 0.18);
+}
+
+.cobertura-map-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  padding: 0.2rem 0.2rem 0;
+}
+
+.cobertura-map-title-box h3 {
+  margin: 0;
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: #0F172A;
+}
+
+[data-theme='dark'] .cobertura-map-title-box h3 {
+  color: #F8FAFC;
+}
+
+.cobertura-districts-pill-bar {
+  display: flex;
+  gap: 0.25rem;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.cobertura-dist-btn {
+  padding: 0.2rem 0.45rem;
+  font-size: 0.7rem;
+  font-weight: 700;
+  border-radius: 6px;
+  border: 1px solid var(--theme-border, #E2E8F0);
+  background: var(--theme-card-bg, #FFFFFF);
+  color: #64748B;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  font-family: var(--font-mono, monospace);
+}
+
+.cobertura-dist-btn:hover {
+  border-color: #0284C7;
+  color: #0284C7;
+}
+
+.cobertura-dist-btn.is-active {
+  background: #0284C7 !important;
+  color: #FFFFFF !important;
+  border-color: #0284C7 !important;
+}
+
+[data-theme='dark'] .cobertura-dist-btn {
+  background: rgba(15, 23, 42, 0.7);
+  border-color: rgba(56, 189, 248, 0.2);
+  color: #94A3B8;
+}
+
+[data-theme='dark'] .cobertura-dist-btn.is-active {
+  background: #38BDF8 !important;
+  color: #0F172A !important;
+  border-color: #38BDF8 !important;
+}
+
+/* CONTENEDOR LEAFLET */
+.cobertura-leaflet-wrapper {
+  position: relative;
+  width: 100%;
+  height: 480px;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid var(--theme-border, #E2E8F0);
+}
+
+[data-theme='dark'] .cobertura-leaflet-wrapper {
+  border-color: rgba(56, 189, 248, 0.2);
+}
+
+.cobertura-leaflet-instance {
+  width: 100%;
+  height: 100%;
+}
+
+/* LEYENDA INFERIOR DEL MAPA */
+.cobertura-map-legend {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  flex-wrap: wrap;
+  padding: 0.45rem 0.2rem 0;
+  font-size: 0.72rem;
+  color: #475569;
+}
+
+[data-theme='dark'] .cobertura-map-legend {
+  color: #94A3B8;
+}
+
+.cobertura-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.cobertura-legend-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  display: inline-block;
+  flex-shrink: 0;
+}
+
+/* MARCADORES PERSONALIZADOS LEAFLET */
+.gamc-marker {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);
+  border: 2px solid #FFFFFF;
+}
+
+.gamc-marker--salud {
+  background: #DC2626;
+  width: 24px;
+  height: 24px;
+}
+
+.gamc-marker--colegio {
+  background: #2563EB;
+  width: 22px;
+  height: 22px;
+}
+
+.gamc-marker--deficit {
+  background: #EF4444;
+  border: 1.5px solid #FFFFFF;
+  border-radius: 50%;
+  box-shadow: 0 0 8px #EF4444;
+  animation: pulseDeficit 2s infinite ease-in-out;
+}
+
+@keyframes pulseDeficit {
+  0% { transform: scale(1); opacity: 0.9; }
+  50% { transform: scale(1.25); opacity: 1; }
+  100% { transform: scale(1); opacity: 0.9; }
+}
+
+/* POPUPS DE LEAFLET */
+.cobertura-popup {
+  font-family: system-ui, -apple-system, sans-serif;
+  font-size: 12px;
+  min-width: 180px;
+  padding: 2px;
+}
+
+.cobertura-popup-badge {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 1px 6px;
+  border-radius: 4px;
+  margin-bottom: 4px;
+  text-transform: uppercase;
+}
+
+.cobertura-popup-badge.salud {
+  background: #FEE2E2;
+  color: #DC2626;
+}
+
+.cobertura-popup-badge.colegio {
+  background: #DBEAFE;
+  color: #2563EB;
+}
+
+.cobertura-popup-badge.verde {
+  background: #D1FAE5;
+  color: #059669;
+}
+
+.cobertura-popup-badge.transporte {
+  background: #EDE9FE;
+  color: #7C3AED;
+}
+
+.cobertura-popup-badge.deficit {
+  background: #FEE2E2;
+  color: #DC2626;
+}
+
+.cobertura-popup-sub {
+  font-size: 11px;
+  color: #64748B;
+  margin-top: 3px;
+}
+
+/* PANEL DERECHO DE CONTROL */
+.cobertura-control-card {
+  padding: 0.85rem 1rem;
+  border-radius: 12px;
+  background: var(--theme-card-bg, #FFFFFF);
+  border: 1px solid var(--theme-border, #E2E8F0);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+[data-theme='dark'] .cobertura-control-card {
+  background: #1E293B;
+  border-color: rgba(56, 189, 248, 0.18);
+}
+
+/* BOTÓN DESTACADO: RESALTAR ZONAS DESATENDIDAS */
+.cobertura-btn-deficit {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  border-radius: 9px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  border: 2px solid #EF4444;
+  background: rgba(239, 68, 68, 0.06);
+  color: #DC2626;
+  position: relative;
+}
+
+.cobertura-btn-deficit:hover {
+  background: #EF4444;
+  color: #FFFFFF;
+  box-shadow: 0 4px 14px rgba(239, 68, 68, 0.35);
+}
+
+.cobertura-btn-deficit.is-active {
+  background: #DC2626 !important;
+  color: #FFFFFF !important;
+  border-color: #B91C1C !important;
+  box-shadow: 0 0 15px rgba(220, 38, 38, 0.5) !important;
+}
+
+.cobertura-pulse-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #FFFFFF;
+  display: inline-block;
+  animation: pulseDot 1s infinite alternate;
+}
+
+@keyframes pulseDot {
+  0% { opacity: 0.4; transform: scale(0.8); }
+  100% { opacity: 1; transform: scale(1.2); }
+}
+
+/* CARD INFORMATIVA DE DÉFICIT ACTIVO */
+.cobertura-deficit-alert {
+  padding: 0.65rem 0.85rem;
+  border-radius: 8px;
+  background: #FEF2F2;
+  border: 1px solid #FECACA;
+  font-size: 0.75rem;
+  color: #991B1B;
+  line-height: 1.4;
+}
+
+[data-theme='dark'] .cobertura-deficit-alert {
+  background: rgba(185, 28, 28, 0.16);
+  border-color: rgba(239, 68, 68, 0.4);
+  color: #FCA5A5;
+}
+
+/* SECCIÓN DE INTERRUPTORES DE CAPAS */
+.cobertura-layers-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.cobertura-layer-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.55rem 0.75rem;
+  border-radius: 8px;
+  border: 1px solid var(--theme-border, #E2E8F0);
+  background: var(--theme-card-bg, #FFFFFF);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  user-select: none;
+}
+
+[data-theme='light'] .cobertura-layer-toggle {
+  background: #F8FAFC;
+}
+
+[data-theme='light'] .cobertura-layer-toggle:hover {
+  background: #F1F5F9;
+  border-color: #CBD5E1;
+}
+
+[data-theme='dark'] .cobertura-layer-toggle {
+  background: rgba(15, 23, 42, 0.6);
+  border-color: rgba(56, 189, 248, 0.15);
+}
+
+[data-theme='dark'] .cobertura-layer-toggle:hover {
+  background: rgba(15, 23, 42, 0.85);
+  border-color: rgba(56, 189, 248, 0.35);
+}
+
+.cobertura-layer-info {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.cobertura-layer-badge {
+  font-size: 0.65rem;
+  font-weight: 700;
+  padding: 0.12rem 0.45rem;
+  border-radius: 9999px;
+  color: #FFFFFF;
+}
+
+.cobertura-layer-name {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #0F172A;
+}
+
+[data-theme='dark'] .cobertura-layer-name {
+  color: #F8FAFC;
+}
+
+.cobertura-layer-count {
+  font-size: 0.7rem;
+  color: #64748B;
+  font-family: var(--font-mono, monospace);
+}
+
+[data-theme='dark'] .cobertura-layer-count {
+  color: #94A3B8;
+}
+
+/* SWITCH TOGGLE VISUAL */
+.cobertura-switch-pill {
+  width: 34px;
+  height: 20px;
+  border-radius: 9999px;
+  background: #CBD5E1;
+  position: relative;
+  transition: background 0.2s ease;
+}
+
+[data-theme='dark'] .cobertura-switch-pill {
+  background: #475569;
+}
+
+.cobertura-switch-pill.is-active {
+  background: #0284C7;
+}
+
+[data-theme='dark'] .cobertura-switch-pill.is-active {
+  background: #38BDF8;
+}
+
+.cobertura-switch-knob {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #FFFFFF;
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  transition: transform 0.2s ease;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+}
+
+.cobertura-switch-pill.is-active .cobertura-switch-knob {
+  transform: translateX(14px);
+}
+
+/* SECCIÓN DE SLIDERS DE RADIOS */
+.cobertura-radios-box {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  padding: 0.75rem;
+  border-radius: 8px;
+  background: #F8FAFC;
+  border: 1px solid var(--theme-border, #E2E8F0);
+}
+
+[data-theme='dark'] .cobertura-radios-box {
+  background: rgba(15, 23, 42, 0.5);
+  border-color: rgba(56, 189, 248, 0.15);
+}
+
+.cobertura-slider-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.cobertura-slider-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.74rem;
+}
+
+.cobertura-slider-label {
+  font-weight: 600;
+  color: #334155;
+}
+
+[data-theme='dark'] .cobertura-slider-label {
+  color: #E2E8F0;
+}
+
+.cobertura-slider-val {
+  font-family: var(--font-mono, monospace);
+  font-weight: 700;
+  font-size: 0.8rem;
+}
+
+.cobertura-slider-sub {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.66rem;
+  color: #64748B;
+}
+
+[data-theme='dark'] .cobertura-slider-sub {
+  color: #94A3B8;
+}
+
+/* BOTÓN RESTABLECER */
+.cobertura-btn-reset {
+  width: 100%;
+  padding: 0.45rem;
+  border-radius: 6px;
+  border: 1px dashed var(--theme-border, #CBD5E1);
+  background: transparent;
+  color: #64748B;
+  font-size: 0.72rem;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.cobertura-btn-reset:hover {
+  border-color: #0284C7;
+  color: #0284C7;
+}
+
+[data-theme='dark'] .cobertura-btn-reset {
+  border-color: rgba(56, 189, 248, 0.25);
+  color: #94A3B8;
+}
+
+[data-theme='dark'] .cobertura-btn-reset:hover {
+  border-color: #38BDF8;
+  color: #38BDF8;
+}
+
+/* SECCIÓN INFERIOR: RANKING COMPARATIVO + FICHA TERRITORIAL */
+.cobertura-bottom-grid {
+  display: grid;
+  grid-template-columns: 6fr 6fr;
+  gap: 0.85rem;
+}
+
+@media (max-width: 900px) {
+  .cobertura-bottom-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.cobertura-ranking-card,
+.cobertura-ficha-card {
+  padding: 0.85rem 1rem;
+  border-radius: 12px;
+  background: var(--theme-card-bg, #FFFFFF);
+  border: 1px solid var(--theme-border, #E2E8F0);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+}
+
+[data-theme='dark'] .cobertura-ranking-card,
+[data-theme='dark'] .cobertura-ficha-card {
+  background: #1E293B;
+  border-color: rgba(56, 189, 248, 0.18);
+}
+
+.cobertura-ranking-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  max-height: 220px;
+  overflow-y: auto;
+  padding-right: 0.3rem;
+  margin-top: 0.5rem;
+}
+
+.cobertura-ranking-row {
+  display: grid;
+  grid-template-columns: 75px 1fr 50px;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.35rem 0.55rem;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  border: 1px solid transparent;
+}
+
+.cobertura-ranking-row:hover {
+  background: rgba(2, 132, 199, 0.05);
+}
+
+.cobertura-ranking-row.is-selected {
+  background: rgba(2, 132, 199, 0.1);
+  border-color: #0284C7;
+}
+
+[data-theme='dark'] .cobertura-ranking-row.is-selected {
+  background: rgba(56, 189, 248, 0.15);
+  border-color: #38BDF8;
+}
+
+.cobertura-ranking-bar-bg {
+  width: 100%;
+  height: 6px;
+  background: #F1F5F9;
+  border-radius: 9999px;
+  overflow: hidden;
+}
+
+[data-theme='dark'] .cobertura-ranking-bar-bg {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.cobertura-ranking-bar-fill {
+  height: 100%;
+  border-radius: 9999px;
+}
+
+/* FICHA TERRITORIAL */
+.cobertura-alerts-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  margin-top: 0.5rem;
+}
+
+.cobertura-alert-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  padding: 0.55rem 0.75rem;
+  border-radius: 8px;
+  background: #F8FAFC;
+  border: 1px solid var(--theme-border, #E2E8F0);
+  font-size: 0.75rem;
+  color: #334155;
+  line-height: 1.4;
+}
+
+[data-theme='dark'] .cobertura-alert-item {
+  background: rgba(15, 23, 42, 0.5);
+  border-color: rgba(56, 189, 248, 0.15);
+  color: #CBD5E1;
+}

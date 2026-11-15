@@ -1,0 +1,574 @@
+/* =========================================================================
+   ESTILOS DEDICADOS PARA PUNTOS CRÍTICOS (MODO CLARO + OSCURO)
+   Pantalla 9: LlajtaLab - Enfoque 2: Ciudad y Servicios
+   Paleta: #F8FAFC (fondo), #FFFFFF (tarjetas), #E2E8F0 (bordes), #0F172A (texto)
+   Colores de severidad: Gris #CBD5E1 (0), Amarillo #FACC15 (1-2),
+   Naranja #F97316 (3-4), Rojo intenso #DC2626 (5-6), Río Rocha #0284C7.
+   ========================================================================= */
+
+.puntos-criticos-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.95rem;
+}
+
+/* Modo Claro explícito predeterminado */
+[data-theme='light'] .puntos-criticos-container {
+  color: #0F172A;
+}
+
+[data-theme='light'] .puntos-criticos-container .puntos-kpi-card,
+[data-theme='light'] .puntos-criticos-container .puntos-district-card,
+[data-theme='light'] .puntos-criticos-container .puntos-map-card {
+  background-color: #FFFFFF !important;
+  border-color: #E2E8F0 !important;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05), 0 1px 2px -1px rgba(0, 0, 0, 0.05) !important;
+}
+
+/* 4 TARJETAS KPI SUPERIORES CON BORDE LATERAL */
+.puntos-kpis-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.75rem;
+}
+
+@media (max-width: 1024px) {
+  .puntos-kpis-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+  .puntos-kpis-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.puntos-kpi-card {
+  display: flex;
+  flex-direction: column;
+  padding: 0.85rem 1rem;
+  border-radius: 10px;
+  background: var(--theme-card-bg, #FFFFFF);
+  border: 1px solid var(--theme-border, #E2E8F0);
+  border-left-width: 5px !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.puntos-kpi-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.puntos-kpi-card.kpi-criticos {
+  border-left-color: #DC2626 !important;
+}
+
+.puntos-kpi-card.kpi-servicios {
+  border-left-color: #EF4444 !important;
+}
+
+.puntos-kpi-card.kpi-ambiental {
+  border-left-color: #F97316 !important;
+}
+
+.puntos-kpi-card.kpi-hidrico {
+  border-left-color: #0284C7 !important;
+}
+
+.puntos-kpi-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.35rem;
+}
+
+.puntos-kpi-label {
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: #475569;
+}
+
+[data-theme='dark'] .puntos-kpi-label {
+  color: #94A3B8;
+}
+
+.puntos-kpi-badge {
+  font-size: 0.65rem;
+  font-weight: 700;
+  padding: 0.15rem 0.45rem;
+  border-radius: 9999px;
+  font-family: var(--font-mono, monospace);
+}
+
+.puntos-kpi-val-row {
+  display: flex;
+  align-items: baseline;
+  gap: 0.45rem;
+  margin: 0.2rem 0 0.35rem;
+}
+
+.puntos-kpi-val {
+  font-size: 1.7rem;
+  font-weight: 800;
+  line-height: 1.1;
+  font-family: var(--font-mono, monospace);
+}
+
+.puntos-kpi-sub {
+  font-size: 0.74rem;
+  color: #64748B;
+  line-height: 1.35;
+}
+
+[data-theme='dark'] .puntos-kpi-sub {
+  color: #94A3B8;
+}
+
+/* BARRA SUPERIOR DE FILTROS Y ORDENAMIENTO */
+.puntos-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  padding: 0.65rem 0.85rem;
+  border-radius: 10px;
+  background: var(--theme-card-bg, #FFFFFF);
+  border: 1px solid var(--theme-border, #E2E8F0);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+[data-theme='dark'] .puntos-toolbar {
+  background: #1E293B;
+  border-color: rgba(56, 189, 248, 0.18);
+}
+
+.puntos-filters-group {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  flex-wrap: wrap;
+}
+
+.puntos-filter-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.28rem 0.65rem;
+  font-size: 0.73rem;
+  font-weight: 600;
+  border-radius: 9999px;
+  cursor: pointer;
+  transition: all 0.15s ease-in-out;
+  border: 1px solid var(--theme-border, #E2E8F0);
+  background: var(--theme-card-bg, #FFFFFF);
+  color: #475569;
+  user-select: none;
+}
+
+[data-theme='dark'] .puntos-filter-btn {
+  background: rgba(15, 23, 42, 0.7);
+  border-color: rgba(56, 189, 248, 0.2);
+  color: #94A3B8;
+}
+
+.puntos-filter-btn:hover {
+  border-color: #0284C7;
+  color: #0284C7;
+  background: rgba(2, 132, 199, 0.05);
+}
+
+.puntos-filter-btn.is-active {
+  background: #0284C7 !important;
+  border-color: #0284C7 !important;
+  color: #FFFFFF !important;
+  box-shadow: 0 2px 6px rgba(2, 132, 199, 0.3);
+}
+
+[data-theme='dark'] .puntos-filter-btn.is-active {
+  background: #38BDF8 !important;
+  border-color: #38BDF8 !important;
+  color: #0F172A !important;
+}
+
+/* SELECTOR DE ORDENAMIENTO */
+.puntos-sort-group {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.74rem;
+  color: #64748B;
+}
+
+.puntos-sort-select {
+  padding: 0.3rem 0.6rem;
+  font-size: 0.73rem;
+  font-weight: 600;
+  border-radius: 6px;
+  border: 1px solid var(--theme-border, #E2E8F0);
+  background: var(--theme-card-bg, #FFFFFF);
+  color: #0F172A;
+  cursor: pointer;
+}
+
+[data-theme='dark'] .puntos-sort-select {
+  background: #0F172A;
+  border-color: rgba(56, 189, 248, 0.2);
+  color: #F8FAFC;
+}
+
+/* GRID PRINCIPAL: LISTA DE DISTRITOS (1.15) Y MAPA COROPLÉTICO (1) */
+.puntos-main-grid {
+  display: grid;
+  grid-template-columns: 1.15fr 1fr;
+  gap: 0.85rem;
+  align-items: start;
+}
+
+@media (max-width: 1024px) {
+  .puntos-main-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* LISTA DE TARJETAS DE DISTRITOS */
+.puntos-districts-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  max-height: 580px;
+  overflow-y: auto;
+  padding-right: 0.35rem;
+}
+
+.puntos-district-card {
+  padding: 0.85rem 1rem;
+  border-radius: 10px;
+  background: var(--theme-card-bg, #FFFFFF);
+  border: 1px solid var(--theme-border, #E2E8F0);
+  border-left-width: 5px !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  transition: all 0.15s ease;
+}
+
+.puntos-district-card:hover {
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+}
+
+.puntos-district-card.is-selected {
+  border-color: #0284C7 !important;
+  box-shadow: 0 0 0 2px rgba(2, 132, 199, 0.25), 0 4px 14px rgba(0, 0, 0, 0.08) !important;
+}
+
+[data-theme='dark'] .puntos-district-card {
+  background: #1E293B;
+  border-color: rgba(56, 189, 248, 0.18);
+}
+
+[data-theme='dark'] .puntos-district-card.is-selected {
+  border-color: #38BDF8 !important;
+  box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.3) !important;
+}
+
+/* ENCABEZADO DE TARJETA DE DISTRITO */
+.puntos-dist-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.puntos-dist-card-title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.puntos-dist-card-title strong {
+  font-size: 0.94rem;
+  font-weight: 800;
+  color: #0F172A;
+}
+
+[data-theme='dark'] .puntos-dist-card-title strong {
+  color: #F8FAFC;
+}
+
+.puntos-dist-semaforo-badge {
+  font-size: 0.68rem;
+  font-weight: 700;
+  padding: 0.15rem 0.5rem;
+  border-radius: 4px;
+}
+
+.puntos-dist-semaforo-badge.semaforo-verde {
+  background: rgba(16, 185, 129, 0.12);
+  color: #059669;
+  border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.puntos-dist-semaforo-badge.semaforo-amarillo {
+  background: rgba(245, 158, 11, 0.12);
+  color: #D97706;
+  border: 1px solid rgba(245, 158, 11, 0.3);
+}
+
+.puntos-dist-semaforo-badge.semaforo-rojo {
+  background: rgba(220, 38, 38, 0.12);
+  color: #DC2626;
+  border: 1px solid rgba(220, 38, 38, 0.3);
+}
+
+.puntos-dist-alert-count {
+  font-size: 0.72rem;
+  font-weight: 800;
+  padding: 0.18rem 0.55rem;
+  border-radius: 9999px;
+  font-family: var(--font-mono, monospace);
+}
+
+/* LISTA DE ALERTAS POR DISTRITO */
+.puntos-alerts-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.puntos-alert-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.55rem;
+  padding: 0.5rem 0.65rem;
+  border-radius: 7px;
+  font-size: 0.77rem;
+  line-height: 1.4;
+  background: #F8FAFC;
+  border: 1px solid var(--theme-border, #E2E8F0);
+}
+
+[data-theme='dark'] .puntos-alert-item {
+  background: rgba(15, 23, 42, 0.6);
+  border-color: rgba(56, 189, 248, 0.15);
+}
+
+/* BADGES DE ALERTAS POR CATEGORÍA */
+.puntos-alert-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.65rem;
+  font-weight: 800;
+  padding: 0.12rem 0.42rem;
+  border-radius: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+/* Badge Rojo: Crítico en Servicios */
+.puntos-alert-badge.badge-servicios {
+  background: #FEE2E2;
+  color: #DC2626;
+  border: 1px solid #FECACA;
+}
+
+[data-theme='dark'] .puntos-alert-badge.badge-servicios {
+  background: rgba(220, 38, 38, 0.2);
+  color: #F87171;
+  border-color: rgba(220, 38, 38, 0.4);
+}
+
+/* Badge Naranja: Pérdida Vegetación / Calor Extremo */
+.puntos-alert-badge.badge-ambiental {
+  background: #FFEDD5;
+  color: #EA580C;
+  border: 1px solid #FED7AA;
+}
+
+[data-theme='dark'] .puntos-alert-badge.badge-ambiental {
+  background: rgba(234, 88, 12, 0.2);
+  color: #FB923C;
+  border-color: rgba(234, 88, 12, 0.4);
+}
+
+/* Badge Azul Cian: Riesgo Hídrico / Inundación / Río Rocha / Cota 2750 */
+.puntos-alert-badge.badge-hidrico {
+  background: #E0F2FE;
+  color: #0284C7;
+  border: 1px solid #BAE6FD;
+}
+
+[data-theme='dark'] .puntos-alert-badge.badge-hidrico {
+  background: rgba(2, 132, 199, 0.2);
+  color: #38BDF8;
+  border-color: rgba(2, 132, 199, 0.4);
+}
+
+/* Badge Violeta: Presión Demográfica al 2030 */
+.puntos-alert-badge.badge-futuro {
+  background: #EDE9FE;
+  color: #7C3AED;
+  border: 1px solid #DDD6FE;
+}
+
+[data-theme='dark'] .puntos-alert-badge.badge-futuro {
+  background: rgba(124, 58, 237, 0.2);
+  color: #C084FC;
+  border-color: rgba(124, 58, 237, 0.4);
+}
+
+.puntos-alert-text {
+  color: #1E293B;
+  flex: 1;
+}
+
+[data-theme='dark'] .puntos-alert-text {
+  color: #E2E8F0;
+}
+
+/* ACCIONES DE TARJETA DE DISTRITO */
+.puntos-dist-card-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.45rem;
+  margin-top: 0.15rem;
+  padding-top: 0.45rem;
+  border-top: 1px solid var(--theme-border, #E2E8F0);
+}
+
+[data-theme='dark'] .puntos-dist-card-footer {
+  border-color: rgba(56, 189, 248, 0.15);
+}
+
+.puntos-btn-action {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+  padding: 0.24rem 0.55rem;
+  border-radius: 6px;
+  border: 1px solid var(--theme-border, #E2E8F0);
+  background: var(--theme-card-bg, #FFFFFF);
+  color: #475569;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.puntos-btn-action:hover {
+  border-color: #0284C7;
+  color: #0284C7;
+  background: rgba(2, 132, 199, 0.05);
+}
+
+[data-theme='dark'] .puntos-btn-action {
+  background: rgba(15, 23, 42, 0.6);
+  border-color: rgba(56, 189, 248, 0.2);
+  color: #94A3B8;
+}
+
+[data-theme='dark'] .puntos-btn-action:hover {
+  border-color: #38BDF8;
+  color: #38BDF8;
+}
+
+/* TARJETA DEL MAPA COROPLÉTICO */
+.puntos-map-card {
+  padding: 0.75rem;
+  border-radius: 12px;
+  background: var(--theme-card-bg, #FFFFFF);
+  border: 1px solid var(--theme-border, #E2E8F0);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+[data-theme='dark'] .puntos-map-card {
+  background: #1E293B;
+  border-color: rgba(56, 189, 248, 0.18);
+}
+
+.puntos-map-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.puntos-map-header h3 {
+  margin: 0;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #0F172A;
+}
+
+[data-theme='dark'] .puntos-map-header h3 {
+  color: #F8FAFC;
+}
+
+.puntos-map-leaflet-wrapper {
+  position: relative;
+  width: 100%;
+  height: 480px;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid var(--theme-border, #E2E8F0);
+}
+
+[data-theme='dark'] .puntos-map-leaflet-wrapper {
+  border-color: rgba(56, 189, 248, 0.2);
+}
+
+.puntos-map-instance {
+  width: 100%;
+  height: 100%;
+}
+
+/* LEYENDA DEL MAPA COROPLÉTICO */
+.puntos-map-legend {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+  padding: 0.35rem 0.2rem 0;
+  font-size: 0.72rem;
+  color: #475569;
+}
+
+[data-theme='dark'] .puntos-map-legend {
+  color: #94A3B8;
+}
+
+.puntos-legend-scale {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.puntos-legend-step {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-family: var(--font-mono, monospace);
+  font-weight: 600;
+}
+
+.puntos-legend-box {
+  width: 12px;
+  height: 12px;
+  border-radius: 3px;
+  display: inline-block;
+  flex-shrink: 0;
+}

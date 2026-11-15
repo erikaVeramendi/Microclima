@@ -73,12 +73,13 @@ export function LoginPage({ onNavigateBack, onLoginSuccess }) {
       <main className="login-center-stage">
         <section className="login-card" aria-labelledby="login-heading">
           <div className="login-portal-header">
-            <div className="portal-ring-avatar">
-              <AbstractGeoSymbol />
+            <div className="login-brand-hero">
+              <img
+                src="/brand/logo-vertical.png"
+                alt="LlajtaLab"
+                className="login-brand-logo-img"
+              />
             </div>
-            <h1 id="login-heading" className="login-title">
-              LlajtaLab
-            </h1>
             <p className="login-subtitle">
               Laboratorio climático urbano de Cochabamba
             </p>

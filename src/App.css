@@ -1,9 +1,9 @@
 /* =========================================================
    LlajtaLab — Laboratorio climático urbano de Cochabamba
    Colorimetría equilibrada:
-   Obsidiana (#070910) + Esmeralda NDVI (#43A875 / #8BCB9A) +
+   Obsidiana (#070910) + Esmeralda NDVI (#5CEA00 / #8BCB9A) +
    Ámbar/Coral LST (#FFCB73 / #F28B50 / #D95757) +
-   Violeta IA (#8875D8) + Celeste Orbital (#65C8F2)
+   Violeta IA (#8875D8) + Celeste Orbital (#00BEFC)
    ========================================================= */
 
 .site-wrapper {
@@ -138,7 +138,7 @@
 }
 
 .btn--primary {
-  background: linear-gradient(135deg, #43A875 0%, #65C8F2 52%, #8875D8 100%);
+  background: linear-gradient(135deg, #5CEA00 0%, #00BEFC 52%, #8875D8 100%);
   color: #070910;
   border-color: rgba(255, 203, 115, 0.45);
   box-shadow: 0 12px 30px -6px rgba(67, 168, 117, 0.45);
@@ -173,7 +173,7 @@
 }
 
 .btn--nav:hover {
-  background: linear-gradient(135deg, #43A875, #65C8F2);
+  background: linear-gradient(135deg, #5CEA00, #00BEFC);
   color: #070910;
 }
 
@@ -212,14 +212,36 @@
   display: flex;
   align-items: center;
   gap: 0.75rem;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.brand-link:hover {
+  opacity: 0.95;
+  transform: translateY(-1px);
+}
+
+.site-navbar-brand-img {
+  height: 40px;
+  max-width: 165px;
+  width: auto;
+  object-fit: contain;
+  filter: drop-shadow(0 2px 10px rgba(0, 110, 253, 0.35));
+}
+
+.site-footer-brand-img {
+  height: 42px;
+  max-width: 175px;
+  width: auto;
+  object-fit: contain;
+  filter: drop-shadow(0 2px 8px rgba(0, 110, 253, 0.3));
 }
 
 .brand-logo {
   width: 38px;
   height: 38px;
   border-radius: 10px;
-  background: linear-gradient(135deg, rgba(67, 168, 117, 0.25), rgba(242, 139, 80, 0.25));
-  border: 1px solid rgba(255, 203, 115, 0.5);
+  background: linear-gradient(135deg, rgba(0, 190, 252, 0.18), rgba(0, 110, 253, 0.22));
+  border: 1px solid rgba(0, 190, 252, 0.45);
   display: grid;
   place-items: center;
 }
@@ -360,7 +382,7 @@
 
 .hero-title-highlight {
   display: block;
-  background: linear-gradient(90deg, #8BCB9A 0%, #65C8F2 36%, #8875D8 68%, #FFCB73 100%);
+  background: linear-gradient(90deg, #8BCB9A 0%, #00BEFC 36%, #8875D8 68%, #FFCB73 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
@@ -434,7 +456,7 @@
   left: 0;
   right: 0;
   height: 3px;
-  background: linear-gradient(90deg, #43A875, #65C8F2, #8875D8, #F28B50);
+  background: linear-gradient(90deg, #5CEA00, #00BEFC, #8875D8, #F28B50);
 }
 
 .hud-console-top {
@@ -538,11 +560,11 @@
 }
 
 .bento-card--veg {
-  border-top: 3px solid #43A875;
+  border-top: 3px solid #5CEA00;
 }
 .bento-card--veg:hover {
   transform: translateY(-5px);
-  border-color: #43A875;
+  border-color: #5CEA00;
   box-shadow: 0 20px 40px -15px rgba(67, 168, 117, 0.35);
 }
 
@@ -556,11 +578,11 @@
 }
 
 .bento-card--cyan {
-  border-top: 3px solid #65C8F2;
+  border-top: 3px solid #00BEFC;
 }
 .bento-card--cyan:hover {
   transform: translateY(-5px);
-  border-color: #65C8F2;
+  border-color: #00BEFC;
   box-shadow: 0 20px 40px -15px rgba(101, 200, 242, 0.35);
 }
 
@@ -616,10 +638,10 @@
 }
 
 .pipeline-node--veg {
-  border-bottom: 3px solid #43A875;
+  border-bottom: 3px solid #5CEA00;
 }
 .pipeline-node--cyan {
-  border-bottom: 3px solid #65C8F2;
+  border-bottom: 3px solid #00BEFC;
 }
 .pipeline-node--ai {
   border-bottom: 3px solid #8875D8;
@@ -842,7 +864,7 @@
 
 .ndvi-slider-control input[type='range'] {
   flex: 1;
-  accent-color: #43A875;
+  accent-color: #5CEA00;
   cursor: pointer;
 }
 
@@ -873,7 +895,7 @@
 .pillar-item {
   background-color: rgba(16, 22, 38, 0.76);
   border: 1px solid rgba(245, 247, 252, 0.14);
-  border-left: 3px solid #43A875;
+  border-left: 3px solid #5CEA00;
   border-radius: 10px;
   padding: 1.05rem 1.2rem;
   transition: transform 0.2s ease;
@@ -995,7 +1017,7 @@
 }
 
 .zone-select-btn.is-active {
-  border-color: #43A875;
+  border-color: #5CEA00;
   color: #8BCB9A;
   background-color: rgba(67, 168, 117, 0.16);
 }

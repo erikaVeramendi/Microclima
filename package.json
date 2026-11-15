@@ -12,6 +12,7 @@
   "dependencies": {
     "leaflet": "^1.9.4",
     "lucide-react": "^1.72.0",
+    "maplibre-gl": "^6.18.0",
     "react": "^19.2.7",
     "react-dom": "^19.2.7"
   },
