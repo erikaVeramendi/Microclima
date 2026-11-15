@@ -35,6 +35,7 @@ import {
   COCHABAMBA_ZONES,
   SCIENTIFIC_GLOSSARY_TERMS,
 } from '../data/internalPanelData'
+import ModoDetectiveScreen from './panel/ModoDetectiveScreen'
 import DiagnosticoDistritalScreen from './panel/DiagnosticoDistritalScreen'
 import { DetectiveTendenciasScreen } from './panel/DetectiveTendenciasScreen'
 import LluviasInundacionesScreen from './panel/LluviasInundacionesScreen'
@@ -48,7 +49,6 @@ import PlanificacionScreen from './panel/PlanificacionScreen'
 import SimuladorEquipamientosScreen from './panel/SimuladorEquipamientosScreen'
 import InformeScreen from './panel/InformeScreen'
 import {
-  IntelligenceCenterScreen,
   VegetationIntelligenceScreen,
 } from './panel/ScreensPart1'
 import {
@@ -405,13 +405,20 @@ export function InternalPlatform({ userSession, onLogout }) {
     setAiInput('')
   }
 
+  const [navParams, setNavParams] = useState({})
+
+  const handleNavigateModule = (moduleId, params = {}) => {
+    setActiveModuleId(moduleId)
+    setNavParams(params || {})
+  }
+
   const renderActiveScreen = () => {
     const commonProps = {
       selectedZoneId,
       onSelectZone: setSelectedZoneId,
       selectedPeriod,
       onPeriodChange: setSelectedPeriod,
-      onNavigateModule: setActiveModuleId,
+      onNavigateModule: handleNavigateModule,
       onOpenAssistantWithPrompt: triggerAiPrompt,
     }
 
@@ -419,7 +426,7 @@ export function InternalPlatform({ userSession, onLogout }) {
       // INICIO
       case 'modo-detective':
       case 'centro-inteligencia':
-        return <IntelligenceCenterScreen {...commonProps} />
+        return <ModoDetectiveScreen {...commonProps} />
 
       // ENFOQUE 1 · CLIMA URBANO
       case 'diagnostico-distrital':
@@ -427,7 +434,7 @@ export function InternalPlatform({ userSession, onLogout }) {
         return <DiagnosticoDistritalScreen {...commonProps} />
       case 'detective-tendencias':
       case 'inteligencia-termica':
-        return <DetectiveTendenciasScreen {...commonProps} />
+        return <DetectiveTendenciasScreen {...commonProps} initialVarId={navParams?.varId} />
       case 'lluvias-inundaciones':
       case 'red-monica':
       case 'relaciones-ambientales':
@@ -449,7 +456,7 @@ export function InternalPlatform({ userSession, onLogout }) {
         return <CoberturaServiciosScreen {...commonProps} />
       case 'puntos-criticos':
       case 'investigacion-descubrimiento':
-        return <PuntosCriticosScreen {...commonProps} />
+        return <PuntosCriticosScreen {...commonProps} initialFilter={navParams?.filter} />
       case 'planificacion-5-anos':
       case 'planificacion-5anios':
         return <PlanificacionScreen {...commonProps} />

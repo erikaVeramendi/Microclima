@@ -360,6 +360,9 @@ export default function LluviasInundacionesScreen({
               {formatNum(ciudadKpis?.avgLluvia, 1)}
               <span className="lluvias-kpi-val-unit">mm/año</span>
             </div>
+            <div style={{ color: 'var(--lluvias-muted)', fontSize: '0.74rem', lineHeight: 1.35, margin: '0.25rem 0 0.35rem' }}>
+              Estimación satelital (GPM IMERG, celdas de ~10 km que incluyen la ladera del Tunari): puede ser mayor que lo medido en estaciones del valle. Lo confiable es la tendencia.
+            </div>
             <div className="lluvias-kpi-subtext">
               Tendencia Sen:{' '}
               <b>

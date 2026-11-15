@@ -1,0 +1,450 @@
+/* =========================================================================
+   ModoDetectiveScreen.css
+   Estilos para la pantalla "Modo detective" (Pestaña de Inicio / Investigación)
+   Paleta oficial LlajtaLab adaptativa a modo oscuro y claro
+   ========================================================================= */
+
+.modo-detective-screen {
+  display: flex;
+  flex-direction: column;
+  gap: 1.75rem;
+  padding: 0.25rem 0 2.5rem;
+  color: var(--theme-text, #F8FAFC);
+  --modo-icon-color: #8A94A6;
+  --modo-card-bg: rgba(15, 23, 42, 0.65);
+  --modo-card-border: rgba(148, 163, 184, 0.15);
+  --modo-header-bg: rgba(30, 41, 59, 0.5);
+  --modo-muted: #94A3B8;
+  --modo-accent: #00BEFC;
+  --modo-accent-subtle: rgba(0, 190, 252, 0.12);
+  --modo-highlight: #38BDF8;
+}
+
+[data-theme='light'] .modo-detective-screen {
+  --modo-icon-color: #6B6559;
+  --modo-card-bg: rgba(255, 255, 255, 0.94);
+  --modo-card-border: rgba(100, 116, 139, 0.2);
+  --modo-header-bg: rgba(241, 245, 249, 0.85);
+  --modo-muted: #64748B;
+  --modo-accent: #0284C7;
+  --modo-accent-subtle: rgba(2, 132, 199, 0.12);
+  --modo-highlight: #0284C7;
+}
+
+/* Encabezado */
+.modo-header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.modo-title {
+  font-size: 1.45rem;
+  font-weight: 700;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  color: var(--theme-text, #F8FAFC);
+}
+
+.modo-subtitle {
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--modo-highlight);
+  margin: 0.2rem 0 0;
+}
+
+/* BLOQUE 1: Preguntas guiadas en 3 pasos */
+.modo-wizard-card {
+  background: var(--modo-card-bg);
+  border: 1px solid var(--modo-card-border);
+  border-radius: 14px;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
+}
+
+.modo-step-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.modo-step-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.modo-step-number {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--modo-header-bg);
+  border: 1px solid var(--modo-card-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--modo-highlight);
+}
+
+.modo-step-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--theme-text, #F8FAFC);
+}
+
+/* Botones grandes de selección de tema */
+.modo-topics-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 0.75rem;
+}
+
+@media (max-width: 900px) {
+  .modo-topics-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .modo-topics-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.modo-topic-btn {
+  background: var(--modo-header-bg);
+  border: 1px solid var(--modo-card-border);
+  border-radius: 10px;
+  padding: 1rem 0.75rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  color: var(--theme-text, #F8FAFC);
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-align: center;
+}
+
+.modo-topic-btn:hover {
+  border-color: rgba(56, 189, 248, 0.4);
+  transform: translateY(-2px);
+}
+
+.modo-topic-btn.is-active {
+  background: var(--modo-accent-subtle);
+  border-color: var(--modo-accent);
+  color: var(--modo-highlight);
+  box-shadow: 0 0 14px rgba(0, 190, 252, 0.2);
+}
+
+.modo-topic-icon {
+  color: var(--modo-icon-color);
+  transition: color 0.2s ease;
+}
+
+.modo-topic-btn.is-active .modo-topic-icon {
+  color: var(--modo-highlight);
+}
+
+/* Paso 2: Selección de ubicación */
+.modo-location-row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.modo-scope-toggle {
+  display: flex;
+  background: var(--modo-header-bg);
+  border: 1px solid var(--modo-card-border);
+  border-radius: 8px;
+  padding: 0.25rem;
+  gap: 0.25rem;
+}
+
+.modo-scope-btn {
+  background: transparent;
+  border: none;
+  border-radius: 6px;
+  padding: 0.45rem 1rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  color: var(--modo-muted);
+  transition: all 0.15s ease;
+}
+
+.modo-scope-btn.is-active {
+  background: var(--modo-accent-subtle);
+  color: var(--modo-highlight);
+  font-weight: 700;
+}
+
+.modo-district-dropdown-wrap {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.modo-district-select {
+  background: var(--modo-header-bg);
+  color: var(--theme-text, #F8FAFC);
+  border: 1px solid var(--modo-card-border);
+  border-radius: 8px;
+  padding: 0.45rem 0.85rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  outline: none;
+  cursor: pointer;
+}
+
+.modo-district-select option {
+  background: #0F172A;
+  color: #F8FAFC;
+}
+
+[data-theme='light'] .modo-district-select option {
+  background: #FFFFFF;
+  color: #0F172A;
+}
+
+/* Paso 3: Botón de acción principal */
+.modo-action-row {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding-top: 0.5rem;
+  border-top: 1px solid var(--modo-card-border);
+}
+
+.modo-launch-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  background: var(--modo-accent);
+  color: #FFFFFF;
+  border: none;
+  border-radius: 9px;
+  padding: 0.75rem 1.75rem;
+  font-size: 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  box-shadow: 0 4px 14px rgba(0, 190, 252, 0.35);
+}
+
+.modo-launch-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 190, 252, 0.45);
+}
+
+/* BLOQUE 2: Casos de ejemplo */
+.modo-block-title-row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  margin-top: 0.5rem;
+}
+
+.modo-block-title {
+  font-size: 1.15rem;
+  font-weight: 700;
+  margin: 0;
+  color: var(--theme-text, #F8FAFC);
+}
+
+.modo-block-sub {
+  font-size: 0.8rem;
+  color: var(--modo-muted);
+  margin: 0;
+}
+
+.modo-cases-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+}
+
+@media (max-width: 768px) {
+  .modo-cases-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.modo-case-card {
+  background: var(--modo-card-bg);
+  border: 1px solid var(--modo-card-border);
+  border-radius: 12px;
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 1rem;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  transition: border-color 0.2s ease, transform 0.2s ease;
+}
+
+.modo-case-card:hover {
+  border-color: rgba(56, 189, 248, 0.4);
+}
+
+.modo-case-top {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.modo-case-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--modo-highlight);
+  background: var(--modo-accent-subtle);
+  border: 1px solid var(--modo-card-border);
+  border-radius: 9999px;
+  padding: 0.15rem 0.55rem;
+  width: fit-content;
+}
+
+.modo-case-heading {
+  font-size: 1.05rem;
+  font-weight: 700;
+  margin: 0;
+  color: var(--theme-text, #F8FAFC);
+  line-height: 1.35;
+}
+
+.modo-case-desc {
+  font-size: 0.82rem;
+  color: var(--modo-muted);
+  line-height: 1.45;
+  margin: 0;
+}
+
+.modo-case-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  background: var(--modo-header-bg);
+  border: 1px solid var(--modo-card-border);
+  border-radius: 8px;
+  padding: 0.5rem 1rem;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  color: var(--theme-text, #F8FAFC);
+  width: fit-content;
+  transition: all 0.15s ease;
+}
+
+.modo-case-btn:hover {
+  background: var(--modo-accent-subtle);
+  border-color: var(--modo-accent);
+  color: var(--modo-highlight);
+}
+
+/* BLOQUE 3: Lo que ya descubrimos */
+.modo-findings-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+}
+
+@media (max-width: 1024px) {
+  .modo-findings-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+  .modo-findings-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.modo-finding-card {
+  background: var(--modo-card-bg);
+  border: 1px solid var(--modo-card-border);
+  border-radius: 12px;
+  padding: 1.15rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 0.9rem;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  transition: border-color 0.2s ease, transform 0.2s ease;
+}
+
+.modo-finding-card:hover {
+  border-color: rgba(56, 189, 248, 0.35);
+  transform: translateY(-2px);
+}
+
+.modo-finding-top {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.modo-finding-header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.modo-finding-tag {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--modo-muted);
+}
+
+.modo-finding-text {
+  font-size: 0.86rem;
+  font-weight: 600;
+  line-height: 1.45;
+  color: var(--theme-text, #F8FAFC);
+  margin: 0;
+}
+
+.modo-finding-text strong {
+  color: var(--modo-highlight);
+}
+
+.modo-finding-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  background: transparent;
+  border: none;
+  padding: 0;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--modo-highlight);
+  cursor: pointer;
+  text-align: left;
+  transition: gap 0.15s ease;
+}
+
+.modo-finding-link:hover {
+  text-decoration: underline;
+  gap: 0.55rem;
+}
